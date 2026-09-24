@@ -7,9 +7,10 @@ let LDEPTH = 0;
 const pushLayer = () => layer(10 + LDEPTH++), popLayer = () => { LDEPTH--; };
 // depth(ctx, px, fn, o): fn(c) draws into a scratch layer, which is composited into ctx with the three colour
 // plates shifted by px (RGB split). px = 0 is in focus; 6-14 reads as foreground/background out of focus.
+// The layer starts at the identity transform; pass {keep: true} to carry ctx's current transform (camera) into it.
 function depth(ctx, px, fn, o = {}) {
   if (!px) { fn(ctx); return; }
-  const c = pushLayer(); fn(c); popLayer();
+  const m = ctx.getTransform(), c = pushLayer(); if (o.keep) c.setTransform(m); fn(c); popLayer();
   misreg(ctx, c.canvas, px, o.angle ?? 0, o.alpha ?? 1);
 }
 function chan(src, color, i) { const c = layer(i); c.drawImage(src, 0, 0); c.globalCompositeOperation = 'multiply'; c.fillStyle = color; c.fillRect(0, 0, W, H); c.globalCompositeOperation = 'destination-in'; c.drawImage(src, 0, 0); c.globalCompositeOperation = 'source-over'; return c.canvas; }

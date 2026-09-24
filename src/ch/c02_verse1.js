@@ -92,7 +92,7 @@
   function ping(ctx, t) {
     const a = t - at(PING), tc = tw(t, at(PING));
     const th = kf(t, [[10.92, 0], [11.0, -.3], [11.2, PI + .32], [11.31, PI - .1], [11.42, PI]], easeInOut);
-    const k = easeInOut(seg(t, 11.26, 11.97));
+    const k = easeInOut(seg(t, 11.04, 11.7));
     const [qx, qy] = shake(t, 9 * hit(t, [PING], 10));
     const A = [lerp(960, 1170, k) + qx, lerp(540, 430, k) + qy, lerp(1, 1.5, k)];
     const B = [A[0], lerp(540, 464, k) + qy, lerp(1, 1.68, k)];              // the rabbit rises out of the chair back as we crane over it
@@ -139,7 +139,7 @@
       outline(ctx, ell(bx, by, r, r, 56), 20 * (1 - g / .8) + 2, INK.cyan, { heavy: 0 }); }
     ctx.restore();
     // foreground roots
-    depth(ctx, 10, c => { cam(c, A[0], A[1] - k * 90, A[2] * (1 + k * .25)); roots(c, t, [-40, 800, 1640], -20, { len: 230, w: 22, color: '#120604' }); c.restore(); });
+    depth(ctx, 10, c => { cam(c, A[0], A[1] - k * 90, A[2] * (1 + k * .25)); roots(c, t, [-40, 800, 1930], -20, { len: 230, w: 22, color: '#120604' }); c.restore(); });
     calmLeft(ctx, .15 + .7 * k, 1020);
     tint(ctx, INK.cyan, .5 * hit(t, [PING], 5) + .06, 'screen');
   }
@@ -556,7 +556,7 @@
     SKIPS.forEach((s, i) => { const f = { font: 'mono', weight: 800, size: 56 }; txt(ctx, s, 1015, 250 + i * 74, { ...f, color: INK.paper });
       const m = s.match(/\.skip|xit/); if (m) { const pre = measure(ctx, s.slice(0, m.index), f).w; txt(ctx, m[0], 1015 + pre, 250 + i * 74, { ...f, color: INK.yellow }); } });
     const res = backOut(seg(t, at(AN), at(AN) + .16), 2.2);
-    if (res > 0) { ctx.save(); ctx.translate(1410, 660); ctx.scale(res, res); txt(ctx, '0 passed \u00B7 412 skipped', 0, 0, { font: 'mono', weight: 800, size: 60, color: INK.yellow, align: 'center', stroke: { w: 8, color: INK.ink } }); ctx.restore(); }
+    if (res > 0) { ctx.save(); ctx.translate(1450, 655); ctx.scale(res, res); fillPts(ctx, rrect(-350, -62, 700, 90, 12), INK.yellow, false); txt(ctx, '0 passed \u00B7 412 skipped', 0, 0, { font: 'mono', weight: 800, size: 48, color: INK.ink, align: 'center' }); ctx.restore(); }
     // floor
     fillPts(ctx, rect(-200, 880, 2400, 400), EARTH2, false); inkLine(ctx, [[-200, 882], [2400, 882]], 6, INK.ink, { taper: [0, 0] });
     // cardboard checks on sticks, toppling like dominoes from the poke
@@ -611,7 +611,7 @@
       for (const g of ghosts) { const tt = t - g / 24, [ga, ge] = writeArm(tt), P = g ? pawAt(RX, RY, RS, 1, ga, ge) : A.pawR;
         ctx.save(); ctx.globalAlpha = g ? .35 / g : 1; penAt(ctx, P[0], P[1], RS, deg(112 + 10 * wob(tt, 6.5))); ink(ctx, ell(P[0], P[1], 30, 27, 16), { fill: INK.fur, line: g ? 0 : 4.5, boil: .8 }); ctx.restore(); }
       ink(ctx, ell(A.pawL[0], Math.max(A.pawL[1], 862), 30, 25, 16), { fill: INK.fur, line: 4.5, boil: .8 });
-      if (punch < .3) speedLines(ctx, A.pawR[0] - 40, A.pawR[1] + 110, { n: 22, r0: 90, r1: 240, w: 5, color: INK.ink });
+      if (punch < .3) speedLines(ctx, A.pawR[0] - 40, A.pawR[1] + 110, { n: 22, r0: 90, r1: 190, w: 5, color: INK.ink });
     } else if (pluck && !crack) {
       penAt(ctx, A.pawR[0], A.pawR[1], RS, -PI / 2 - twirl * TAU * 1.5);
       if (t < at(30.3) + .12) sparkle(ctx, A.pawR[0] + 20, A.pawR[1] - 150, 50, 1 - (t - at(30.3)) / .12);

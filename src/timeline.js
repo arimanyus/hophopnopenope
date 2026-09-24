@@ -5,9 +5,11 @@
 // Shots must be pure functions of t: frames render in parallel and out of order.
 const CH = [];
 function chapter(name, a, b, shots) { CH.push({ name, a, b, shots }); CH.sort((p, q) => p.a - q.a); }
+// Cuts snap to the frame that contains their time, so a cut on a downbeat is never a frame late (sync law).
+const cutF = x => Math.floor(x * FPS + 1e-6) / FPS;
 function shotAt(t) {
-  const ch = CH.find(c => t >= c.a && t < c.b); if (!ch) return null;
-  let i = 0; while (i + 1 < ch.shots.length && t >= ch.shots[i + 1][0]) i++;
+  const ch = CH.find(c => t >= cutF(c.a) - 1e-6 && t < cutF(c.b) - 1e-6); if (!ch) return null;
+  let i = 0; while (i + 1 < ch.shots.length && t >= cutF(ch.shots[i + 1][0]) - 1e-6) i++;
   const t0 = ch.shots[i][0], t1 = i + 1 < ch.shots.length ? ch.shots[i + 1][0] : ch.b;
   return { ch, i, fn: ch.shots[i][1], t0, t1 };
 }
@@ -39,7 +41,7 @@ function drawFrame(ctx, t) {
   paperBg(ctx);
   const s = window.LOOK ? null : shotAt(t);
   if (window.LOOK) { ctx.save(); window.LOOK(ctx, t); ctx.restore(); FRAME.lyrics = FRAME.lyrics && !!window.LOOK.lyrics; }
-  else if (s) { ctx.save(); s.fn(ctx, t, t - s.t0, s.t1 - s.t0); ctx.restore(); } else placeholder(ctx, t);
+  else if (s) { const ts = Math.max(t, s.t0); ctx.save(); s.fn(ctx, ts, ts - s.t0, s.t1 - s.t0); ctx.restore(); } else placeholder(ctx, t);
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.filter = 'none';
   if (FRAME.lyrics) drawLyrics(ctx, t);
   for (const f of FRAME.post) { ctx.save(); f(ctx, t); ctx.restore(); }

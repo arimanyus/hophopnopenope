@@ -255,6 +255,17 @@
   function nopeChoreo(ctx, t) {
     const tc = twh(t, NOPE);
     field(ctx, INK.blue, INK.blueDk, { y0: 250, y1: 1150 });
+    // the giant cursor wags like a no-no finger behind the crowd (chorus 1's pivot, faster swing)
+    const [n1, n2] = NOPE.map(at), cs = 1050;
+    const swing = (tt, T, from, to) => lerp(from, to, backOut(clamp((tt - T) / .08), 2.4));
+    const ang = tt => tt < n2 ? swing(tt, n1, 20, -20) : swing(tt, n2, -20, 20);
+    const drawCursor = (tt, tag) => { ctx.save(); ctx.translate(960, 1200); ctx.rotate((ang(tt) + 24) * Math.PI / 180);
+      cursor(ctx, -.44 * cs, -.965 * cs, cs, { label: false });
+      if (tag) { ctx.translate(-.44 * cs, -.965 * cs); ink(ctx, rrect(.1 * cs, .1 * cs, 190, 94, 24), { fill: INK.pink, line: 5, boil: .4, smooth: false });
+        txt(ctx, 'you', .1 * cs + 95, .1 * cs + 67, { font: 'ui', weight: 800, size: 62, color: INK.white, align: 'center' }); }
+      ctx.restore(); };
+    for (const T of [n1, n2]) { const a = t - T; if (a >= 0 && a < .12) for (const k of [2, 1]) { ctx.save(); ctx.globalAlpha = .2 * (3 - k); drawCursor(t - k / 40, false); ctx.restore(); } }
+    drawCursor(t, true);
     const shk = (i, tt) => { let v = 0; for (const x of NOPE) { const a = tt - at(x); if (a >= 0) v = Math.sin(a * TAU * 4.5 + i * .35) * .3 * Math.exp(-a * 4); } return v; };
     crowd(ctx, b => ({ rot: shk(b.i + b.r, tc), eyes: 'dot', look: -Math.sign(shk(b.i + b.r, tc)) }));
     // head whip: direction flips on each nope (on ones), with a ghost of the previous pose as the smear
@@ -265,12 +276,8 @@
     if (a < .1) { ctx.save(); ctx.globalAlpha = .35; rabbit(ctx, 960, 985, 40, { ...pose, ...head(prev), noShadow: true }); ctx.restore();
       streaks(ctx, [760, 460, 1160, 700], { dir: [dir, 0], n: 12, len: 260, w: 6, color: rgba(INK.white, .8), seed: 7 }); }
     rabbit(ctx, 960, 985, 40, { ...pose, ...head(dir * set) });
-    // the cursor wags like a no-no finger, pivoting at its base
-    const up = .43, w = t >= at(NOPE[1]) ? lerp(up + .5, up - .5, elasticOut(clamp((t - at(NOPE[1])) / .32))) : lerp(up - .2, up + .5, elasticOut(clamp((t - at(NOPE[0])) / .32)));
-    const S = 250, bx = 1440, by = 470, px = .42 * S, py = .92 * S, ca = Math.cos(w), sa = Math.sin(w);
-    cursor(ctx, bx - (px * ca - py * sa), by - (px * sa + py * ca), S, { rot: w, label: 'you' });
-    slamStamp(ctx, 'NOPE', 520, 330, 280, t - at(NOPE[0]), { color: INK.red, rot: -.16 });
-    slamStamp(ctx, 'NOPE', 1470, 700, 310, t - at(NOPE[1]), { color: INK.red, rot: .1 });
+    slamStamp(ctx, 'NOPE', 460, 290, 250, t - n1, { color: INK.yellow, rot: -.14 });
+    slamStamp(ctx, 'NOPE', W - 460, 290, 250, t - n2, { color: INK.yellow, rot: .12 });
     misregFrame(ctx, 12 * hit(t, NOPE, 14), 0);
   }
 

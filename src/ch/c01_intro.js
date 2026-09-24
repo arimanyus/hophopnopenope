@@ -18,15 +18,23 @@
   const GROUND = mix(INK.orangeDk, INK.ink, .32), GRASS = mix(INK.ink, INK.orangeDk, .18);
 
   // ---------------------------------------------------------------- 0.00 PING (the thumbnail)
-  function earTips(ctx, t) {
-    const up = kf(t, [[0, .6], [.083, 1.12], [.125, .96], [.16, 1]]), vib = Math.sin(boilN(t) * 2.1) * 3;
-    const A = rabbit(ctx, 470, 1905 + (1 - up) * 190, 78, { earL: { a: -10 + vib, b: 0, len: lerp(.92, 1.04, up) }, earR: { a: 10 - vib, b: 0, len: lerp(.92, 1.04, up) }, noShadow: true });
+  function earTips(ctx, t, sink = 0) {
+    const tt = twos(t), jump = tt >= STAB ? Math.exp(-(tt - STAB) * 6) : 0;
+    const up = kf(t, [[0, .6], [.083, 1.12], [.125, .96], [.16, 1]]) + .55 * jump, vib = Math.sin(boilN(t) * 2.1) * (3 + 6 * jump);
+    const A = rabbit(ctx, 470, 1905 + (1 - up) * 190 + sink * 520, 78, { earL: { a: -10 + vib, b: 0, len: lerp(.92, 1.04, up) }, earR: { a: 10 - vib, b: 0, len: lerp(.92, 1.04, up) }, noShadow: true });
     for (const [e, sd] of [[A.earL, -1], [A.earR, 1]]) for (let i = 0; i < 3; i++) {
       const a = -Math.PI / 2 + sd * (.55 + i * .42), pts = [];
       for (let j = 0; j <= 6; j++) { const r = lerp(78, 160, j / 6), w = Math.sin(j * 2.3 + boilN(t) * 1.7 + i) * 8; pts.push([e[0] + Math.cos(a) * r - Math.sin(a) * w, e[1] + Math.sin(a) * r + Math.cos(a) * w]); }
       inkLine(ctx, pts, 10, INK.paper, { taper: [.1, .5] });
     }
   }
+  function rings(ctx, x, y, age, s) {
+    for (let j = 0; j < 3; j++) {
+      const r = 90 * s + (age + j * .16) * 1500, a = clamp(1.25 - r / 1100);
+      if (a > .02) { ctx.save(); ctx.globalAlpha = a; outline(ctx, ell(x, y, r, r, 72), 18 * (1 - r / 1500) + 5, INK.cyan, { seed: j }); ctx.restore(); }
+    }
+  }
+  const badgeAt = T => [T.x + T.s * (470 * Math.cos(T.rot) + 140 * Math.sin(T.rot)), T.y + T.s * (470 * Math.sin(T.rot) - 140 * Math.cos(T.rot))];
   function ping(ctx, t) {
     const S = kf(t, [[0, 1.15], [.083, .982], [.125, 1]], x => x), imp = t > .07 ? Math.exp(-(t - .083) * 25) : 0, [sx, sy] = shake(t, 12 * imp);
     const cx = 930, cy = 455, s = 1.32 * S, rot = -.07;
@@ -38,10 +46,7 @@
     });
     ctx.save(); ctx.translate(sx, sy);
     earTips(ctx, t);
-    for (let j = 0; j < 3; j++) {
-      const r = 90 * s + (t + j * .16) * 1500, a = clamp(1.25 - r / 1100);
-      if (a > .02) { ctx.save(); ctx.globalAlpha = clamp(a); outline(ctx, ell(bx, by, r, r, 72), 18 * (1 - r / 1500) + 5, INK.cyan, { seed: j }); ctx.restore(); }
-    }
+    rings(ctx, bx, by, t, s);
     // slam multiples: where the card was a frame ago
     if (t < .07) for (const [k, a] of [[1.2, .3], [1.1, .5]]) { ctx.save(); ctx.translate(cx, cy); ctx.rotate(rot * 1.4); ctx.scale(s * k, s * k); ctx.globalAlpha = a; outline(ctx, rrect(-500, -150, 1000, 300, 26), 9 / (s * k), INK.paper, { smooth: false }); ctx.restore(); }
     toast(ctx, cx, cy, s, { rot });
@@ -77,16 +82,21 @@
       ink(c, [[-150 * u, 600 * u], [-98 * u, 168 * u], [104 * u, 168 * u], [168 * u, 600 * u]], { fill: INK.orange, shade: { color: INK.orangeDk, spacing: 14, dir: [.6, .8], from: 0, to: 240 * u }, line: 7, boil: 1.4, seed: 4 });
       inkLine(c, [[-36 * u, 250 * u], [-24 * u, 460 * u]], 5, INK.orangeDk, { taper: [.2, .4] });
       ink(c, rrect(-112 * u, 150 * u, 226 * u, 46 * u, 16 * u), { fill: INK.orangeDk, line: 6, boil: 1, smooth: false });
-      ink(c, ell(0, 112 * u, 112 * u, 58 * u, 28), { ...fur, seed: 5 });
+      ink(c, [[-128 * u, 96 * u], [-60 * u, 84 * u], [60 * u, 84 * u], [128 * u, 96 * u], [120 * u, 150 * u], [0, 172 * u], [-120 * u, 150 * u]], { ...fur, seed: 5 });
+      for (const x of [-52, 0, 52]) inkLine(c, [[x * u, 140 * u], [x * 1.05 * u, 160 * u]], 5, INK.ink, { taper: [.1, .6] });
       return;
     }
-    // one mitt wrapped over the front of the case (bumpy finger tips), the thumb pressing on its left side
-    const m = [], n = 32;
-    for (let i = 0; i <= n; i++) { const k = i / n, a = lerp(46, 134, k) * D2R, r0 = 86 - 11 * Math.pow(Math.abs(Math.sin(k * Math.PI * 4)), .6) * (1 - Math.pow(Math.abs(k - .5) * 2, 4)); m.push([Math.cos(a) * r0 * u, Math.sin(a) * r0 * u]); }
-    for (let i = n; i >= 0; i--) { const a = lerp(46, 134, i / n) * D2R; m.push([Math.cos(a) * 128 * u, Math.sin(a) * 128 * u]); }
-    ink(c, m, { ...fur, seed: 6 });
-    for (const k of [.25, .5, .75]) { const a = lerp(46, 134, k) * D2R; inkLine(c, [[Math.cos(a) * 84 * u, Math.sin(a) * 84 * u], [Math.cos(a) * 104 * u, Math.sin(a) * 104 * u]], 6, INK.ink, { taper: [.05, .6] }); }
-    ink(c, xform(ell(0, 0, 17 * u, 38 * u, 18), -97 * u, 50 * u, 1, .5), { ...fur, seed: 11 });
+    // the watch sits in the cupped palm; the thumb and two fingers curl over the rim
+    ink(c, [[-134 * u, 122 * u], [-142 * u, 64 * u], [-126 * u, 14 * u], [-104 * u, 2 * u], [-88 * u, 22 * u], [-88 * u, 70 * u], [-70 * u, 106 * u]], { ...fur, seed: 11 });
+    for (const [a, i] of [[14, 0], [36, 1]]) ink(c, xform(ell(0, 0, 17 * u, 30 * u, 18), Math.cos(a * D2R) * 100 * u, Math.sin(a * D2R) * 100 * u, 1, a * D2R), { ...fur, seed: 12 + i });
+  }
+  // label-maker tape stuck across the case: the deadline, big enough to read on a phone
+  function deadline(c, r) {
+    const s = 'DEPLOY \u00B7 FRI 5:00 PM', w = r * 1.62, h = r * .25, tw = measure(c, s, { font: 'ui', weight: 900, size: 100 }).w;
+    c.save(); c.translate(0, r * .96); c.rotate(-.05);
+    ink(c, rrect(-w / 2, -h / 2, w, h, r * .03), { fill: INK.red, line: r * .02, boil: .6, smooth: false });
+    txt(c, s, 0, 0, { font: 'ui', weight: 900, size: Math.min(h * .62, w * .88 * 100 / tw), align: 'center', base: 'middle', color: INK.white });
+    c.restore();
   }
   function watchAt(ctx, t, x, y, r, rot, ang, ghosts) {
     ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
@@ -94,39 +104,65 @@
     if (Math.cos(ang * D2R) < 0) lid(ctx, r, ang);
     ctx.restore();
     const ticks = Math.max(0, beatN(t) - beatN(STAB));
-    pocketWatch(ctx, x, y, r, { secs: clockSecs(16, 58, 30) + ticks, left: 90, rot });
+    pocketWatch(ctx, x, y, r, { secs: clockSecs(16, 58, 30) + ticks, left: 90, rot, label: false });
     ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
     for (const [a, g] of ghosts || []) lid(ctx, r, a, g);
     if (Math.cos(ang * D2R) >= 0) lid(ctx, r, ang);
+    deadline(ctx, r);
     paw(ctx, r, true);
     ctx.restore();
   }
+  // the premise stays up: the toast is knocked aside by the watch on the stab, pinged again on the first beat,
+  // then whipped off so the lyric column is clear
+  const PING2 = beatTime(0) - FR, BOKEH = [[260, 250, 170, INK.yellow], [1720, 330, 210, INK.orangeLt], [1540, 900, 150, INK.orangeDk], [150, 860, 120, INK.orangeLt]];
+  function toastPose(t) {
+    const k = backOut(seg(t, STAB, STAB + .13), 1.6), w = easeIn(seg(t, 1.1, 1.3)), [dx, dy] = drift(t, 8, .6);
+    return { x: lerp(930, 680, k) + dx * k - 2300 * w, y: lerp(455, 250, k) + dy * k - 240 * w, s: lerp(1.32, 1.04, k) * (1 + .04 * hit(t, [PING2 + FR], 12)), rot: lerp(-.07, -.035, k) - .5 * w };
+  }
   function watchShot(ctx, t) {
     const lt = t - STAB, f = Math.round(lt * 24);
-    const hook = seg(t, 1.14, 1.36), sl = backOut(hook, 1.25), antic = t < 1.14 ? Math.sin(seg(t, 1.0, 1.14) * Math.PI) : 0;
-    const X = k => lerp(960, 1488, k);
-    const x = X(sl) - 34 * antic, y = lerp(488, 560, easeInOut(hook));
-    const r = lerp(lerp(372, 398, easeOut(seg(t, STAB, 1.14))), lerp(330, 346, seg(t, 1.36, 2.62)), easeInOut(hook));
+    const hook = seg(t, 1.14, 1.36), sl = backOut(hook, 1.25), antic = t < 1.14 ? Math.sin(seg(t, 1.0, 1.14) * Math.PI) : 0, bg = easeInOut(hook);
+    const P = k => [lerp(1460, 1488, k), lerp(675, 540, k)];
+    // slammed up into frame from below on the stab: overshoots, rings down
+    const slam = -60 * Math.exp(-lt * 12) * Math.cos(lt * 26) * (1 - hook);
+    const x = P(sl)[0], y = P(sl)[1] + 30 * antic + slam;
+    const r = lerp(lerp(278, 292, easeOut(seg(t, STAB, 1.14))), lerp(318, 334, seg(t, 1.36, 2.62)), bg);
     const tk = pulse(t, 16), jolt = .075 * Math.exp(-lt * 6) * Math.cos(lt * 17);
     const rot = jolt + .014 * tk * (beatN(t) % 2 ? 1 : -1) + wob(t, .23) * .012 - .05 * Math.sin(hook * Math.PI);
     const imp = Math.exp(-lt * 11), [sx, sy] = shake(t, 16 * imp + 5 * tk * (t > 1.36));
-    // warm, defocused burrow behind the close-up; flat ink once the lyric column needs the left half
-    fillPts(ctx, rect(0, 0, W, H), mix(WARM, INK.ink, easeInOut(hook) * .7), false);
-    const bgA = 1 - easeInOut(hook) * .85, px = 380 * easeInOut(hook);
-    if (bgA > .05) depth(ctx, 11, c => {
-      c.save(); c.globalAlpha = bgA; c.translate(px - 20 * seg(t, STAB, 1.14), 0);
-      dotsIn(c, [-400, 0, W, H], { spacing: 30, color: mix(WARM, INK.orangeDk, .45), k: (x, y) => .35 + .35 * noise2(x * .003, y * .003) });
-      for (const [bx, by, br, col] of [[260, 250, 170, INK.yellow], [1720, 330, 210, INK.orangeLt], [1540, 900, 150, INK.orangeDk], [150, 860, 120, INK.orangeLt]]) {
-        c.save(); clipPts(c, ell(bx, by, br, br, 32)); dotsIn(c, [bx - br, by - br, bx + br, by + br], { spacing: 24, color: rgba(col, .55), k: (x, y) => 1.1 - Math.hypot(x - bx, y - by) / br * .6 }); c.restore();
+    // the ping's night field, then flat ink with a few defocused burrow lights once the lyric needs the left half
+    fillPts(ctx, rect(0, 0, W, H), mix(INK.night, mix(WARM, INK.ink, .7), bg), false);
+    depth(ctx, 8, c => {
+      if (bg < 1) { c.save(); c.globalAlpha = 1 - bg; dotsIn(c, [0, 0, W, H], { spacing: 34, color: INK.nightLt, k: (px, py) => .2 + .75 * clamp(Math.hypot(px - 930, (py - 455) * 1.7) / 1150) }); c.restore(); }
+      if (bg > 0) for (const [bx, by, br, col] of BOKEH) {
+        c.save(); c.globalAlpha = .15 * bg; c.translate(380, 0); clipPts(c, ell(bx, by, br, br, 32)); dotsIn(c, [bx - br, by - br, bx + br, by + br], { spacing: 24, color: rgba(col, .55), k: (x, y) => 1.1 - Math.hypot(x - bx, y - by) / br * .6 }); c.restore();
       }
-      c.restore();
     }, { angle: .4 });
     ctx.save(); ctx.translate(sx, sy);
+    earTips(ctx, t, easeIn(hook));
     if (f <= 2) speedLines(ctx, x, y, { n: 50, r0: r * 1.25, r1: 1900, w: 14, color: rgba(INK.orangeDk, .9 - f * .3), seed: 9 });
-    const moving = t > 1.15 && t < 1.31;
-    if (moving) {
-      streaks(ctx, [x - 700, y - r, x - 200, y + r], { dir: [1, 0], n: 18, len: 520, w: 10, color: rgba(INK.orangeDk, .8) });
-      for (const [d, a] of [[2, .22], [1, .4]]) { const k = backOut(seg(t - d * FR, 1.14, 1.36), 1.25); ctx.save(); ctx.globalAlpha = a; fillPts(ctx, ell(X(k), y, r * 1.06, r * 1.06, 40), BRASS); ctx.restore(); }
+    // the toast: the opening rings still travelling, a fresh ping on the beat, whip multiples on the way out
+    const T = toastPose(t), [bx, by] = badgeAt(T), [b0x, b0y] = badgeAt({ x: 930, y: 455, s: 1.32, rot: -.07 }), pa = t - PING2;
+    rings(ctx, b0x, b0y, t, 1.32);
+    if (pa >= 0) rings(ctx, bx, by, pa, T.s);
+    if (T.x > -700) {
+      if (t > 1.12) {
+        streaks(ctx, [T.x + 420 * T.s, T.y - 140 * T.s, T.x + 420 * T.s + 800, T.y + 140 * T.s], { dir: [1, 0], n: 16, len: 600, w: 12, color: rgba(INK.paper, .5) });
+        for (const [d, a] of [[2, .25], [1, .45]]) { const G = toastPose(t - d * FR); ctx.save(); ctx.translate(G.x, G.y); ctx.rotate(G.rot); ctx.scale(G.s, G.s); ctx.globalAlpha = a; fillPts(ctx, rrect(-500, -150, 1000, 300, 26), INK.paper); ctx.restore(); }
+      }
+      toast(ctx, T.x, T.y, T.s, { rot: T.rot });
+      const la = pa >= 0 ? pa : t;
+      ctx.save(); ctx.globalAlpha = .9; outline(ctx, ell(bx, by, 62 * T.s + 14 + la * 90, 62 * T.s + 14 + la * 90, 40), 7, INK.cyan); ctx.restore();
+      if (pa >= 0 && pa < 2 * FR) krackle(ctx, bx, by, 150 * T.s, { n: 22, size: 16, color: INK.cyan, seed: 6 });
+    }
+    // the watch: slam multiples from below on the stab, then the whip up to the right half for the lyric
+    if (f <= 1) {
+      streaks(ctx, [x - r, y + r * .6, x + r, H + 40], { dir: [0, 1], n: 16, len: 420, w: 12, color: rgba(INK.orangeDk, .85) });
+      if (f === 0) for (const [d, a] of [[380, .22], [190, .42]]) { ctx.save(); ctx.globalAlpha = a; fillPts(ctx, ell(x + d * .2, y + d, r * 1.06, r * 1.06, 40), BRASS); ctx.restore(); }
+    }
+    if (t > 1.15 && t < 1.31) {
+      streaks(ctx, [x - r, y + r, x + r, y + r + 500], { dir: [0, 1], n: 14, len: 400, w: 10, color: rgba(INK.orangeDk, .8) });
+      for (const [d, a] of [[2, .22], [1, .4]]) { const [gx, gy] = P(backOut(seg(t - d * FR, 1.14, 1.36), 1.25)); ctx.save(); ctx.globalAlpha = a; fillPts(ctx, ell(gx, gy, r * 1.06, r * 1.06, 40), BRASS); ctx.restore(); }
     }
     const ghosts = f === 0 ? [[22, .2], [48, .3], [76, .45]] : null;
     watchAt(ctx, t, x, y, r, rot, lidAngle(t), ghosts);
@@ -180,12 +216,12 @@
     const crouch = easeOut(seg(t, onF(4.03), 4.27)), fly = t >= DIVE;
     const up = late > 0 ? 1 + .22 * Math.exp(-(t - onF(2.99)) * 9) * Math.cos((t - onF(2.99)) * 30) : 0, vib = late > 0 && !fly ? Math.sin(tt * 47) * 5 : 0;
     const p = { turn: -.38, noShadow: true, lx: -.2, ly: .1, eyes: 'open', mouth: 'smile',
-      earL: { a: lerp(-14, -3, Math.min(1, up)) + vib, b: 0, len: 1 + .18 * up },
-      earR: { a: lerp(12, 3, Math.min(1, up)) - vib, b: 0, len: 1 + .18 * up } };
+      earL: { a: lerp(-14, -2, Math.min(1, up)) + vib, b: 0, len: 1 + .28 * up },
+      earR: { a: lerp(12, 2, Math.min(1, up)) - vib, b: 0, len: 1 + .28 * up } };
     if (tuck < 1) { p.armR = { a: lerp(38, 18, tuck), e: lerp(158, 40, tuck) }; p.pawR = 'mitt'; p.lx = lerp(.75, -.2, look); p.ly = lerp(.55, 0, look); }
     else { p.armR = { a: 14, e: 30 }; }
     p.armL = { a: 12, e: 12 };
-    if (late > 0) { p.eyes = 'wide'; p.mouth = 'o'; p.sweat = clamp(late * 1.2); p.sense = 1; p.brows = .3; p.sq = -.14 * Math.exp(-(t - onF(2.99)) * 8); }
+    if (late > 0) { const a = hopArc(t, onF(2.99), .24, .9); p.eyes = 'wide'; p.mouth = 'o'; p.sweat = clamp(late * 1.2); p.sense = 1; p.brows = .3; p.hop = a.h; p.sq = a.sq - .12 * Math.exp(-(t - onF(2.99)) * 8); }
     if (look > 0) { p.mouth = 'open'; p.open = .75 * (1 - crouch); p.browTilt = -2; p.hop = t < onF(3.83) ? hopArc(t, onF(3.40), .3, .9).h : 0; }
     if (crouch > 0 && !fly) { p.sq = .38 * crouch; p.lean = -16 * crouch; p.armL = { a: lerp(12, 55, crouch), e: 20 }; p.armR = { a: lerp(14, 55, crouch), e: 20 }; p.earL = { a: -30 * crouch - 6, b: 30 * crouch, len: 1.05 }; p.earR = { a: 20 - 30 * crouch, b: 34 * crouch, len: 1.05 }; p.eyes = 'open'; p.mouth = 'flat'; p.brows = -.1; p.browTilt = 1.5 * crouch; p.lids = .15; p.lx = -.8; p.ly = .3; p.sense = 0; p.sweat = 0; }
     if (fly) {
@@ -233,7 +269,7 @@
   function mpush(t) {
     const pop = onF(2.99), k = kf(t, [[2.62, 0], [2.93, .88], [pop, 1], [3.8, 1.04], [4.24, 0]], easeInOut) + (t >= pop ? .1 * Math.exp(-(t - pop) * 10) * (t < 3.8) : 0);
     const r = proj(mcam(t), RX, 1.05, HZ);
-    return { Z: 1 + .72 * k, x: lerp(960, r[0] - 150, clamp(k)), y: lerp(540, r[1] - 40, clamp(k)) };
+    return { Z: 1 + .6 * k, x: lerp(960, r[0] - 150, clamp(k)), y: lerp(540, r[1] - 110, clamp(k)) };
   }
   function meadow(ctx, t) {
     const M = mpush(t);
@@ -449,10 +485,11 @@
       c.restore();
     }, { angle: roll });
     // lettering: screen space, not rolled
-    sfx(ctx, 'TICK', 560, 290, 230, e - T1 + FR, { rot: -.14, life: .42 });
-    sfx(ctx, 'TICK', 1370, 300, 270, t < TICK2 ? -1 : e - T2 + FR, { rot: .1, life: .4 });
-    sfx(ctx, 'TOCK!', 960, 200, 320, e - T3 + FR, { rot: -.06, life: .46, color: INK.orange, dotColor: INK.yellow });
-    for (let i = 0; i < CARDS.length; i++) card(ctx, t, i);
+    sfx(ctx, 'TICK', 560, 290, 230, e - T1, { rot: -.14, life: .42 });
+    sfx(ctx, 'TICK', 1370, 300, 270, t < TICK2 ? -1 : e - T2, { rot: .1, life: .4 });
+    sfx(ctx, 'TOCK!', 960, 200, 320, e - T3, { rot: -.06, life: .46, color: INK.orange, dotColor: INK.yellow });
+    // scraps still arriving from deep in the hole go under the ones that have landed
+    CARDS.map((_, i) => i).sort((a, b) => (t >= CARD_T[a]) - (t >= CARD_T[b])).forEach(i => card(ctx, t, i));
     if (pinch > .6) { const k = seg(pinch, .6, 1); fillPts(ctx, ell(960, 540, 12 + k * 30, 12 + k * 30, 20), INK.white); outline(ctx, ell(960, 540, 60 + k * 420, 60 + k * 420, 48), 16 * (1 - k) + 3, INK.orange); outline(ctx, ell(960, 540, 30 + k * 230, 30 + k * 230, 40), 9 * (1 - k) + 2, INK.cyan); }
   }
 
@@ -565,8 +602,10 @@
       if (age < FR * 1.5) { krackle(ctx, cx, 860, 230, { n: 34, size: 20, color: INK.ink, seed: 3 }); speedLines(ctx, cx, 860, { n: 30, r0: 260, r1: 700, w: 10, color: rgba(INK.paper, .7), seed: 4 }); }
     }
     ctx.restore();
-    sfx(ctx, 'THUD', 1120, 600, 170, t - LAND + FR, { rot: -.12, life: .4 });
+    sfx(ctx, 'THUD', 1120, 600, 170, t - LAND, { rot: -.12, life: .4 });
   }
 
-  chapter('intro', 0, 10.45, [[0, ping], [STAB - .005, watchShot], [2.62, meadowShot], [DIVE, diveShot], [DROP, fall], [CUT_LAND, land]]);
+  // cuts snap to the frame containing t0, which is rendered at t0: register each on the first frame it should own
+  const atF = x => Math.ceil(x * 24 - 1e-6) / 24;
+  chapter('intro', 0, 10.45, [[0, ping], [STAB, watchShot], [atF(2.62), meadowShot], [atF(DIVE), diveShot], [atF(DROP), fall], [atF(CUT_LAND), land]]);
 })();

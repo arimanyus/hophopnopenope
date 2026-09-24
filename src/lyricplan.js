@@ -7,8 +7,7 @@ Object.assign(LYRICS, {
   1: { mode: 'none' },                            // DOWN THE RABBIT HOLE / TICK TICK TOCK are lettered by the shots
   // verse 1: lyric column left
   2: { mode: 'hero', box: [96, 170, 760, 720], rows: [1, 3, 2, 2], emph: [0], color: INK.paper, hot: INK.cyan, stroke: { w: 8, color: INK.ink }, extrude: { dx: 10, dy: 12, color: INK.ink } },
-  3: [{ mode: 'hero', words: [0, 1], box: [100, 150, 420, 90], color: INK.paper, stroke: { w: 5, color: INK.ink }, maxSize: 84, upper: false },
-      { mode: 'hero', words: [2, 3, 4, 5, 6], box: [96, 280, 790, 640], rows: [1, 1, 3], emph: [2, 3], color: INK.paper, hot: INK.orange, stroke: { w: 10, color: INK.ink }, extrude: { dx: 12, dy: 14, color: INK.ink } }],
+  3: { mode: 'hero', words: [2, 3, 4, 5, 6], box: [96, 280, 790, 640], rows: [1, 1, 3], emph: [2, 3], color: INK.paper, hot: INK.orange, stroke: { w: 10, color: INK.ink }, extrude: { dx: 12, dy: 14, color: INK.ink } }, // "Small fix" is the on-screen PR title
   4: { mode: 'caption', x: 90, y: 90, w: 820, rot: -.02 },
   5: { mode: 'hero', box: [96, 200, 760, 700], rows: [1, 2, 4], emph: [0], color: INK.paper, hot: INK.orange, stroke: { w: 9, color: INK.ink }, extrude: { dx: 11, dy: 13, color: INK.ink } },
   6: { mode: 'caption', x: 90, y: 760, w: 900, rot: .015 },
@@ -24,7 +23,7 @@ Object.assign(LYRICS, {
   14: { mode: 'caption', x: 90, y: 820, w: 960, rot: .015 },
   15: { mode: 'caption', x: 90, y: 80, w: 860, rot: -.015 },
   16: { mode: 'caption', x: 1000, y: 820, w: 830, rot: -.02 },
-  17: { mode: 'caption', x: 90, y: 80, w: 860, rot: .02, fill: INK.pinkLt },
+  17: { mode: 'caption', x: 90, y: 80, w: 860, rot: .02, fill: INK.pinkLt, end: 69.24 },
   // chorus 2
   18: { mode: 'hero', words: [0, 1, 2, 3, 4, 5], box: [300, 215, 1320, 400], rows: [1, 2, 3], emph: [0], align: 'center', color: INK.white, hot: INK.cyan, stroke: { w: 12, color: INK.ink }, extrude: { dx: 14, dy: 16, color: INK.ink }, until: 72.35 },
   19: { mode: 'sub', y: 1010, until: 75.50 },
@@ -34,7 +33,7 @@ Object.assign(LYRICS, {
   22: { mode: 'noir', x: 90, y: 90, w: 900, hot: [1, 2, 3], rot: -.015 },
   23: { mode: 'noir', x: 90, y: 860, w: 900, hot: [0], rot: .015 },
   24: { mode: 'hero', box: [96, 110, 860, 860], rows: [3, 4, 3], color: INK.red, hot: INK.red, stroke: { w: 10, color: INK.ink }, extrude: { dx: 12, dy: 14, color: INK.ink }, tilt: .02 },
-  25: { mode: 'sub', y: 1010, bg: INK.ink, color: INK.paper, hot: INK.red },
+  25: { mode: 'sub', y: 1010, bg: INK.ink, color: INK.paper, hot: INK.red, end: 103.4 },
   // final chorus: ransom-note collage
   26: { mode: 'ransom', words: [0, 1, 2, 3, 4, 5], box: [120, 90, 1680, 460], rows: [2, 4], until: 107.1 },
   27: { mode: 'ransom', words: [0, 1, 2, 3, 4, 5, 6, 7], box: [160, 640, 1600, 360], rows: [4, 4], until: 110.8 },

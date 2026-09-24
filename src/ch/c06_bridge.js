@@ -8,10 +8,8 @@
   const EVIL = "Robert'); DROP TABLE users;--";
   const Q = [['const q = "SELECT * FROM users WHERE name = \'" + ', null], ['req.query.name', 'red'], [' + "\'";', null]];
   const QS = Q.map(s => s[0]).join('');
-  const W12 = { now: 89.60, there: 92.86, flag: 94.64, red: 95.18, caps: 95.84, paw: 96.68, merge: 98.56, shipped: 99.88, flaw: 101.06, end: 104.63 };
+  const W12 = { now: 89.60, there: 92.86, flag: 94.64, caps: 95.84, paw: 96.68, merge: 98.56, shipped: 99.88 };
   const fr = t => Math.floor(t * 24 + 1e-6);
-  const cutAt = s => Math.floor(s * 24) / 24 - 1e-4;                          // the frame that contains the sound
-
   // ---------- the code (lines around 9012) ----------
   const BITS = ['const result = await fix(input);', 'if (x !== undefined && x !== null) {', 'return a ? b ? c : d : e;', 'console.log("here");',
     '// TODO: remove before merge', 'export function fix(data) {', 'const user = users.find(u => u.id === id);', 'items.map(i => i.value).filter(Boolean);',
@@ -45,11 +43,13 @@
     if (o.hood === false) return A;
     const base = ctx.getTransform(), px = 1 / s, U0 = UPX; ctx.save(); ctx.setTransform(base.multiply(headM(x, y, s, pose))); UPX = px;
     const turn = clamp(pose.turn || 0, -1, 1), tx = turn * .5;
-    const outer = [[-2.95 + tx * .3, 2.35], [-3.1, .6], [-2.95, -1.2], [-2.2, -2.45], [-.9, -3.0], [.3 + tx, -3.1], [1.5, -2.85], [2.55, -2.1], [3.05, -.8], [3.05, .9], [2.9, 2.35], [2.2, 2.2], [2.35, .4], [2.05, -1.1], [1.1, -1.95], [0, -2.1], [-1.1, -1.95], [-2.05, -1.1], [-2.35, .4], [-2.2, 2.2]];
+    const rim = [[2.4, .5], [2.25, -.55], [1.45, -1.35], [tx * .3, -1.62], [-1.45, -1.35], [-2.25, -.55], [-2.4, .5]];
+    const outer = [[-3.0, 2.4], [-3.18, .6], [-3.05, -1.3], [-2.45, -2.65], [-1.25, -3.35], [.15 + tx * .6, -3.95], [1.35, -3.35], [2.55, -2.65], [3.12, -1.3], [3.18, .6], [3.0, 2.4], [2.25, 2.3], ...rim, [-2.25, 2.3]];
     ink(ctx, outer, { fill: G1, hatch: { color: K, spacing: 9 * px, width: 3 * px, angle: -Math.PI / 3, dir: [.6, .8], from: -.2 }, line: 5.2 * px, boil: 1.3 * px, seed: 61 });
-    // hood shadow falling on the brow: a hatched band above the eyes (the eyes stay clear)
-    ctx.save(); clipPts(ctx, headPts(turn)); hatch(ctx, [[-2.6, -2.3], [2.6, -2.3], [2.6, -1.25], [0, -1.05], [-2.6, -1.25]], { color: K, spacing: 7 * px, width: 3.2 * px, angle: -Math.PI / 4, jit: 2 * px }); ctx.restore();
-    inkLine(ctx, [[-2.05, -1.1], [-1.1, -1.95], [0, -2.1], [1.1, -1.95], [2.05, -1.1]], 5 * px, K, { taper: [.1, .1] });
+    inkLine(ctx, [[.15 + tx * .6, -3.8], [-.9, -2.6], [-1.9, -1.6]], 3 * px, K, { taper: [.2, .6] });
+    // the hood's shadow on the brow: a hatched band under the rim (the eyes stay clear)
+    ctx.save(); clipPts(ctx, headPts(turn)); hatch(ctx, [[-2.6, -1.9], [2.6, -1.9], [2.6, -1.15], [0, -1.0], [-2.6, -1.15]], { color: K, spacing: 7 * px, width: 3.2 * px, angle: -Math.PI / 4, jit: 2 * px }); ctx.restore();
+    inkLine(ctx, rim.slice(1, -1), 6 * px, K, { taper: [.1, .1] });
     // ears through slits in the hood (redrawn on top), then the slit hems
     const E = [earPts(-1, pose.earL, turn), earPts(1, pose.earR, turn)], far = turn > 0 ? 1 : 0;
     drawEar(ctx, E[far], pose, px, true); drawEar(ctx, E[1 - far], pose, px, false);
@@ -70,8 +70,8 @@
     ctx.translate(0, -bob);
     const hem = sway * .35;
     const coat = [[-1.75, -5.55], [-2.12, -4.6], [-2.2, -3.3], [-2.6 + hem, -1.5], [-1.25 + hem, -1.28], [0 + hem, -1.4], [1.25 + hem, -1.28], [2.6 + hem, -1.5], [2.2, -3.3], [2.12, -4.6], [1.75, -5.55], [0, -5.8]];
-    fillPts(ctx, xform(coat, -.2, 0), P);                                              // rim light on the lit side
-    ink(ctx, coat, { fill: G1, shade: { color: K, spacing: 11 * px, dir: [.6, .8], from: -.5, to: 2.2, max: .95 }, line: 5 * px, boil: 1.3 * px, seed: 71 });
+    fillPts(ctx, xform(coat, -.38, -.1), P);                                              // rim light on the lit side
+    ink(ctx, coat, { fill: G2, shade: { color: K, spacing: 11 * px, dir: [.6, .8], from: -.5, to: 2.2, max: .95 }, line: 5 * px, boil: 1.3 * px, seed: 71 });
     fillPts(ctx, rect(-2.2, -3.62, 4.4, .42), K, false); ink(ctx, rrect(-.32, -3.7, .64, .58, .1), { fill: G2, line: 2.6 * px, boil: .5 * px, smooth: false });
     L([[0, -3.1], [hem * .6, -1.42]], 3); L([[-.5, -5.6], [-.8, -3.7]], 2.4, K, [.3, .5]); L([[.5, -5.6], [.8, -3.7]], 2.4, K, [.3, .5]);
     // arms: left hangs, right is raised forward holding the flashlight (forearm hidden)
@@ -82,8 +82,8 @@
     ctx.translate(look * .45, 0);
     const hood = [[-2.3, -5.95], [-2.78, -7.4], [-2.55, -8.95], [-1.65, -9.85], [0, -10.15], [1.65, -9.85], [2.55, -8.95], [2.78, -7.4], [2.3, -5.95], [1.2, -5.55], [0, -5.45], [-1.2, -5.55]];
     if (look < -.3) { const k = clamp((-look - .3) / .5); ink(ctx, [[-2.5, -8.2], [-2.5 - .7 * k, -7.3], [-2.4 - .5 * k, -6.4], [-2.1, -6.3]], { fill: WH, line: 3.4 * px, boil: .8 * px }); for (const j of [0, 1]) L([[-2.7 - .4 * k, -7.0 + j * .3], [-3.4 - .6 * k, -7.2 + j * .5]], 1.8, K, [.1, .7]); }
-    fillPts(ctx, xform(hood, -.2, 0), P);
-    ink(ctx, hood, { fill: G1, shade: { color: K, spacing: 11 * px, dir: [.6, .8], from: -.8, to: 2.2, max: .95 }, line: 5.2 * px, boil: 1.3 * px, seed: 74 });
+    fillPts(ctx, xform(hood, -.38, -.1), P);
+    ink(ctx, hood, { fill: G2, shade: { color: K, spacing: 11 * px, dir: [.6, .8], from: -.8, to: 2.2, max: .95 }, line: 5.2 * px, boil: 1.3 * px, seed: 74 });
     L([[0, -10.05], [.05, -8], [0, -6.1]], 2.6);
     const ear = (sd, a, b) => { const bx = sd * 1.0, by = -9.2, m = [bx + Math.sin(deg(a)) * 2.4, by - Math.cos(deg(a)) * 2.4], tp = [m[0] + Math.sin(deg(a + b)) * 2.5, m[1] - Math.cos(deg(a + b)) * 2.5];
       const sp = [[bx, by + .3], [lerp(bx, m[0], .5), lerp(by, m[1], .5)], m, [lerp(m[0], tp[0], .55), lerp(m[1], tp[1], .55)], tp];
@@ -102,7 +102,7 @@
     const a = Math.atan2(T[1] - A[1], T[0] - A[0]);
     return [A, [A[0] + Math.cos(a - half) * R, A[1] + Math.sin(a - half) * R], [A[0] + Math.cos(a + half) * R, A[1] + Math.sin(a + half) * R]];
   }
-  // light(ctx, poly, drawLit): repaint the scene lit inside the wedge, then a halftone falloff band outside its edges
+  // light(ctx, apex, target, half-angle, drawLit): repaint the scene lit inside the wedge, then a halftone falloff band outside its edges
   function light(ctx, A, T, half, drawLit, band = 70) {
     const wp = wedge(A, T, half);
     ctx.save(); clipPts(ctx, wp, false); drawLit(ctx); ctx.restore();
@@ -140,7 +140,7 @@
   // misregistered grey screen plate under the ink plate, so the palette stays paper + ink (+ red where it is drawn red).
   function nd(ctx, px, fn, ghost = G3) {
     if (!px) { fn(ctx); return; }
-    const c = pushLayer(); fn(c); popLayer();
+    const c = pushLayer(); c.setTransform(ctx.getTransform()); fn(c); popLayer();
     const g = layer(30 + LDEPTH); g.drawImage(c.canvas, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = ghost; g.fillRect(0, 0, W, H);
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(g.canvas, -px, px * .35); ctx.drawImage(c.canvas, px * .5, 0); ctx.restore();
   }
@@ -154,7 +154,7 @@
   // ---------- SHOT 1 (87.74-91.10): the canyon of code ----------
   // Every line of code is a tower standing on end (its text reads bottom to top). A blade sign on each tower carries its
   // line number: the gutter. The rabbit walks down the street one line per step and stops at 9012 on "now".
-  const CAN = { sp: 6, fw: 5.2, WL: -26, WR: 30, gs: 2.5, first: 8996, last: 9100 };
+  const CAN = { sp: 9, fw: 8, WL: -19, WR: 24, gs: 3.4, first: 8998, last: 9080 };
   const zOf = n => (n - 9000) * CAN.sp;
   const towerH = n => (lenOf(n) + 4) * 1.9 + 12 + hash(n * 5.1) * 34;
   const PLANTS = [87.74, 88.236, 88.631, 89.072, W12.now];
@@ -191,10 +191,11 @@
       if (o.shadow) o.shadow(c);
       c.restore();
     }
+    const [cx0, cx1] = o.cull || [-40, W + 40];
     for (const T of towers) {
       if (!inBand((T.z0 + T.z1) / 2)) continue;
       const { n, X, za, z1, h } = T, q = q2([pj(C, X, 0, za), pj(C, X, 0, z1), pj(C, X, -h, z1), pj(C, X, -h, za)]);
-      if (Math.max(q[0][0], q[1][0]) < -40 || Math.min(q[0][0], q[1][0]) > W + 40) continue;
+      if (Math.max(q[0][0], q[1][0]) < cx0 || Math.min(q[0][0], q[1][0]) > cx1) continue;
       const d = X < 0 ? -6 : 6;
       if (za === T.z0) fillPts(c, q2([pj(C, X, 0, za), pj(C, X + d, 0, za), pj(C, X + d, -h, za), pj(C, X, -h, za)]), lit ? G3 : mix(K, P, .07), false);
       fillPts(c, q, wall, false);
@@ -202,15 +203,15 @@
       if (C.f / (zc - C.z) * CAN.gs > 3.5) wallLine(c, C, X, zc, CAN.gs, X > 0 ? n + 400 : n, { text: on ? (lit ? K : G3) : txt0, red: on ? R : red0 }, -1.8, -h + 2);
     }
     // blade signs (the gutter): one line number per tower, facing the camera
-    for (const n of [...Array(18)].map((_, j) => 9024 - j).filter(n => n !== o.sign).concat([o.sign])) {
+    for (const n of [...Array(6)].map((_, j) => o.sign + 3 - j).filter(n => n !== o.sign && n >= 9007).concat([o.sign])) {
       const z = zOf(n) + CAN.fw * .5; if (z < C.z + 4 || !inBand(z)) continue;
-      const on = n === o.sign, pop = on ? 1.08 + (o.pop || 0) * .18 : 1;
-      const a = pj(C, CAN.WL, -12 - 7 * pop, z), b = pj(C, CAN.WL + 3.8 * pop, -12 + 7 * pop, z), w = b[0] - a[0], h = b[1] - a[1]; if (b[0] < -10 || a[0] > W + 10) continue;
-      fillPts(c, q2([pj(C, CAN.WL, -17.2, z), pj(C, CAN.WL + 1.2, -17.2, z), pj(C, CAN.WL + 1.2, -16.6, z), pj(C, CAN.WL, -16.6, z)]), lit ? K : G1, false);
+      const on = n === o.sign, pop = on ? 1.12 + (o.pop || 0) * .22 : 1;
+      const a = pj(C, CAN.WL, -9 - 8 * pop, z), b = pj(C, CAN.WL + 5.4 * pop, -9 + 8 * pop, z), w = b[0] - a[0], h = b[1] - a[1]; if (b[0] < -10 || a[0] > W + 10) continue;
+      fillPts(c, q2([pj(C, CAN.WL, -13.2, z), pj(C, CAN.WL + 1.2, -13.2, z), pj(C, CAN.WL + 1.2, -12.6, z), pj(C, CAN.WL, -12.6, z)]), lit ? K : G1, false);
       c.save(); c.setTransform(1, 0, 0, 1, 0, 0);
-      fillPts(c, rect(a[0], a[1], w, h), on || lit ? (on && lit ? WH : P) : K, false);
-      c.strokeStyle = on || lit ? K : G1; c.lineWidth = Math.max(1.5, w * .07); c.strokeRect(a[0] + w * .12, a[1] + w * .12, w * .76, h - w * .24);
-      const ds = String(n); for (let j = 0; j < 4; j++) txt(c, ds[j], a[0] + w / 2, a[1] + h * (.2 + j * .2), { font: 'mono', weight: 800, size: w * .74, color: on ? (n === 9012 ? R : K) : (lit ? K : G2), align: 'center', base: 'middle' });
+      fillPts(c, rect(a[0], a[1], w, h), on ? (n === 9012 ? R : K) : lit ? P : K, false);
+      c.strokeStyle = on ? P : lit ? K : G1; c.lineWidth = Math.max(1.5, w * .07); c.strokeRect(a[0] + w * .12, a[1] + w * .12, w * .76, h - w * .24);
+      const ds = String(n); for (let j = 0; j < 4; j++) txt(c, ds[j], a[0] + w / 2, a[1] + h * (.2 + j * .2), { font: 'mono', weight: 800, size: w * .74, color: on ? P : (lit ? G2 : G1), align: 'center', base: 'middle' });
       c.restore();
     }
   }
@@ -218,9 +219,9 @@
     const tc = twos(t), wk = walk(tc), ws = walk(t), { i, f } = wk;
     // camera: follows the walk; on "what is this?" it pans onto the lit 9012 sign and pushes in
     const pan = easeInOut(seg(t, 89.66, 91.1)), dr = drift(t, 4);
-    const C = { x: 3 - pan * 7, y: -12 - pan * 2, z: ws.z - lerp(44, 40, seg(t, 87.74, W12.now)) + pan * 14, f: 1100, yaw: pan * .3, cx: 960 + dr[0], cy: 500 + dr[1] };
+    const C = { x: 3 - pan * 5, y: -9 - pan * 2, z: ws.z - lerp(36, 33, seg(t, 87.74, W12.now)) + pan * 10, f: 1100, yaw: pan * .26, cx: 1000 + dr[0], cy: 505 + dr[1] };
     const litSign = 9008 + i, pop = hit(t, PLANTS, 9), face = t >= W12.now + .2 ? 9012 : -1;
-    const X = -8, gp = pj(C, X, 0, wk.z), s = C.f / gp[2];
+    const X = 3, gp = pj(C, X, 0, wk.z), s = C.f / gp[2];
     const step = i >= 4 ? 0 : Math.sin(f * Math.PI), stopHit = hit(t, [W12.now], 9);
     const look = kf(tc, [[W12.now + .1, 0], [W12.now + .45, -.95]]);
     const perk = tc >= 90.0 ? 1 : 0;
@@ -232,15 +233,26 @@
     nd(ctx, 5, c => canyonScene(c, C, t, { ...sc, band: [130, 1e9] }));
     canyonScene(ctx, C, t, { ...sc, band: [24, 130] });
     nd(ctx, 9, c => canyonScene(c, C, t, { ...sc, band: [0, 24] }));
-    // the beam: on the lit sign ahead, then it swings to the base of tower 9012 and climbs the line, reading it
-    const sign = pj(C, CAN.WL + 1.9, -12, zOf(litSign) + CAN.fw * .5), zt = zOf(9012) + CAN.fw * .5;
+    // the beam rides on the lit sign ahead; on "this?" it jolts
+    const sign = pj(C, CAN.WL + 2.7, -5, zOf(litSign) + CAN.fw * .5);
     const tr = shake(t, 3 * hit(t, [90.02], 5)), T = [sign[0] + tr[0], sign[1] + tr[1]];
     const A0 = [gp[0] + (2.2 + look * .45) * s, gp[1] - (4.7 + pose.bob) * s];
-    light(ctx, A0, T, .12, c => canyonScene(c, C, t, { ...sc, lit: true, floor: true }));
+    rain(ctx, t, G1, 0);
+    const wb = bbox(wedge(A0, T, .42)), cull = [Math.max(-40, wb[0]), Math.min(W + 40, wb[2])];
+    light(ctx, A0, T, .42, c => { canyonScene(c, C, t, { ...sc, lit: true, floor: true, cull }); rain(c, t, G2, 0); });
     bunnyBack(ctx, gp[0], gp[1], s, pose);
+    nd(ctx, 10, c => rain(c, t, G2, 1));
     // "this?": ears snap up and the rabbit-sense squiggles fire around the hood
     const sense = t >= 90.0 ? clamp(hit(t, [90.02], 2.2) * 1.6) : 0;
     if (sense > .02) senseAt(ctx, gp[0] + look * .45 * s, gp[1] - 9.5 * s, s * 1.15, sense, P);
+  }
+  // noir rain, screen space, on ones. layer 0 = far (thin, many), 1 = near (thick, few)
+  function rain(ctx, t, col, lay) {
+    const n = lay ? 14 : 70, len = lay ? 190 : 80, w = lay ? 5 : 2.2, v = lay ? 2600 : 1500;
+    ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = w; ctx.lineCap = 'round'; ctx.beginPath();
+    for (let i = 0; i < n; i++) { const y = mod(hash(i * 3.3 + lay) * (H + 400) + t * v * (.8 + hash(i) * .4), H + 400) - 200, x = mod(hash(i * 7.1 + lay * 5) * (W + 300) + y * .16, W + 300) - 150;
+      ctx.moveTo(x, y); ctx.lineTo(x - len * .16, y - len); }
+    ctx.stroke(); ctx.restore();
   }
   // private rabbit-sense squiggles around a point (the rig's version only exists on the front-view head)
   function senseAt(ctx, x, y, s, k, col = K) {
@@ -259,7 +271,7 @@
   const redX0 = 1080, redX1 = 1080 + Q[1][0].length * CW.cw;
   function codeWall(c, lit, o = {}) {
     fillPts(c, rect(-600, -600, W + 1200, H + 1200), lit ? P : K, false);
-    const other = o.pale ? mix(P, K, .1) : lit ? G2 : G1;
+    const other = o.pale ? mix(P, K, .1) : lit ? G3 : G1;
     for (let n = 9006; n <= 9018; n++) {
       if (n === 9012) { let x = CW.x; for (const [s, kind] of Q) { txt(c, s, x, rowY(n), { font: 'mono', weight: 700, size: CW.size, color: kind ? (lit ? R : RD) : (lit ? K : G2) }); x += s.length * CW.cw; } }
       else txt(c, code(n), CW.x, rowY(n), { font: 'mono', weight: 700, size: CW.size, color: other });
@@ -275,28 +287,33 @@
     const e = ell(x, y, rx, ry, 48, rot);
     ctx.save(); clipPts(ctx, e); drawLit(ctx); ctx.restore();
     const ca = Math.cos(-rot), sa = Math.sin(-rot);
-    ctx.save(); const tr = ctx.getTransform();
     dotsIn(ctx, [x - rx - ring * 2, y - ry - ring * 2, x + rx + ring * 2, y + ry + ring * 2], { spacing: 20, color: P, angle: .3,
       k: (px, py) => { const dx = px - x, dy = py - y, u = (dx * ca - dy * sa) / rx, v = (dx * sa + dy * ca) / ry, d = Math.hypot(u, v); return d < 1 ? 0 : clamp(1 - (d - 1) * Math.min(rx, ry) / ring) * .95; } });
-    ctx.restore();
   }
   // the injected input, slithering: chars ride a travelling wave; the head is the first char
   function snake(c, t, hx, y, o = {}) {
-    const size = o.size || 40, cw = size * .6, rear = o.rear || 0;
-    for (let i = 0; i < EVIL.length; i++) {
-      const x = hx + i * cw, ph = x * .018 - t * 7, rise = rear * Math.max(0, 1 - i / 6) * (6 - i) * 9;
+    const size = o.size || 40, rear = o.rear || 0, n = EVIL.length, tc = twos(t);
+    let x = hx, head = null;
+    for (let i = 0; i < n; i++) {
+      const sz = size * lerp(1.18, .7, i / (n - 1)), ph = x * .018 - tc * 7, rise = rear * Math.max(0, 1 - i / 6) * (6 - i) * 9;
       const yy = y + Math.sin(ph) * size * .22 * (o.amp ?? 1) - rise, rot = Math.cos(ph) * .22 - rear * Math.max(0, 1 - i / 6) * .5;
-      txt(c, EVIL[i], x, yy, { font: 'mono', weight: 800, size, color: o.color || K, rot, align: 'center', base: 'middle' });
+      txt(c, EVIL[i], x, yy, { font: 'mono', weight: 800, size: sz, color: o.color || K, rot, align: 'center', base: 'middle' });
+      if (!i) head = [x, yy, rot, sz];
+      x += sz * .6;
     }
+    // a forked red tongue flicks from the head (on twos)
+    if (Math.floor(tc * 12) % 4 < 2) { const [hx0, hy0, r, sz] = head, a = r + Math.PI, L = sz * .7, bx = hx0 + Math.cos(a) * sz * .45, by = hy0 + Math.sin(a) * sz * .45, tx = bx + Math.cos(a) * L, ty = by + Math.sin(a) * L;
+      inkLine(c, [[bx, by], [tx, ty], [tx + Math.cos(a - .5) * sz * .25, ty + Math.sin(a - .5) * sz * .25]], sz * .07, R, { taper: [0, .5] });
+      inkLine(c, [[tx, ty], [tx + Math.cos(a + .5) * sz * .25, ty + Math.sin(a + .5) * sz * .25]], sz * .06, R, { taper: [0, .6] }); }
   }
   function beamLine(ctx, t, lt, dur) {
     const k = easeInOut(seg(t, 91.1, 92.86)), tc = twos(t);
-    const bx = lerp(700, 1240, easeInOut(seg(t, 91.1, 92.3))), by = CW.y - 20, rx = 640, ry = 250;
-    const hx = kf(tc, [[91.1, 2300], [92.55, 1100], [92.86, 1080]], x => x), rear = easeOut(seg(tc, 92.5, 92.86));
-    const zoom = lerp(1, 1.32, k), rot = lerp(-.03, -.055, k), dr = drift(t, 5);
-    cam(ctx, lerp(880, 1180, k) + dr[0], CW.y + 20 + dr[1], zoom, rot);
+    const bx = lerp(980, 1300, easeInOut(seg(t, 91.1, 92.3))), by = CW.y + 10, rx = 780, ry = 330;
+    const hx = kf(tc, [[91.1, 1820], [92.55, 1100], [92.86, 1080]], x => x), rear = easeOut(seg(tc, 92.5, 92.86));
+    const zoom = lerp(1.55, 1.9, k), rot = lerp(-.03, -.055, k), dr = drift(t, 5);
+    cam(ctx, lerp(1230, 1320, k) + dr[0], CW.y + 36 + dr[1], zoom, rot);
     codeWall(ctx, false);
-    spot(ctx, bx, by, rx, ry, -.02, c => { codeWall(c, true); snake(c, t, hx, CW.y + 54, { rear, size: 44 }); });
+    spot(ctx, bx, by, rx, ry, -.02, c => { codeWall(c, true); snake(c, t, hx, CW.y + 56, { rear, size: 50 }); });
     // the red taint trembles as the input arrives
     const tremble = clamp((2100 - hx) / 900) * .8;
     if (tremble > .05) { ctx.save(); clipPts(ctx, ell(bx, by, rx, ry, 48, -.02)); const j = shake(t, 3 * tremble); fillPts(ctx, rect(redX0 - 4, CW.y - 48, redX1 - redX0 + 8, 60), P, false); txt(ctx, Q[1][0], redX0 + j[0], CW.y + j[1], { font: 'mono', weight: 700, size: CW.size, color: R }); ctx.restore(); }
@@ -312,31 +329,34 @@
     const push = lerp(1, 1.16, easeInOut(seg(t, 92.86, 94.4))) * (1 + hit(t, [93.3], 7) * .07), j = shake(t, 5 * hit(t, [W12.there, 93.1, 93.3], 9));
     fillPts(ctx, rect(0, 0, W, H), K, false);
     cam(ctx, ex - j[0], ey - j[1], push, -.02);
-    const lids = kf(tc, [[93.06, 0], [93.14, .32]]), pose = { eyes: 'open', lids, browTilt: kf(tc, [[93.06, .5], [93.14, 2.2]]), mouth: 'flat', sense: 1, lx: 0, ly: 0, earL: { a: -6 }, earR: { a: 6 } };
+    const lids = kf(tc, [[93.06, 0], [93.14, .32]]), pose = { eyes: 'open', lids, mouth: 'flat', sense: 1, lx: 0, ly: 0, earL: { a: -6 }, earR: { a: 6 } };
     const x = ex - .95 * s, y = ey + 7.75 * s;
     noirRabbit(ctx, x, y, s, pose);
-    const M = ctx.getTransform().multiply(headM(x, y, s, noirPose(pose))), base = ctx.getTransform();
-    ctx.save(); ctx.setTransform(M);
+    ctx.save(); ctx.setTransform(ctx.getTransform().multiply(headM(x, y, s, noirPose(pose))));
     const px = 1 / s;
     // noir light: one hard band across the eyes, the rest of the face in hatched shadow
     ctx.save(); clipPts(ctx, headPts(0));
     hatch(ctx, [[-3, .78], [3, .72], [3, 3], [-3, 3]], { color: K, spacing: 12 * px, width: 4.5 * px, angle: -Math.PI / 4, jit: 3 * px });
     hatch(ctx, [[-3, 1.25], [3, 1.2], [3, 3], [-3, 3]], { color: K, spacing: 12 * px, width: 4.5 * px, angle: Math.PI / 4, jit: 3 * px });
     ctx.restore();
-    // the pupil: redrawn big and dark, holding a tiny copy of the beam spot with the red line in it
+    // the pupil: redrawn big and dark, holding a tiny copy of the beam spot with the red line in it;
+    // then a suspicious squint (lid lower at the inner corner) and hard brows, drawn here because the rig's
+    // browTilt tilts brows and lids in opposite directions
     for (const [eX, big] of [[-.95, 0], [.95, 1]]) {
-      const pxc = eX, pyc = -.15 + .08, rx = .4, ry = .52;
-      ctx.save(); clipPts(ctx, ell(eX, -.15, .6, .8, 20)); if (lids > .02) clipPts(ctx, rect(-9, -.15 - .8 + lids * 1.6, 18, 9), false);
+      const pxc = eX, pyc = -.15 + .08, rx = .4, ry = .52, sd = Math.sign(eX), out = eX + sd * .62, inn = eX - sd * .62;
+      ctx.save(); clipPts(ctx, ell(eX, -.15, .6, .8, 20));
       fillPts(ctx, ell(pxc, pyc, rx, ry, 24), K);
       ctx.save(); clipPts(ctx, ell(pxc, pyc, rx, ry, 24));
       fillPts(ctx, ell(pxc, pyc + .02, .36, .11, 24), P);
       if (big) { ctx.save(); ctx.translate(pxc, pyc + .045); ctx.scale(1 / 300, 1 / 300); txt(ctx, 'req.query.name', 0, 0, { font: 'mono', weight: 800, size: 25, color: R, align: 'center' }); ctx.restore(); }
       ctx.restore();
       fillPts(ctx, ell(pxc - .16, pyc - .26, .1, .1, 12), WH); fillPts(ctx, ell(pxc + .13, pyc + .22, .045, .045, 8), WH);
+      const yo = -.95 + lids * 1.6, yi = yo + lids * .75;
+      if (lids > .02) fillPts(ctx, [[out, -2], [inn, -2], [inn, yi], [out, yo]], WH, false);
       ctx.restore();
-      if (lids > .02) inkLine(ctx, [[eX - .62, -.95 + lids * 1.6], [eX, -.9 + lids * 1.6], [eX + .62, -.95 + lids * 1.6]], 6 * px, K, { taper: [.1, .1] });
+      if (lids > .02) { inkLine(ctx, [[out + sd * .04, yo], [inn - sd * .02, yi]], 7 * px, K, { taper: [.1, .1] }); inkLine(ctx, [[eX + sd * .5, -1.42], [eX - sd * .42, -1.12]], 11 * px, K, { taper: [.2, .3] }); }
     }
-    ctx.restore(); ctx.setTransform(base);
+    ctx.restore();
     // rabbit-sense at maximum, radiating from the eye
     const sk = .7 + .3 * hit(t, [W12.there, 93.1, 93.3], 5);
     ctx.save(); ctx.translate(ex, ey);
@@ -365,8 +385,10 @@
   function bigPaw(ctx, x, y, s, rot = 0) {
     ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(s, s);
     const px = 1 / s, U0 = UPX; UPX = px;
-    ink(ctx, tube([[5.2, -7.5], [3.2, -4.4], [1.2, -1.6]], k => lerp(3.1, 2.4, k), 10), { fill: G1, shade: { color: K, spacing: 14 * px, dir: [.6, .8], from: -1, to: 2 }, line: 6 * px, boil: 1.4 * px });
-    ink(ctx, tube([[2.1, -2.9], [1.25, -1.7]], () => 2.75, 4), { fill: K, line: 5 * px, boil: 1 * px, smooth: false });
+    ink(ctx, tube([[5.6, -8.2], [3.4, -4.6], [1.3, -1.7]], k => lerp(3.6, 2.6, k), 10), { fill: G1, shade: { color: K, spacing: 14 * px, dir: [.6, .8], from: -1, to: 2 }, line: 6 * px, boil: 1.4 * px });
+    inkLine(ctx, [[4.2, -7.6], [2.7, -5.3], [1.0, -3.1]], 5 * px, P, { taper: [.3, .5] });
+    for (const k of [0, 1]) inkLine(ctx, [[3.1 + k * .9, -5.6 - k * 1.3], [4.1 + k * .9, -5.2 - k * 1.3], [4.7 + k * .9, -4.2 - k * 1.3]], 4 * px, K, { taper: [.3, .3] });
+    ink(ctx, tube([[2.2, -3.0], [1.3, -1.75]], () => 2.9, 4), { fill: K, line: 5 * px, boil: 1 * px, smooth: false });
     const m = blob(0, 0, 1.9, 4, .06, 18, 1.75);
     ink(ctx, m, { fill: WH, shade: { color: G3, spacing: 12 * px, dir: [.6, .8], from: -.2, to: 1.8 }, line: 6.5 * px, boil: 1.5 * px });
     for (const k of [-.6, 0, .6]) inkLine(ctx, [[k * 1.3 - .5, -1.3 + Math.abs(k) * .4], [k * 1.55 - .7, .1], [k * 1.4 - .5, 1.2]], 4.5 * px, K, { taper: [.3, .3] });
@@ -378,9 +400,8 @@
   const CARD = ['\u26A0 CRITICAL:', 'SQL INJECTION.', 'SANITIZE THIS INPUT.'];
   function noirCard(ctx, x, y, w, t, t0, size = 46) {
     let n = Math.max(0, Math.floor((t - t0) * 70)); const total = CARD.join('').length, caret = n < total && Math.floor(t * 8) % 2 ? '\u258D' : '';
-    const body = CARD.map(l => { const s = l.slice(0, n); n -= l.length; return s; });
+    const body = CARD.map(l => { const s = l.slice(0, Math.max(0, n)); n -= l.length; return s; });
     const cur = body.findIndex((s, i) => s.length < CARD[i].length); if (cur >= 0) body[cur] += caret;
-    body.push('');
     commentCard(ctx, x, y, w, t, { author: 'coderabbitai', time: 'just now', chip: 'critical', body, buttons: false, size, bold: true });
     noirAvatar(ctx, x + 44, y + 44, 26);
   }
@@ -394,10 +415,10 @@
     cam(ctx, 1170 + j[0], CW.y - 170 + j[1], zoom, -.035);
     codeWall(ctx, true, { pale: true });
     // the input, coiled under the red slot; the slam scatters its letters
-    if (t < slam - 1 / 24) snake(ctx, t, 1080, CW.y + 54, { rear: 1, size: 44 });
-    else { const age = t - slam; for (let i = 0; i < EVIL.length; i++) { const a = -Math.PI * .95 + hash(i * 3.1) * Math.PI * .9 + (i % 2 ? Math.PI : 0) * .0, v = 900 + hash(i) * 900;
-      const x = 1080 + i * 26.4 + Math.cos(a) * v * age, y = CW.y + 54 + Math.sin(a) * v * age * .6 + 1400 * age * age;
-      if (y < H + 400) txt(ctx, EVIL[i], x, y, { font: 'mono', weight: 800, size: 44, color: K, rot: age * (hash(i + 5) - .5) * 20, align: 'center', base: 'middle' }); } }
+    if (t < slam - 1 / 24) snake(ctx, t, 1080, CW.y + 56, { rear: 1, size: 50 });
+    else { const age = t - slam; for (let i = 0; i < EVIL.length; i++) { const a = -Math.PI * .95 + hash(i * 3.1) * Math.PI * .9, v = 900 + hash(i) * 900;
+      const x = 1080 + i * 30 + Math.cos(a) * v * age * .7, y = CW.y + 56 + Math.sin(a) * v * age * .45 + 1300 * age * age;
+      if (y < H + 400) txt(ctx, EVIL[i], x, y, { font: 'mono', weight: 800, size: 50, color: K, rot: age * (hash(i + 5) - .5) * 20, align: 'center', base: 'middle' }); } }
     // the stamp, then the ink splatter
     if (t >= slam - 1 / 24) {
       pawPrint(ctx, PAWX, PAWY, 108, -.12, R, 3);
@@ -442,8 +463,8 @@
     txt(c, 'WHERE name = \'" + req.query.name + "\'";', 1040, ly + 70, { font: 'mono', weight: 700, size: 40, color: G2 });
     pawPrint(c, 1520, ly + 55, 34, -.15, R, 5);
     // the rabbit (appears upright after the roll; the world is upside down), flag raised overhead
-    const flapT = tc * 5, pawUp = easeOut(seg(tc, W12.paw - .05, W12.paw + .2)), X = 1330, Y = ly + 4, s = 43;
-    const A = noirRabbit(c, X, Y, s, { turn: -.25, eyes: 'open', lids: .35, browTilt: 1.4, mouth: 'flat', lx: -.4, ly: -.2,
+    const flapT = tc * 5, pawUp = easeOut(seg(tc, W12.paw - .05, W12.paw + .2)), X = 1320, Y = ly + 4, s = 47;
+    const A = noirRabbit(c, X, Y, s, { turn: -.25, eyes: 'open', lids: .4, mouth: 'flat', lx: -.4, ly: -.2,
       armR: { a: 168, e: 6 }, pawR: 'fist', armL: { a: lerp(35, 125, pawUp), e: lerp(40, 50, pawUp) }, pawL: 'mitt',
       earL: { a: -8, b: wob(tc, 1.1) * 6 }, earR: { a: 8, b: wob(tc, 1.3, .3) * 6 } });
     // "with my paw": the left paw turns to camera, its pad still inked red from the stamp
@@ -468,7 +489,7 @@
   // ---------- the pocket watch, in noir inks (the shared one is brass and orange) ----------
   function noirWatch(ctx, x, y, r, secs, o = {}) {
     ctx.save(); ctx.translate(x, y); ctx.rotate(o.rot || 0);
-    const col = o.col || { case: G1, dk: K, face: P, ink: K, red: R };
+    const col = { case: G1, dk: K, face: P, ink: K, red: R };
     if (o.chain !== false) inkLine(ctx, [[0, -r * 1.12], [r * .08, -r * 1.55], [r * .4, -r * 2.3], [r * .2, -r * 3.4]], r * .05, col.dk, { taper: [0, 0] });
     ink(ctx, rrect(-r * .14, -r * 1.24, r * .28, r * .2, r * .05), { fill: col.case, line: r * .03, boil: .5, smooth: false });
     ink(ctx, ell(0, -r * 1.03, r * .16, r * .12, 14), { fill: col.case, line: r * .03, boil: .5 });
@@ -514,7 +535,7 @@
     const secs = clockSecs(17, 0, 0) - (after ? 0 : 1 - easeInOut(ct) * .999), wr = shake(t, 9 * dong);
     noirWatch(ctx, 440 + wr[0], 480 + wr[1], 310, secs, { hot: after, rot: -.08 + wob(t, .25) * .02, smoothSec: true, label: 'DEPLOY \u00B7 FRI 5:00 PM' });
     if (after) for (let i = 0; i < 3; i++) { const k = clamp((age - i * .22) / .9); if (k > 0 && k < 1) { ctx.save(); ctx.globalAlpha = 1 - k; outline(ctx, ell(440, 480, 340 + k * 520, 340 + k * 520, 48), 10 * (1 - k) + 2, R); ctx.restore(); } }
-    sfx(ctx, 'DONG', 560, 150, 250, age, { color: R, dotColor: K, shadow: K, rot: -.1, life: 1.25, stretch: 2 });
+    sfx(ctx, 'DONG', 560, 200, 240, age, { color: R, dotColor: K, shadow: K, rot: -.1, life: 1.25, stretch: 2 });
     if (f === fc) flash(ctx, WH, 1);
   }
 
@@ -532,12 +553,12 @@
       if (o.rx != null) { const w = (240 + hash(k * 3) * 160) * Math.max(q, .15), x = o.rx + Math.sin(tc * 3 + k) * 20 * q; fillPts(c, rect(x - w / 2, y - size * .9, w, size * .38), o.glint || P, false); }
     }
   }
-  function steamship(c, x, y, s, t, o = {}) {                   // (x, y) = waterline centre; s = 1 is ~470 px long
+  function steamship(c, x, y, s, t) {                           // (x, y) = waterline centre; s = 1 is ~470 px long
     const tc = twos(t), bob = Math.sin(tc * 3.1) * 4, rock = Math.sin(tc * 2.3) * .02;
     c.save(); c.translate(x, y + bob * s); c.rotate(rock); c.scale(s, s);
     // smoke from the stack: puffs born on the beats, drifting back
     for (let i = 3; i >= 0; i--) { const b = beatN(t) - i, age = t - beatTime(b); if (age < 0) continue; const r = 16 + age * 22, px = 70 - age * 120, py = -205 - age * 60;
-      ink(c, blob(px, py, r, b * 1.3, .22, 12), { fill: o.smoke || G2, line: 3.5, boil: 1.4 }); }
+      ink(c, blob(px, py, r, b * 1.3, .22, 12), { fill: G2, line: 3.5, boil: 1.4 }); }
     ink(c, [[48, -100], [96, -100], [104, -196], [42, -196]], { fill: K, line: 4, smooth: false, boil: .8 });
     fillPts(c, rect(44, -178, 58, 16), P, false);
     inkLine(c, [[-100, -100], [-106, -268]], 7, K, { taper: [0, .1], smooth: false });
@@ -547,7 +568,7 @@
     fillPts(c, rect(-240, -30, 486, 9), P, false);
     txt(c, 'SHIP IT', -40, 20, { font: 'display', weight: 900, stretch: -1, size: 40, color: P, align: 'center' });
     // bow wave
-    inkLine(c, [[256, 30], [300, 36], [340, 30]], 6, o.wake || P, { taper: [.2, .8] });
+    inkLine(c, [[256, 30], [300, 36], [340, 30]], 6, P, { taper: [.2, .8] });
     c.restore();
     return { mast: [x + (-106 * Math.cos(rock) + 268 * Math.sin(rock)) * s, y + bob * s + (-268 * Math.cos(rock) - 106 * Math.sin(rock)) * s] };
   }
@@ -566,7 +587,7 @@
     const [px, py, pa] = at((red0 + red1) / 2 / N); pawPrint(c, px, py + w * .1, w * .42, pa - .1, R, 11);
   }
   // the dock (foreground) and the rabbit watching
-  function dock(c, x0, x1, y, t) {
+  function dock(c, x0, x1, y) {
     ink(c, rect(x0, y, x1 - x0, 60), { fill: G1, line: 5, smooth: false, boil: .8 });
     for (let i = 0; i < (x1 - x0) / 90; i++) inkLine(c, [[x0 + i * 90, y + 4], [x0 + i * 90 + 6, y + 56]], 3, K, { taper: [0, 0], smooth: false });
     for (const px of [x1 - 40, x1 - 260]) ink(c, rect(px, y + 50, 34, 300), { fill: K, line: 4, smooth: false, boil: .6 });
@@ -583,8 +604,7 @@
     // dusk: paper sky with a halftone darkening at the top, a low hard white sun
     fillPts(ctx, rect(-200, -200, W + 400, hz + 200), P, false);
     dotsIn(ctx, [-100, -100, W + 100, hz], { spacing: 30, color: G3, dir: [0, 1], from: -100, to: hz, min: .9, max: .1 });
-    ink(ctx, ell(1400, hz - 40, 250, 250, 48), { fill: WH, line: 6, boil: .8 });
-    seaOfCode(ctx, t, hz, { rx: 1400 });
+    nd(ctx, 6, c => { ink(c, ell(1400, hz - 40, 250, 250, 48), { fill: WH, line: 6, boil: .8 }); seaOfCode(c, t, hz, { rx: 1400 }); });
     // the code wall at the left: dark rows, with line 9012 lit (paper) until it tears out, leaving a black gap
     ink(ctx, rect(-200, -200, 760, 1100), { fill: K, line: 6, smooth: false, boil: .8 });
     ctx.save(); clipPts(ctx, rect(-200, -200, 760, 1100), false);
@@ -593,59 +613,60 @@
     const rowY0 = 430 - 8, gap = t >= rip - 1 / 24;
     if (gap) { const g = []; for (let i = 0; i <= 16; i++) g.push([-200 + i * 48, rowY0 - 32 + (hash(i * 3) - .5) * 18]); for (let i = 16; i >= 0; i--) g.push([-200 + i * 48, rowY0 + 32 + (hash(i * 5) - .5) * 18]); fillPts(ctx, g, K, false); outline(ctx, g, 3, G2, { smooth: false }); }
     // the ship
-    const S = steamship(ctx, shx, shy, shs, t, {});
-    if (sail > 0) for (let i = 0; i < 4; i++) inkLine(ctx, [[shx - 250 * shs, shy + 30 * shs + i * 16], [shx - (500 + i * 220) * shs * (1 + sail), shy + 60 + i * 34]], 5, P, { taper: [.1, .9] });
+    const S = steamship(ctx, shx, shy, shs, t);
+    if (sail > 0) for (let i = 0; i < 5; i++) { const x0 = shx - (240 + i * 90) * shs, y0 = shy + (34 + i * 12) * shs, w = 120 * shs * (1 + i * .3);
+      inkLine(ctx, [[x0, y0], [x0 - w * .5, y0 + 5 + Math.sin(tc * 6 + i) * 4], [x0 - w, y0 + 2]], 5 - i * .6, P, { taper: [.3, .3] }); }
     // the strip: lies in the wall, tears out on "shipped" (right end first), flies and flaps from the mast as a pennant
     const N = 16, pts = [];
     for (let i = 0; i <= N; i++) {
       const u = i / N, k = easeInOut(clamp((t - rip - (1 - u) * .16) / .42)), flap = Math.sin(u * 7 - tc * 9) * 26 * u;
-      const a = [-420 + u * 1260, rowY0 - (gap ? easeOut(clamp((t - rip) / .1)) * (1 - u) * 0 : 0)];
+      const a = [-420 + u * 1260, rowY0];
       const b = [S.mast[0] - (1 - u) * 520 * shs, S.mast[1] + 26 * shs + (1 - u) * 60 * shs + Math.sin((1 - u) * 6 - tc * 10) * 22 * (1 - u) * shs];
       pts.push([lerp(a[0], b[0], k), lerp(a[1], b[1], k) - Math.sin(k * Math.PI) * 240 + flap * Math.sin(k * Math.PI)]);
     }
     strip(ctx, pts, lerp(60, 34 * shs, easeInOut(clamp((t - rip) / .5))), 3);
     // the dock and the rabbit, deadpan, watching it go
-    dock(ctx, -80, 820, 900, t);
+    dock(ctx, -80, 820, 900);
     const look = clamp((shx - 1100) / 700);
-    noirRabbit(ctx, 560, 906, 25, { turn: .7, lx: .6 + look * .3, ly: -.1, lids: .5, mouth: 'flat', browTilt: -.4, armL: { a: 8, e: 10 }, armR: { a: 8, e: 10 },
+    noirRabbit(ctx, 560, 906, 25, { turn: .7, lx: .6 + look * .3, ly: -.1, lids: .5, mouth: 'flat', armL: { a: 8, e: 10 }, armR: { a: 8, e: 10 },
       earL: { a: -14, b: -easeInOut(seg(tc, 100.5, 101)) * 40 }, earR: { a: 12, b: 0 } });
     ctx.restore();
   }
 
   // ---------- SHOT 5 (101.10-104.63): held "flaaaw". Ink corruption, 5 PM -> 3 AM, the spill forms 03:00 ----------
   const SPILL = [...Array(64)].map((_, i) => { const u = hash(i * 1.9), v = hash(i * 7.3);
-    return { x: lerp(1500, 120, Math.pow(u, .8)) + (v - .5) * 700 * u, y: lerp(360, 1060, Math.pow(u, 1.2)) + (hash(i * 3.7) - .5) * 160, r: 40 + hash(i * 5.1) * 90 * (.5 + u), t0: 101.1 + u * 1.7 + hash(i * 2.2) * .5 }; });
+    return { x: lerp(1500, 120, Math.pow(u, .8)) + (v - .5) * 700 * u, y: lerp(360, 1060, Math.pow(u, 1.2)) + (hash(i * 3.7) - .5) * 160, r: 40 + hash(i * 5.1) * 90 * (.5 + u), t0: 101.05 + u * .9 + hash(i * 2.2) * .3 }; });
   const DIG = { s: '03:00', x: 960, y: 800, size: 520 };
   function flawShot(ctx, t, lt, dur) {
-    const tc = twos(t), hz = 330, night = seg(t, 101.8, 103.8), resolve = easeInOut(seg(t, 103.35, 104.4));
-    const slamF = fr(W12.end), f = fr(t), pre = easeIn(seg(t, 104.42, 104.6)), slam = f >= slamF ? 1 : 0;
-    const dr = drift(t, 5), j = shake(t, 22 * slam + 3 * resolve);
-    const zoom = lerp(1, 1.1, easeInOut(seg(t, 101.1, 104.4))) * (1 - pre * .03) * (1 + slam * .16);
+    const tc = twos(t), hz = 330, night = seg(tc, 101.8, 103.8), resolve = easeInOut(seg(t, 103.35, 104.4));
+    const pre = easeIn(seg(t, 104.42, 104.6));                       // anticipation; chapter 7 owns the slam frame
+    const dr = drift(t, 5), j = shake(t, 3 * resolve);
+    const zoom = lerp(1, 1.1, easeInOut(seg(t, 101.1, 104.4))) * (1 - pre * .03);
     cam(ctx, 960 + dr[0] + j[0], 540 + dr[1] + j[1], zoom, lerp(0, -.03, night));
     // sky: dusk paper, flooded by dry-brush sweeps of night ink from the top
-    const sky = mix(P, INK.night, 0);
-    fillPts(ctx, rect(-300, -300, W + 600, hz + 300), sky, false);
-    dryBrush(ctx, [-300, -300, W + 300, hz + 2], night, INK.night, 1);
+    fillPts(ctx, rect(-300, -300, W + 600, hz + 300), P, false);
+    dryBrush(ctx, [-300, -300, W + 300, hz + 2], night, INK.night);
     // the watch hangs as the moon; hands spin forward, 5 PM -> 3 AM, faster and faster
     const secs = lerp(clockSecs(17, 0, 0), clockSecs(27, 0, 0), easeIn(seg(t, 101.1, 104.35)));
-    noirWatch(ctx, 1540, 170, 118, secs, { hot: true, chain: false, smoothSec: true, rot: .06 });
+    noirWatch(ctx, 1545, 195, 160, secs, { hot: true, chain: false, smoothSec: true, rot: .06 });
     // the sea of code; night sweeps over it too, from the horizon toward us
-    const nightSea = easeInOut(seg(t, 102.2, 104.0));
-    seaOfCode(ctx, t, hz, { sea: K, text: nightSea > .5 ? INK.nightLt : G1, rx: 1540, glint: night > .6 ? INK.nightLt : P, under: c => dryBrush(c, [-300, hz, W + 300, H + 300], nightSea, INK.night) });
+    const nightSea = easeInOut(seg(tc, 102.2, 104.0));
+    nd(ctx, 5, d => seaOfCode(d, t, hz, { sea: K, text: nightSea > .5 ? INK.nightLt : G1, rx: 1540, glint: night > .6 ? INK.nightLt : P, under: c => dryBrush(c, [-300, hz, W + 300, H + 300], nightSea, INK.night) }), G1);
     // the ship, far out, trailing its wake of red ink
     const shx = lerp(1250, 1420, seg(t, 101.1, 104.6)), shy = hz + 34, shs = lerp(.26, .16, seg(t, 101.1, 104.6));
-    const S = steamship(ctx, shx, shy, shs, t, {});
-    strip(ctx, [[S.mast[0] - 140 * shs, S.mast[1] + 40 * shs + Math.sin(tc * 9) * 8 * shs], [S.mast[0] - 70 * shs, S.mast[1] + 20 * shs], S.mast].map(p => p), 34 * shs, 3);
-    // the red spill: blots born along the wake, growing with dry-brush edges; then they gather into 03:00
+    const S = steamship(ctx, shx, shy, shs, t);
+    strip(ctx, [[S.mast[0] - 140 * shs, S.mast[1] + 40 * shs + Math.sin(tc * 9) * 8 * shs], [S.mast[0] - 70 * shs, S.mast[1] + 20 * shs], S.mast], 34 * shs, 3);
+    // Spot-style corruption from the first frame: holes and dry-brush tendrils chewing in from every edge, growing
+    // with the rising note, then the red spill gathers into 03:00
+    chew(ctx, t, resolve);
     spill(ctx, t, resolve);
     // the dock, tiny, with the rabbit's silhouette
-    dock(ctx, -80, 460, 850, t);
+    dock(ctx, -80, 460, 850);
     noirRabbit(ctx, 300, 856, 12, { turn: .7, lx: .8, lids: .55, mouth: 'flat', earL: { a: -30, b: -60 }, earR: { a: 12, b: 10 } });
     ctx.restore();
-    if (slam) { speedLines(ctx, DIG.x, DIG.y - 200, { n: 70, r0: 560, r1: 1600, w: 12, color: K }); FRAME.post.push(c => ghostFrame(c, 18, 8, .5)); }
   }
   // dry-brush flood: ragged horizontal strokes sweep in from the top as k goes 0 -> 1 (on twos)
-  function dryBrush(ctx, [x0, y0, x1, y1], k, color, dir = 1) {
+  function dryBrush(ctx, [x0, y0, x1, y1], k, color) {
     if (k <= 0) return; if (k >= 1) { fillPts(ctx, rect(x0, y0, x1 - x0, y1 - y0), color, false); return; }
     const n = 26, hh = (y1 - y0) / n;
     ctx.beginPath();
@@ -666,8 +687,29 @@
       for (let b = 0; b < 6; b++) { const yy = y + hh * (b + .5) / 6, l = 40 + hash(i * 9 + b) * 140; ctx.moveTo(xe, yy); ctx.lineTo(xe + (left ? l : -l), yy + (hash(b + i) - .5) * 6); } }
     ctx.stroke();
   }
+  // edge anchors for the chewing ink: points around the frame border, each aiming at the centre
+  const CHEW = [...Array(22)].map((_, i) => { const u = i / 22 + hash(i * 2.7) * .03, p = u * 2 * (W + H), side = p < W ? 0 : p < W + H ? 1 : p < 2 * W + H ? 2 : 3;
+    const [x, y] = side === 0 ? [p, -20] : side === 1 ? [W + 20, p - W] : side === 2 ? [W - (p - W - H), H + 20] : [-20, H - (p - 2 * W - H)];
+    return { x, y, a: Math.atan2(540 - y, 960 - x) + (hash(i * 5.3) - .5) * .9, r: 110 + hash(i * 3.1) * 130, red: hash(i * 9.1) < .62, len: 380 + hash(i * 4.4) * 520 }; });
+  function chew(ctx, t, resolve) {
+    const tc = twos(t), g = (.55 + .45 * easeIn(seg(tc, 101.1, 103.3))) * (1 - resolve), bite = hit(t, [101.1], 5);
+    if (g <= .01) return;
+    for (const b of CHEW) {
+      if (b.y > H && b.x > 330 && b.x < 1590) continue;                  // line 25's subtitle band stays calm
+      const col = b.red ? R : K, r = b.r * g * (1 + bite * .15);
+      // the hole: a boiling blob with a scribbled paper rim (so ink holes still read over the dark sea)
+      const p = boil(blob(b.x, b.y, r, b.x * .1, .42, 16), 6, b.y);
+      fillPts(ctx, p, col); outline(ctx, p, 4, b.red ? RD : P, { heavy: .2 });
+      // a dry-brush tendril crawling inward, with parallel bristle strokes and splatter at its tip
+      const L = b.len * g, pts = [];
+      for (let q = 0; q <= 10; q++) { const d = q / 10 * L, w = noise1(q * .6 + b.x * .01 + tc * 1.3) * 60 * (q / 10); pts.push([b.x + Math.cos(b.a) * d - Math.sin(b.a) * w, b.y + Math.sin(b.a) * d + Math.cos(b.a) * w]); }
+      if (!b.red) inkLine(ctx, pts, r * .55 + 10, P, { taper: [0, .95] });
+      inkLine(ctx, pts, r * .55, col, { taper: [0, .95] });
+      for (const off of [-1, 1]) inkLine(ctx, pts.map(([x, y], q) => [x - Math.sin(b.a) * off * r * .42, y + Math.cos(b.a) * off * r * .42]).slice(0, 8), 5, col, { taper: [.1, .6] });
+      const tip = pts[10]; for (let q = 0; q < 4; q++) fillPts(ctx, ell(tip[0] + (hash(b.x + q) - .5) * 90, tip[1] + (hash(b.y + q) - .5) * 90, 5 + hash(q + b.r) * 10, 5 + hash(q * 2 + b.r) * 8, 8), col);
+    }
+  }
   function spill(ctx, t, resolve) {
-    const tc = twos(t);
     // the free blots shrink back as the ink gathers into the digits
     ctx.beginPath();
     for (const b of SPILL) { const g = easeOut(clamp((t - b.t0) / 1.2)) * (1 - resolve * .95); if (g <= .01) continue;
@@ -693,9 +735,6 @@
     }
   }
 
-  // ---------- placeholders for the rest (built below) ----------
-  function todo(label) { return (ctx, t) => { fillPts(ctx, rect(0, 0, W, H), K, false); txt(ctx, label + ' ' + t.toFixed(2), W / 2, H / 2, { size: 80, align: 'center', base: 'middle', color: P }); }; }
-
-  chapter('bridge', 87.74, 104.63, [[87.74, canyon], [91.10, beamLine], [cutAt(W12.there), eyeShot], [94.40, pawShot], [cutAt(W12.caps), flipShot],
-    [97.60, mergeShot], [cutAt(W12.shipped), shipShot], [101.10, flawShot]]);
+  chapter('bridge', 87.74, 104.63, [[87.74, canyon], [91.10, beamLine], [W12.there, eyeShot], [94.40, pawShot], [W12.caps, flipShot],
+    [97.60, mergeShot], [W12.shipped, shipShot], [101.10, flawShot]]);
 })();

@@ -23,6 +23,7 @@ Each chapter is one file in `src/ch/`, wrapped in an IIFE so its helpers stay pr
 })();
 ```
 
+- Cuts (chapter and shot starts) snap to the frame that *contains* their time, so a cut on a downbeat is never late. A shot's first frame is rendered at its own start time `t0`.
 - `chapter(name, start, end, shots)` registers the chapter. Each shot is called as `fn(ctx, t, lt, dur)`: song time, time since the shot started, and shot length. It must paint **the entire frame**, background included. Cuts land on each shot's start time.
 - **Frames render in parallel and out of order.** Every shot must be a pure function of `t`:
   - no state that carries between frames;
@@ -79,6 +80,7 @@ Shapes are point lists `[[x, y], ...]`, traced as smooth closed splines.
 
 - `depth(ctx, px, c => { ...draw... })` draws into a scratch layer and composites with misregistered colour plates.
   - `px = 0` is in focus; use 6–12 px for foreground and background planes. This is how depth of field works in this film, so use it in almost every shot.
+  - The layer starts at the **identity** transform, so apply your camera inside it (`cam(c, ...)` … `c.restore()`). Alternatively, pass `{keep: true}` to carry ctx's current transform into it.
   - Nesting is fine.
   - It costs a few ms per call, so don't call it 50 times a frame.
 - `misregFrame(ctx, px, angle)` splits what is already drawn (hit flashes, whips).
@@ -129,7 +131,7 @@ Pose fields (degrees for angles; all optional):
 | `lids` 0..1 | .5 = deadpan |
 | `lx`, `ly` | pupils look −1..1 |
 | `bags` 0..1 | fatigue |
-| `brows`, `browTilt` | + angry, − worried |
+| `brows`, `browTilt` | + worried/pleading, − angry |
 | `mouth` | 'smile' \| 'open' \| 'o' \| 'flat' \| 'frown' \| 'wavy' \| 'grin' \| 'smirk', with `open` 0..1 |
 | `blush`, `sweat`, `anger`, `sense` 0..1 | `sense` = rabbit-sense squiggles (spider-sense) |
 | `glasses` | reading glasses |

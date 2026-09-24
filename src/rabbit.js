@@ -11,7 +11,7 @@
 //   earL/earR: {a: base angle, b: bend at the middle, len: 0..1.2}, armL/armR: {a: shoulder (0 down, 90 out, 170 up), e: elbow},
 //   pawL/pawR: 'mitt' | 'point' | 'fist' | 'open' | 'thumb',
 //   eyes: 'open' | 'wide' | 'happy' | 'closed' | 'star' | 'spiral' | 'x' | 'heart' | 'dot', lids 0..1, lx/ly -1..1 look,
-//   bags 0..1, brows (raise, u), browTilt (+ angry, - worried), mouth: 'smile' | 'open' | 'o' | 'flat' | 'frown' | 'wavy' |
+//   bags 0..1, brows (raise, u), browTilt (+ worried/pleading, - angry), mouth: 'smile' | 'open' | 'o' | 'flat' | 'frown' | 'wavy' |
 //   'grin' | 'smirk', open 0..1, blush 0..1, sweat 0..1, sense 0..1 (rabbit-sense squiggles), anger 0..1,
 //   glasses, pen (default true), hood (hood up), col: {hoodie, hoodieDk, fur, furDk, ear, line}, noShadow.
 const RB = {

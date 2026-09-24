@@ -39,7 +39,8 @@ function toast(ctx, cx, cy, s = 1, o = {}) {
   ink(ctx, rrect(-460, -110, 150, 150, 30), { fill: INK.orange, line: 5, boil: .5, smooth: false });
   avatar(ctx, -385, -35, 58, 'rabbit', INK.orange);
   txt(ctx, '\uD83D\uDD14 Review requested', -280, -62, { font: 'ui', weight: 700, size: 38, color: '#6E6A78' });
-  txt(ctx, `${o.title || PR.title} #${o.num || PR.num}`, -280, 12, { font: 'ui', weight: 900, size: 70, color: INK.ink });
+  const title = `${o.title || PR.title} #${o.num || PR.num}`, tw = measure(ctx, title, { font: 'ui', weight: 900, size: 70 }).w;
+  txt(ctx, title, -280, 12, { font: 'ui', weight: 900, size: 70 * Math.min(1, 700 / tw), color: INK.ink });
   txt(ctx, `+${o.add || PR.add}`, -280, 100, { font: 'mono', weight: 800, size: 58, color: INK.green });
   const aw = measure(ctx, `+${o.add || PR.add}`, { font: 'mono', weight: 800, size: 58 }).w;
   txt(ctx, `\u2212${o.del || PR.del}`, -280 + aw + 34, 100, { font: 'mono', weight: 800, size: 58, color: INK.red });
@@ -75,8 +76,13 @@ function prHeader(ctx, x, y, w, o = {}) {
   const py = y + size * 1.75, st = o.state || 'open';
   let px = x + pill(ctx, x, py, st === 'merged' ? 'Merged' : st === 'closed' ? 'Closed' : 'Open', { fill: st === 'merged' ? INK.purple : st === 'closed' ? INK.red : INK.green, size: size * .42 }) + 16;
   txt(ctx, `${o.author || PR.author} wants to merge into main from ${PR.branch}`, px, py + size * .15, { font: 'ui', weight: 500, size: size * .38, color: '#4A4658' });
-  if (o.stats !== false) { const sy = py; txt(ctx, `+${o.add ?? PR.add}`, x + w - 330, sy + size * .15, { font: 'mono', weight: 800, size: size * .5, color: INK.green, align: 'right' }); txt(ctx, `\u2212${o.del ?? PR.del}`, x + w - 190, sy + size * .15, { font: 'mono', weight: 800, size: size * .5, color: INK.red, align: 'right' });
-    for (let i = 0; i < 5; i++) fillPts(ctx, rect(x + w - 170 + i * 30, sy - 12, 24, 24), i < 5 ? INK.green : INK.red, false); }
+  if (o.stats !== false) { // on the title row, right-aligned, so it never collides with the author line
+    const add = o.add ?? PR.add, del = o.del ?? PR.del, sy = y + size * .8, num = s => +String(s).replace(/[^\d]/g, '') || 0;
+    const greens = Math.round(5 * num(add) / Math.max(1, num(add) + num(del)));
+    for (let i = 0; i < 5; i++) fillPts(ctx, rect(x + w - 150 + i * 30, sy - 12, 24, 24), i < greens ? INK.green : INK.red, false);
+    txt(ctx, `\u2212${del}`, x + w - 172, sy + size * .15, { font: 'mono', weight: 800, size: size * .5, color: INK.red, align: 'right' });
+    const dw = measure(ctx, `\u2212${del}`, { font: 'mono', weight: 800, size: size * .5 }).w;
+    txt(ctx, `+${add}`, x + w - 190 - dw, sy + size * .15, { font: 'mono', weight: 800, size: size * .5, color: INK.green, align: 'right' }); }
   return y + size * 2.5;
 }
 function prTabs(ctx, x, y, w, o = {}) {
@@ -134,7 +140,7 @@ function prPage(ctx, t, o = {}) {
 function commentCard(ctx, x, y, w, t, o = {}) {
   const size = o.size || 30, body = o.body || ['Consider handling the null case here.'], st = o.state || 'open';
   if (st === 'resolved') { uiBox(ctx, x, y, w, size * 1.9, { fill: '#E9E4DA', shadow: 6, r: 8 }); txt(ctx, '\u2713 Resolved \u00B7 ' + (o.author || 'coderabbitai') + (o.by ? ' \u00B7 by ' + o.by : ''), x + 24, y + size * 1.22, { font: 'ui', weight: 700, size: size * .9, color: '#6E6A78' }); return y + size * 1.9; }
-  const h = size * (2.9 + body.length * 1.35 + (o.buttons === false ? 0 : 1.8));
+  const h = size * (2.9 + body.length * 1.35 + (o.chip ? 1.3 : 0) + (o.buttons === false ? 0 : 1.8));
   uiBox(ctx, x, y, w, h, { fill: st === 'outdated' ? '#ECE8DF' : INK.white, shadow: 8, r: 10 });
   avatar(ctx, x + 44, y + 44, 26, o.kind || 'rabbit');
   txt(ctx, o.author || 'coderabbitai', x + 84, y + 54, { font: 'ui', weight: 800, size, color: INK.ink });
@@ -187,7 +193,7 @@ function cursor(ctx, x, y, s, o = {}) {
   fillPts(ctx, cursorShape(ctx, 7, 9, s, INK.ink, INK.ink).map(p => p), INK.ink, false);
   const P = cursorShape(ctx, 0, 0, s, o.fill || INK.ink, INK.white);
   outline(ctx, P, Math.max(3, s * .035), INK.ink, { smooth: false, heavy: .2 });
-  if (o.label !== false) { const L = o.label || 'you', size = Math.max(22, s * .2), m = measure(ctx, L, { font: 'ui', weight: 800, size });
+  if (o.label !== false) { const L = o.label || 'you', size = clamp(s * .2, 22, 40), m = measure(ctx, L, { font: 'ui', weight: 800, size });
     ink(ctx, rrect(s * .52, s * .82, m.w + size * 1.1, size * 1.6, size * .35), { fill: o.color || INK.pink, line: 3, boil: .4, smooth: false });
     txt(ctx, L, s * .52 + size * .55, s * .82 + size * 1.13, { font: 'ui', weight: 800, size, color: INK.white }); }
   if (o.crown) { const c = [[-.1, -.02], [.05, -.34], [.2, -.12], [.33, -.4], [.46, -.12], [.6, -.34], [.72, -.02]].map(([a, b]) => [a * s * .6 - s * .08, b * s * .6 - s * .02]);
@@ -365,13 +371,13 @@ function stamp(ctx, s, x, y, size, age, o = {}) {
   if (age < 0 || (o.life && age > o.life)) return;
   const k = age < .08 ? lerp(1.8, 1, easeIn(age / .08)) : 1 + .04 * Math.exp(-(age - .08) * 20) * Math.sin((age - .08) * 60);
   const col = o.color || INK.red, f = { font: 'display', weight: 900, stretch: o.stretch ?? 0, size: size * k }, m = measure(ctx, s, f);
-  ctx.save(); ctx.translate(x, y); ctx.rotate(o.rot ?? -.12); ctx.globalAlpha = age < .08 ? clamp(age / .04) : 1;
+  // drawn on its own layer so the worn-ink specks knock holes in the ink only, never paint the background
+  const c = layer(45); c.setTransform(ctx.getTransform()); c.translate(x, y); c.rotate(o.rot ?? -.12);
   const bw = m.w + size * .5, bh = size * 1.05 * k;
-  ctx.lineWidth = size * .09; ctx.strokeStyle = col; ctx.strokeRect(-bw / 2, -bh / 2, bw, bh);
-  txt(ctx, s, 0, size * .36 * k, { ...f, color: col, align: 'center' });
-  // worn ink: knock paper-coloured specks out of the stamp
-  ctx.globalAlpha = .9; dotsIn(ctx, [-bw / 2, -bh / 2, bw / 2, bh / 2], { spacing: size * .14, color: o.paper || INK.paper, k: (a, b) => clamp(.15 + noise2(a * .03 + 7, b * .03) * .5) });
-  ctx.restore();
+  c.lineWidth = size * .09; c.strokeStyle = col; c.strokeRect(-bw / 2, -bh / 2, bw, bh);
+  txt(c, s, 0, size * .36 * k, { ...f, color: col, align: 'center' });
+  c.globalCompositeOperation = 'destination-out'; dotsIn(c, [-bw / 2 - size * .1, -bh / 2 - size * .1, bw / 2 + size * .1, bh / 2 + size * .1], { spacing: size * .14, color: '#000', k: (a, b) => clamp(.1 + noise2(a * .03 + 7, b * .03) * .45) });
+  ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = age < .08 ? clamp(age / .04 + .5) : 1; ctx.drawImage(c.canvas, 0, 0); ctx.restore();
 }
 // Thumbs-up reaction (drawn, not an emoji glyph).
 function thumbsUp(ctx, x, y, s, o = {}) {

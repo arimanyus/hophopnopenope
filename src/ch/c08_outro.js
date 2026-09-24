@@ -213,32 +213,45 @@
     const title = `${o.title} #${o.num}`, tf = { font: 'ui', weight: 900, size: 70, color: INK.ink };
     for (tf.stretch = 0; tf.stretch > -4 && measure(ctx, title, tf).w > 740; tf.stretch--);
     txt(ctx, title, -280, 12, tf);
-    const df = { font: 'mono', weight: 800, size: 58 };
+    const df = { font: 'mono', weight: 800, size: o.dsize || 58 };
     txt(ctx, `+${o.add}`, -280, 100, { ...df, color: INK.green });
     txt(ctx, `\u2212${o.del}`, -280 + measure(ctx, `+${o.add}`, df).w + 34, 100, { ...df, color: INK.red });
     ink(ctx, ell(470, -140, 62, 62, 24), { fill: INK.red, line: 6, boil: .6 }); txt(ctx, String(o.badge), 470, -118, { font: 'ui', weight: 900, size: 70, color: INK.white, align: 'center' });
     ctx.restore();
   }
+  // Mirrors c01's frame 0 (the thumbnail): same toast position/scale/tilt, rings, slam multiples and ear tips from
+  // the bottom edge, so the loop reads. The ears spring up by reflex, and the head peeks up with dot pupils.
   function btn(ctx, t) {
-    const a = Math.max(0, age(t, T_BTN)), p = Math.exp(-a * 9), n = Math.floor(a * 12);   // n: pose index on twos
+    const a = Math.max(0, age(t, T_BTN)), n = Math.floor(a * 12);   // n: pose index on twos
+    const S = kf(a, [[0, 1.15], [.083, .982], [.125, 1]], x => x), imp = a > .07 ? Math.exp(-(a - .083) * 25) : 0, [sx, sy] = shake(t, 12 * imp + 10 * Math.exp(-a * 14));
+    const cx = 930, cy = 455, s = 1.32 * S, rot = -.07;
+    const bx = cx + s * (470 * Math.cos(rot) + 140 * Math.sin(rot)), by = cy + s * (470 * Math.sin(rot) - 140 * Math.cos(rot));
     fillPts(ctx, rect(0, 0, W, H), INK.night, false);
-    dotsIn(ctx, [0, 0, W, H], { spacing: 34, color: INK.nightLt, dir: [0, 1], from: 0, to: H, min: .2, max: .7 });
-    const [sx, sy] = shake(t, 14 * p), z = 1 + .06 * p + .012 * a;
-    const M = new DOMMatrix().translate(W / 2 + sx, H / 2 + sy).scale(z).translate(-W / 2, -H / 2);
-    const osc = Math.cos(n * 2) * Math.exp(-n * .5), len = 1 + .22 * Math.exp(-n * .6);   // damped ear wobble, stretch
-    const pose = { ...HOLD, lids: 0, eyes: 'dot', brows: .5, sq: -.28 * osc, hop: [1.25, 1.05, .9][n] ?? .85, earL: { a: -3 + 3 * osc, b: 5 * osc, len }, earR: { a: 3 - 12 * osc, b: -18 * osc, len } };
-    const A = litRabbit(ctx, RX, RY0, RS, pose, M);
-    ctx.save(); ctx.setTransform(M);
-    // the right ear's swing from flat to up, as speed arcs round its root
-    if (n < 2) { const bx = A.head[0] + .95 * RS, by = A.head[1] - 1.62 * RS; ctx.globalAlpha = n ? .45 : .9;
-      for (const r of [3.2, 4.1, 5]) { const pts = []; for (let k = 0; k <= 12; k++) { const th = (lerp(78, 8, k / 12) - 90) * Math.PI / 180; pts.push([bx + Math.cos(th) * r * RS, by + Math.sin(th) * r * RS]); } inkLine(ctx, pts, 9, INK.white, { taper: [.6, .1] }); }
-      ctx.globalAlpha = 1; }
-    const ts = 1.1 * slam(a, [1.2, 1.06, .98, 1.01]), tx = RX - 20, ty = 872 + (a < .09 ? 70 * (1 - a / .09) : 0), rot = -.07;
-    const bx = tx + ts * (470 * Math.cos(rot) + 140 * Math.sin(rot)), by = ty + ts * (470 * Math.sin(rot) - 140 * Math.cos(rot));
-    for (const r0 of [0, .3]) { const ra = a - r0; if (ra >= 0 && ra < .6) ring(ctx, bx, by, 70 + easeOut(ra / .6) * 1300, 16 * (1 - ra / .6), INK.cyan); }
-    toastFit(ctx, tx, ty, ts, { title: 'Small fix (again)', num: 4814, add: '28,406', del: '3', badge: 1, rot });
+    depth(ctx, 8, c => {
+      dotsIn(c, [0, 0, W, H], { spacing: 34, color: INK.nightLt, k: (x, y) => .2 + .75 * clamp(Math.hypot(x - cx, (y - cy) * 1.7) / 1150) });
+      speedLines(c, cx, cy, { n: 60, r0: 780, r1: 1900, w: 16, color: INK.nightLt, seed: 3 });
+    });
+    ctx.save(); ctx.translate(sx, sy);
+    // the reflex: the rabbit springs up from below the frame, overshoots, settles with its ears just under the toast
+    const up = [.55, 1.14, .93, 1.03][n] ?? 1, vib = Math.sin(boilN(t) * 2.1) * 3, len = [.95, .9, .72, .76][n] ?? .74;
+    const A = rabbit(ctx, 470, 1622 + (1 - up) * 280, 74, { eyes: 'dot', lids: 0, bags: 1, brows: .6, mouth: 'flat', sq: [-.3, -.12, .1][n] ?? 0,
+      earL: { a: -9 + vib, b: 0, len }, earR: { a: 9 - vib, b: 0, len }, noShadow: true });
+    for (const [e, sd] of [[A.earL, -1], [A.earR, 1]]) for (let i = 0; i < 3; i++) {
+      const ang = -Math.PI / 2 + sd * (.95 + i * .42), pts = [], ex = e[0], ey = e[1] + 120;
+      for (let j = 0; j <= 6; j++) { const r = lerp(70, 150, j / 6), w = Math.sin(j * 2.3 + boilN(t) * 1.7 + i) * 8; pts.push([ex + Math.cos(ang) * r - Math.sin(ang) * w, ey + Math.sin(ang) * r + Math.cos(ang) * w]); }
+      inkLine(ctx, pts, 10, INK.paper, { taper: [.1, .5] });
+    }
+    // ping rings from the badge, on the attack and repeating like a radar
+    for (let j = 0; j < 4; j++) {
+      const r = 90 * s + mod(a + j * .16, .64) * 1500, al = clamp(1.25 - r / 1100) * (j * .16 <= a + .32 ? 1 : 0);
+      if (al > .02) { ctx.save(); ctx.globalAlpha = clamp(al); outline(ctx, ell(bx, by, r, r, 72), 18 * (1 - r / 1500) + 5, INK.cyan, { seed: j }); ctx.restore(); }
+    }
+    if (a < .07) for (const [k, al] of [[1.2, .3], [1.1, .5]]) { ctx.save(); ctx.translate(cx, cy); ctx.rotate(rot * 1.4); ctx.scale(s * k, s * k); ctx.globalAlpha = al; outline(ctx, rrect(-500, -150, 1000, 300, 26), 9 / (s * k), INK.paper, { smooth: false }); ctx.restore(); }
+    toastFit(ctx, cx, cy, s, { title: 'Small fix (again)', num: 4814, add: '28,406', del: '3', badge: 1, rot, dsize: 84 });
+    ctx.save(); ctx.globalAlpha = .9; outline(ctx, ell(bx, by, 62 * s + 14 + a * 90, 62 * s + 14 + a * 90, 40), 7, INK.cyan); ctx.restore();
+    if (imp > .3) krackle(ctx, bx, by, 150 * s, { n: 22, size: 16, color: INK.cyan, seed: 5 });
     ctx.restore();
-    misregFrame(ctx, 16 * p, .4);
+    misregFrame(ctx, 14 * Math.exp(-a * 12), .4);
   }
 
   // ---------- the title card ----------

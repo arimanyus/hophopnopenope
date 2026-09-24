@@ -32,7 +32,7 @@ function burrow(ctx, t, o = {}) {
       for (let k = 0; k < 8; k++) fillPts(c, rect(-55, -70 + k * 19, 40 + hash(i * 9 + k) * 70, 7), k % 3 === 1 ? rgba(INK.red, .6) : rgba(INK.green, .55), false);
       fillPts(c, ell(0, -84, 8, 8, 10), INK.red); c.restore(); });
     c.strokeStyle = mood === 'grey' ? '#9A9A9A' : INK.red; c.lineWidth = 4; c.beginPath(); c.moveTo(190, 216); c.lineTo(360, 166); c.lineTo(560, 216); c.moveTo(250, 386); c.lineTo(430, 346); c.lineTo(360, 166); c.stroke();
-  });
+  }, { keep: true });
   // monitor wall
   const glow = o.glow ?? 1, scr = mood === 'grey' ? '#BDBDBD' : '#DDF6FB';
   const monitor = ([x, y, w, h], main) => {
@@ -62,7 +62,7 @@ function burrow(ctx, t, o = {}) {
   inkLine(ctx, [[1030, dy], [1000, 470], [1030, 340]], 10, INK.ink, { taper: [0, 0] });
   ink(ctx, [[975, 300], [1085, 300], [1105, 360], [955, 360]], { fill: INK.orange, line: 5, boil: .8, smooth: false });
   // foreground: dangling roots, out of focus
-  if (o.fg !== false) depth(ctx, 10, c => { for (let i = 0; i < 3; i++) inkLine(c, [[i * 820 - 40, -20], [i * 820 + 30 + wob(t, .2, i) * 12, 110 + i * 30], [i * 820 + 10, 190 + i * 40]], 22, '#120604', { taper: [.02, .85], seed: 40 + i }); });
+  if (o.fg !== false) depth(ctx, 10, c => { for (let i = 0; i < 3; i++) inkLine(c, [[i * 820 - 40, -20], [i * 820 + 30 + wob(t, .2, i) * 12, 110 + i * 30], [i * 820 + 10, 190 + i * 40]], 22, '#120604', { taper: [.02, .85], seed: 40 + i }); }, { keep: true });
 }
 
 // ---------- the chorus stage ----------

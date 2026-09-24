@@ -155,7 +155,7 @@ function sub(ctx, t, li, o = {}) {
 // sfx(ctx, 'HOP!', x, y, size, age, {rot, color, fill2, life}) - pops with overshoot, jitters, then snaps away.
 function sfx(ctx, s, x, y, size, age, o = {}) {
   const life = o.life ?? .9; if (age < 0 || age > life) return;
-  const k = backOut(clamp(age / .1), 3), out = clamp((age - (life - .12)) / .12), j = shake(age + x, 3 * (1 - age / life));
+  const k = backOut(clamp((age + 1 / 24) / .1), 3), out = clamp((age - (life - .12)) / .12), j = shake(age + x, 3 * (1 - age / life));
   txt(ctx, s, x + j[0], y + j[1], { font: 'display', weight: 900, stretch: o.stretch ?? 2, italic: true, size: size * k * (1 + out * .3), align: 'center', base: 'middle', rot: o.rot ?? -.1,
     color: o.color || INK.yellow, stroke: { w: size * .09, color: INK.ink }, extrude: { dx: size * .06, dy: size * .08, color: o.shadow || INK.ink }, dots: o.dots === false ? null : { color: rgba(o.dotColor || INK.orange, .9), spacing: size * .08 }, alpha: 1 - out });
 }

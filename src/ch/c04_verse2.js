@@ -17,12 +17,12 @@
     poem: { fill: mix(INK.pinkLt, INK.orangeLt, .4), rim: mix(INK.pink, INK.orange, .2), dots: INK.pink },
   };
   // One main blob plus satellites straddling its edge; the frame falls off into bare paper at the corners.
-  // o: {k: bloom 0..1 (grows from o.at), c: centre, r: [rx, ry], n: satellites}
+  // o: {k: bloom 0..1 (grows from o.at), c: centre, r: [rx, ry], n: satellites, sr: satellite scale}
   function moodWash(ctx, t, col, seed = 1, o = {}) {
     const P = typeof col === 'string' ? MOOD[col] : col, k = o.k ?? 1, at = o.at || [960, 540];
     const [mx, my] = o.c || [960, 540], [RX, RY] = o.r || [800, 480], B = [[mx, my, RX, RY]];
     for (let i = 0; i < (o.n ?? 5); i++) {
-      const a = (i + .3 * hash(seed * 3 + i)) / (o.n ?? 5) * TAU + seed, d = .8 + .25 * hash(seed * 5 + i), r = hrange(seed * 7 + i, 210, 380);
+      const a = (i + .3 * hash(seed * 3 + i)) / (o.n ?? 5) * TAU + seed, d = .8 + .25 * hash(seed * 5 + i), r = hrange(seed * 7 + i, 210, 380) * (o.sr ?? 1);
       B.push([mx + Math.cos(a) * RX * d, my + Math.sin(a) * RY * d, r, r * hrange(seed * 11 + i, .65, 1)]);
     }
     const pts = B.map(([x, y, rx, ry], i) => {
@@ -122,8 +122,10 @@
   const WATCH = [1120, 560];
   function sixty(ctx, t) {
     const SNAP = 47.88, a = ago(t, SNAP), hk = kick(t, SNAP, 9), [wx, wy] = WATCH, r = 380;
-    const z = lerp(1.34, 1, easeOut(seg(t, 47.74, 48.75))) * (1 + .07 * hk), [dx, dy] = drift(t, 7, .6), [sx, sy] = shake(t, 16 * hk + (a < 0 ? 3 : 0));
-    const K = [lerp(wx, 980, easeOut(seg(t, 47.74, 48.3))) + dx + sx, lerp(wy, 600, easeOut(seg(t, 47.74, 48.3))) + dy + sy, z, .012 * wob(t, .35) - .02 * hk];
+    // hold the hand-off close-up, then whip back on the snap so the watch lands clear of the caption (top left)
+    const out = a < 0 ? 0 : expoOut(clamp(a / .3)), z = (a < 0 ? lerp(1.34, 1.38, seg(t, 47.74, SNAP)) : lerp(1.38, .94, out) - .03 * seg(t, 48.2, 48.75)) * (1 + .05 * hk);
+    const [dx, dy] = drift(t, 7, .6), [sx, sy] = shake(t, 16 * hk + (a < 0 ? 3 : 0));
+    const K = [lerp(wx, 820, out) + dx + sx, lerp(wy, 500, out) + dy + sy, z, .012 * wob(t, .35) - .02 * hk];
     bg(ctx, K, c => {
       moodWash(c, t, 'hope', 2);
       if (a >= 0 && a < .5) speedLines(c, wx, wy, { r0: r * 1.2, r1: 2100, n: 64, w: 12, color: rgba(INK.orange, .8 * (1 - a / .5)) });
@@ -155,7 +157,7 @@
 
   // ======================================================================================================
   // 2 · 48.75 "force-push on the branch": `git push --force`, then a Hokusai great wave of green diff lines
-  const ENTER = 49.40, CRASH = 50.22;
+  const ENTER = 49.435, CRASH = 50.22;
   const BR = [[-40, 560], [240, 522], [520, 474], [760, 452]];                       // the branch fix/small-fix
   const GRIP = [500, 478];
   function tree(ctx, t) {
@@ -373,25 +375,25 @@
   // 4 · 52.55 "never had a chance": alone on the wet page in deep-blue ink rain; the last bunny fades in its paws.
   function rain(ctx, t, lt, dur) {
     const tc = twos(t), p = lt / dur, [dx, dy] = drift(t, 5, .4);
-    const K = [860 + dx, 620 + dy + 20 * p, 1.0 + .1 * easeInOut(p), 0];
-    bg(ctx, K, c => { moodWash(c, t, 'deep', 5, { c: [880, 560], r: [700, 470] }); }, 6, .5);
+    const K = [940 + dx, 700 + dy + 20 * p, 1.0 + .08 * easeInOut(p), 0];
+    bg(ctx, K, c => { moodWash(c, t, 'deep', 5, { c: [880, 600], r: [700, 470] }); }, 6, .5);
     cam(ctx, ...K);
     // wet floor with a pale puddle under it
     fillPts(ctx, [[-300, 1000], [2300, 985], [2300, 1500], [-300, 1500]], mix(INK.white, INK.blue, .12), false);
-    ctx.save(); ctx.globalAlpha = .9; fillPts(ctx, blob(860, 1050, 460, 5, .2, 16, 60), mix(INK.blue, INK.white, .55)); ctx.restore();
+    ctx.save(); ctx.globalAlpha = .9; fillPts(ctx, blob(760, 1050, 460, 5, .2, 16, 60), mix(INK.blue, INK.white, .55)); ctx.restore();
     outline(ctx, [[-300, 1000], [2300, 985], [2300, 1500], [-300, 1500]], 5, INK.ink, { smooth: false });
     const fade = seg(t, 53.1, 53.64), gone = ago(t, 53.64) > 0;
     const fold = backOut(seg(t, 52.9, 53.02), 2), droop = smooth(seg(t, 53.6, 53.85));
     const lids = Math.max(lerp(.3, .45, droop), blink(t, [52.62, 54.0], .14));
-    const s = 66, gx = 860, gy = 1160, hug = { a: 5, e: -135 };
+    const s = 66, gx = 760, gy = 1160, hold = { a: 16, e: -30 };
     const pose = {
-      sit: 1, bags: BAGS, eyes: 'open', lids, ly: .8, lx: -.05, browTilt: -2.5, mouth: 'flat', turn: .05, noShadow: true,
-      armL: hug, armR: hug, pawL: 'mitt', pawR: 'mitt',
+      sit: 1, bags: BAGS, eyes: 'open', lids, ly: .85, lx: -.05, browTilt: -2.5, mouth: 'flat', turn: .05, noShadow: true,
+      armL: hold, armR: hold, pawL: 'mitt', pawR: 'mitt',
       earL: { a: lerp(-24, -62, droop), b: lerp(-18, -70, droop) }, earR: { a: lerp(18, 40, fold), b: lerp(10, 118, fold) },
     };
     const A = rabbit(ctx, gx, gy, s, pose);
-    // the last outdated bunny, cradled, fading to halftone dots
-    const bs = 180, bx = (A.pawL[0] + A.pawR[0]) / 2, by = (A.pawL[1] + A.pawR[1]) / 2 + bs * .3;
+    // the last outdated bunny, sitting in its lap, fading to halftone dots (then the paws hold nothing)
+    const bs = 2.9 * s, bx = gx, by = gy - .15 * s;
     if (!gone) sprite(ctx, c => commentBunny(c, bx, by, bs, { state: 'outdated', eyes: 'sad', look: .2, rot: -.05 }), c => dotOut(c, screenBox(ctx, bx - bs * .7, by - bs * 1.4, bx + bs * .7, by + bs * .15), fade, 3, 12));
     else { const a = ago(t, 53.64); ctx.save(); ctx.globalAlpha = clamp(1 - a / .5); ctx.beginPath(); for (let i = 0; i < 14; i++) { const x = bx + (hash(i) - .5) * 200, y = by - 80 - a * (80 + hash(i + 3) * 180), r = 6 + hash(i + 5) * 6; ctx.moveTo(x + r, y); ctx.arc(x, y, r, 0, TAU); } ctx.fillStyle = '#8A8496'; ctx.fill(); ctx.restore(); }
     // the paws again, over the bunny, so it sits in them
@@ -516,7 +518,7 @@
   // ======================================================================================================
   // 7-8 · 57.30 "I drew a diagram," / 58.95 "you didn't read a thing": the easel, the unveil, the scroll past.
   const UNVEIL = 58.06, BOARD = [860, 190, 920, 700];
-  function diagram(ctx, t, arrows) {
+  function diagram(ctx, t, arrows, note = 1) {
     const [bx, by] = BOARD, X = [1020, 1320, 1620], f = { font: 'ui', weight: 800, size: 38 };
     ctx.save(); ctx.setLineDash([16, 12]); ctx.lineWidth = 4; ctx.strokeStyle = INK.ink; ctx.beginPath(); for (const x of X) { ctx.moveTo(x, by + 140); ctx.lineTo(x, by + 650); } ctx.stroke(); ctx.restore();
     ['Client', 'API', 'DB'].forEach((s, i) => { ink(ctx, rrect(X[i] - 115, by + 50, 230, 88, 12), { fill: mix(INK.yellow, INK.white, .55), line: 5, smooth: false, boil: .6 }); txt(ctx, s, X[i], by + 108, { ...f, align: 'center' }); });
@@ -528,7 +530,7 @@
       fillPts(ctx, [[x1, y], [x1 - dirn * 24, y - 13], [x1 - dirn * 24, y + 13]], i === 2 ? INK.red : INK.ink, false);
       if (k > .6) txt(ctx, s, (x0 + X[b]) / 2, y - 16, { font: 'ui', weight: 700, size: 32, align: 'center', color: i === 2 ? INK.red : INK.ink });
     });
-    const nk = clamp(arrows * 4 - 3.4); if (nk > 0) {
+    const nk = clamp(note); if (nk > 0) {
       ctx.save(); ctx.translate(1470, by + 610); ctx.rotate(-.05); ctx.scale(backOut(nk, 2.6), backOut(nk, 2.6));
       fillPts(ctx, rect(-128, -44, 256, 88), INK.ink, false); ink(ctx, rect(-136, -52, 256, 88), { fill: INK.red, line: 4, smooth: false });
       txt(ctx, 'null?', -8, 6, { font: 'hand', weight: 800, size: 44, color: INK.white, align: 'center', base: 'middle' }); ctx.restore();
@@ -548,7 +550,7 @@
       if (sc > 0) { // scrolled past: the diagram smears upward into speed lines (multiples, never blur)
         const off = -easeIn(sc) * 1400;
         for (let g = 3; g >= 0; g--) { ctx.save(); ctx.globalAlpha = g ? .22 : 1; ctx.translate(0, off + g * 90 * (1 - sc) + g * 40); diagram(ctx, t, 1); ctx.restore(); }
-      } else diagram(ctx, t, o.arrows ?? 1);
+      } else diagram(ctx, t, o.arrows ?? 1, o.note ?? 1);
     }
     if (o.smear > 0) { ctx.save(); ctx.globalAlpha = o.smear; streaks(ctx, [bx, by, bx + bw, by + bh + 400], { dir: [0, -1], n: 36, len: 520, w: 9, color: INK.ink, seed: 2 }); streaks(ctx, [bx, by, bx + bw, by + bh + 400], { dir: [0, -1], n: 14, len: 400, w: 7, color: INK.red, seed: 5 }); ctx.restore(); }
     ctx.restore();
@@ -570,7 +572,7 @@
     const K = [1000 + dx, 560 + dy, 1.0 + .05 * easeInOut(p) + .05 * uk, 0];
     bg(ctx, K, c => moodWash(c, t, 'hope', 9, { c: [1100, 540] }));
     cam(ctx, ...K);
-    easel(ctx, t, { drape: au < 0 ? 0 : expoOut(clamp(au / .14)) * .96 + (au >= .14 ? .04 : 0), arrows: seg(t, 58.14, 58.85) });
+    easel(ctx, t, { drape: au < 0 ? 0 : expoOut(clamp(au / .14)) * .96 + (au >= .14 ? .04 : 0), arrows: seg(t, UNVEIL - VLEAD, UNVEIL + .13), note: seg(t, 58.24, 58.36) });
     if (au >= 0 && au < 1.2) for (let i = 0; i < 6; i++) { const k = backOut(clamp((au - i * .07) / .14), 3) * (1 - clamp((au - .6 - i * .05) / .3)); if (k > .02) sparkle(ctx, [900, 1760, 1830, 820, 1300, 1700][i], [170, 150, 600, 820, 110, 930][i], 38 * k, tc * 2 + i, i % 2 ? INK.yellow : INK.white); }
     // the rabbit yanks the cord, then presents, proud
     const crouch = seg(t, 57.84, UNVEIL - .05), yank = au >= 0, pr = smooth(seg(t, UNVEIL + .1, UNVEIL + .35));
@@ -649,10 +651,10 @@
     }
     if (!posted) button(ctx, 960, 480, 250, 84, 'Comment', { fill: INK.green, press: ck > -.06 && ck < .12 ? 1 : 0, size: 36 });
     // the reply: coderabbitai itself, obliging
-    const rk = seg(T, REPLY, REPLY + .1);
+    const rk = seg(T, REPLY - VLEAD, REPLY - VLEAD + .1);
     if (rk > 0) {
-      ctx.save(); ctx.translate(110, 650); const q = lerp(.7, 1, backOut(rk, 2.4)); ctx.scale(1.6 * q, 1.6 * q); ctx.globalAlpha *= clamp(rk * 4);
-      commentCard(ctx, 0, 0, 700, T, { author: 'coderabbitai', kind: 'rabbit', time: 'just now', body: ['     Reviews paused'], buttons: false, size: 30 });
+      ctx.save(); ctx.translate(110, 650); const q = lerp(.7, 1, backOut(rk, 2.4)); ctx.scale(1.6 * q, 1.6 * q);
+      commentCard(ctx, 0, 0, 480, T, { author: 'coderabbitai', kind: 'rabbit', time: 'just now', body: ['     Reviews paused'], buttons: false, size: 30 });
       ink(ctx, rrect(84, 102, 34, 34, 7), { fill: INK.green, line: 3, smooth: false, boil: .3 }); inkLine(ctx, [[92, 119], [99, 127], [111, 110]], 5, INK.white, { taper: [0, 0], smooth: false });
       ctx.restore();
     }
@@ -694,11 +696,14 @@
     bg(ctx, K, c => moodWash(c, FREEZE, 'hurt', 11, { c: [980, 520] }));
     cam(ctx, ...K); pauseScene(ctx, T, eyes); ctx.restore();
   }
+  const CU0 = [1420, 592, 2.3], CU1 = [1445, 602, 2.48];   // the frozen face close-up, start and end of its creep
   function frozen(ctx, t) {
     BOIL = 0; BOIL_T = FREEZE - .01;
     const FREEZE_K = pauseK(FREEZE - .01);
     const slide = smooth(clamp(ago(t, 63.20) / .17)), lids = Math.max(lerp(.12, .42, slide), blink(t, [63.80], .18));
-    const push = smooth(seg(t, 63.0, 64.55)), K = [lerp(FREEZE_K[0], 1300, push), lerp(FREEZE_K[1], 545, push), lerp(FREEZE_K[2], 1.32, push), 0];
+    // hold the wide freeze, then a fast zoom onto the face (frozen cursor left of frame) so the eye slide reads; a slow creep after
+    const zin = expoOut(seg(t, 63.06, 63.16)), creep = smooth(seg(t, 63.16, 64.6));
+    const K = [0, 1, 2].map(i => lerp(FREEZE_K[i], lerp(CU0[i], CU1[i], creep), zin)).concat(0);
     const insert = t >= 64.16 && t < 64.33;
     if (!insert) frozenScene(ctx, FREEZE - .01, { lx: lerp(-.15, 0, slide), ly: lerp(.75, -.05, slide), lids }, K);
     else pauseSign(ctx, t);
@@ -758,39 +763,41 @@
     if (k >= 1) { fn(ctx); return; }
     if (k <= 0) return;
     sprite(ctx, fn, c => { c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalCompositeOperation = 'destination-in';
-      dotsIn(c, box, { spacing: 18, size: 1.1, color: '#000', k: (x, y) => clamp(k * 2.6 - 1 + (1 - (y - box[1]) / (box[3] - box[0])) * .8) * 1.3 }); c.restore(); });
+      dotsIn(c, box, { spacing: 18, size: 1.1, color: '#000', k: (x, y) => clamp(k * 2.6 - 1 + (1 - (y - box[1]) / (box[3] - box[1])) * .8) * 1.3 }); c.restore(); });
   }
   function poem(ctx, t, lt, dur) {
     BOIL_T = t;
     const tc = twos(t);
     if (t < 65.04) { // A: the un-pause
-      const K = [1330, 545, 1.32, 0], still = t < 64.8;
+      // continuous from the frozen close-up; the camera pulls back as the rabbit stands and steps off the laptop
+      const pull = expoOut(seg(t, 64.72, 64.98)), K = [0, 1, 2].map(i => lerp(CU1[i], [1380, 500, 1.9][i], pull)).concat(0), still = t < 64.72;
       BOIL = 0; frozenScene(ctx, FREEZE - .01, { lx: 0, ly: -.05, lids: .42, rabbit: false }, K);
       cam(ctx, ...K); pauseRabbit(ctx, FREEZE - .01, { lx: 0, ly: -.05, lids: .42, greyLaptop: true, rabbitFn: still ? undefined : () => {} }); ctx.restore(); BOIL = 1;
       ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); duotone(ctx, INK.ink, mix(INK.paper, INK.white, .3), 1.2); ctx.restore();
-      bg(ctx, K, c => moodWash(c, t, 'poem', 14, { k: easeOut(seg(t, 64.7, 65.1)), at: [RX - 120, 520], c: [RX - 170, 520], r: [330, 300], n: 4 }), 0, 1);
+      bg(ctx, K, c => moodWash(c, t, 'poem', 14, { k: easeOut(seg(t, 64.7, 65.1)), at: [RX - 120, 520], c: [RX - 170, 540], r: [250, 240], n: 5, sr: .5 }), 0, 1);
       cam(ctx, ...K);
       if (!still) laptop(ctx, RX, RY - 60, true);
-      const rise = seg(t, 64.8, 64.92), grab = seg(t, 64.88, 64.98), hasPen = t >= 64.96;
+      const rise = seg(t, 64.72, 64.84), grab = seg(t, 64.84, 64.96), hasPen = t >= 64.94;
+      const rk = seg(t, 64.6, 64.9); // the un-pause shockwave: colour rings off the rabbit
+      if (rk > 0 && rk < 1) for (const [d, c] of [[0, INK.pink], [.18, INK.orange]]) { const q = clamp(rk - d); if (q > 0) outline(ctx, ell(RX - 60, RY - 200, 80 + 700 * easeOut(q), 60 + 560 * easeOut(q), 40), 18 * (1 - q) + 3, c); }
       const pose = {
         sit: 1 - smooth(rise), sq: rise > 0 && rise < 1 ? -.15 : 0, bags: BAGS, turn: -.15, eyes: 'open', lx: 0, ly: -.05, lids: t < 64.8 ? .42 : .3, mouth: 'flat',
         armL: { a: lerp(30, 20, rise), e: lerp(-110, 20, rise) }, armR: grab > 0 ? { a: lerp(118, 160, grab), e: lerp(-58, hasPen ? 20 : 70, grab) } : { a: 118, e: -58 },
-        pawL: 'mitt', pawR: hasPen ? 'fist' : 'point', pen: !hasPen, earL: { a: -12, b: lerp(22, 0, rise) }, earR: { a: 14, b: lerp(-30, 0, rise) },
+        pawL: rise > 0 ? 'mitt' : 'point', pawR: hasPen ? 'fist' : 'point', pen: !hasPen, earL: { a: -12, b: lerp(22, 0, rise) }, earR: { a: 14, b: lerp(-30, 0, rise) },
       };
       const rx = RX - 170 * smooth(rise);
-      colourIn(ctx, seg(t, 64.6, 64.78), screenBox(ctx, rx - 200, RY - 480, rx + 200, RY), c => {
+      colourIn(ctx, seg(t, 64.6, 64.7), screenBox(ctx, rx - 200, RY - 480, rx + 200, RY), c => {
         const A = rabbit(c, rx, RY, 32, pose);
         if (hasPen) pen(c, A.pawR[0] - 20, A.pawR[1] - 36, D(-60), 110, 15);
       });
       if (rise <= 0) laptop(ctx, RX, RY - 60, true);
       ctx.restore();
-      const g = seg(t, 64.6, 64.8);
-      FRAME.post.push((c, tt) => osdTear(c, tt, g));
+      FRAME.post.push((c, tt) => { osdTear(c, tt, seg(tt, 64.6, 64.7), '\u258C\u258C PAUSE', 90, 'left'); if (tt >= 64.64) osdTear(c, tt, seg(tt, 64.9, 65.0), 'PLAY \u25B6', 1830, 'right'); });
       return;
     }
     // B: the card close-up, the red pen writing line by line
     const p = seg(t, 65.04, 66.55), [dx, dy] = drift(t, 5, .6);
-    const K = [990 + dx, 610 + dy, 1.0 + .04 * p, -.01];
+    const K = [990 + dx, 530 + dy, 1.0 + .04 * p, -.01];
     BOIL = 0; bg(ctx, [1360, 480, 1.6, 0], c => pauseScene(c, FREEZE - .01, { noCursor: true, greyLaptop: true, rabbitFn: () => {} }), 10, 1); BOIL = 1;
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); duotone(ctx, INK.ink, mix(INK.paper, INK.white, .3), 1.2); ctx.restore();
     bg(ctx, K, c => moodWash(c, t, 'poem', 14, { k: 1, c: [1000, 600], r: [760, 440] }), 6, .6);
@@ -804,21 +811,21 @@
     ctx.restore();
   }
   // the VHS OSD tearing itself apart as the rabbit un-pauses
-  function osdTear(ctx, t, g) {
+  function osdTear(ctx, t, g, s, x, align) {
     if (g >= 1) return;
     const c = pushLayer(); c.setTransform(1, 0, 0, 1, 0, 0);
-    c.font = '700 64px "JetBrains Mono"'; c.textBaseline = 'top'; c.fillStyle = '#fff'; c.shadowColor = 'rgba(0,0,0,.6)'; c.shadowOffsetX = 4; c.shadowOffsetY = 4; c.fillText('\u258C\u258C PAUSE', 90, 70);
+    c.font = '700 64px "JetBrains Mono"'; c.textBaseline = 'top'; c.textAlign = align; c.fillStyle = '#fff'; c.shadowColor = 'rgba(0,0,0,.6)'; c.shadowOffsetX = 4; c.shadowOffsetY = 4; c.fillText(s, x, 70);
     popLayer();
-    const f = Math.floor(t * 24);
-    for (let i = 0; i < 8; i++) { if (hash(f * 3 + i) < g * 1.1) continue; const y = 60 + i * 12, dx = (hash(f + i * 7) - .5) * 400 * g; ctx.drawImage(c.canvas, 0, y, 700, 12, dx, y, 700, 12); }
+    const f = Math.floor(t * 24), x0 = align === 'right' ? x - 520 : x - 20;
+    for (let i = 0; i < 8; i++) { if (g > 0 && hash(f * 3 + i) < g * 1.1) continue; const y = 60 + i * 12, dx = (hash(f + i * 7) - .5) * 400 * g; ctx.drawImage(c.canvas, x0, y, 560, 12, x0 + dx, y, 560, 12); }
   }
 
   // ======================================================================================================
   // 12 · 66.55 "all the same" (held "same"): fold, fly, land, Resolved in one click; T-30; the bar becomes the stage floor.
-  const LAUNCH = 66.94, LAND = 67.92, RESOLVE = 68.20, FLASH30 = 68.43, BAR = [480, 930];
-  // paper aeroplane, side view, pointing right (s = length)
-  function paperPlane(ctx, x, y, s, rot) {
-    ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
+  const LAUNCH = 66.94, LAND = 67.988, RESOLVE = 68.20, FLASH30 = 68.43, BAR = [480, 930];
+  // paper aeroplane, side view, pointing right (s = length); flip points it left
+  function paperPlane(ctx, x, y, s, rot, flip) {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(rot); if (flip) ctx.scale(-1, 1);
     const nose = [s * .55, 0], L = { line: 5, smooth: false, boil: .8 };
     ink(ctx, [nose, [-s * .5, s * .15], [-s * .42, s * .02]], { fill: mix(INK.paper, INK.paperDk, .7), ...L });
     ink(ctx, [nose, [-s * .45, -s * .27], [-s * .3, s * .02]], { fill: INK.white, ...L });
@@ -842,78 +849,92 @@
     BOIL = 0; bg(ctx, K, c => { moodWash(c, FREEZE, 'hurt', 11, { c: [980, 520] }); pauseScene(c, FREEZE - .01, { noCursor: true, greyLaptop: true, rabbitFn: () => {} }); }, 0, 1); BOIL = 1;
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); duotone(ctx, INK.ink, mix(INK.paper, INK.white, .3), 1.2); ctx.restore();
   }
-  const GLIDE_K = t => { const e = easeInOut(seg(t, 67.08, LAND)), [dx, dy] = drift(t, 6, .5); return [lerp(1180, 780, e) + dx, lerp(440, 720, e) + dy, lerp(1.12, 1.24, e) + .05 * kick(t, RESOLVE, 8), 0]; };
-  const glidePath = f => [lerp(2050, BAR[0] + 40, f) + Math.sin(f * 5.2) * 110, lerp(150, BAR[1] - 50, f * f) - Math.sin(f * Math.PI) * 60 + Math.sin(f * 9) * 22];
+  const FLY = 67.0;
+  const GLIDE_K = t => { const e = easeInOut(seg(t, FLY, LAND)), [dx, dy] = drift(t, 6, .5); return [lerp(1180, 780, e) + dx, lerp(440, 720, e) + dy, lerp(1.12, 1.24, e) + .05 * kick(t, RESOLVE, 8), 0]; };
+  const glidePath = f => [lerp(1170, BAR[0] + 40, f) + Math.sin(f * 5.2) * 90, lerp(360, BAR[1] - 50, Math.pow(f, 1.5)) - Math.sin(f * Math.PI) * 40 + Math.sin(f * 9) * 18];
   function plane(ctx, t, lt, dur) {
     BOIL_T = t;
-    const tc = twos(t), aL = ago(t, LAUNCH);
-    if (t < 67.12) { // fold on twos, then throw
-      const K = [990, 610, 1.04, -.01];
+    const tc = twos(t), aL = ago(t, LAUNCH), aR = ago(t, RESOLVE);
+    if (t < FLY) { // A: the poem card folds on twos, then it's thrown off frame left
+      const K = [990, 530, 1.04 + .05 * seg(t, 66.55, 66.94), -.01];
       BOIL = 0; bg(ctx, [1360, 480, 1.6, 0], c => pauseScene(c, FREEZE - .01, { noCursor: true, greyLaptop: true, rabbitFn: () => {} }), 10, 1); BOIL = 1;
       ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); duotone(ctx, INK.ink, mix(INK.paper, INK.white, .3), 1.2); ctx.restore();
       bg(ctx, K, c => moodWash(c, t, 'poem', 14, { k: 1, c: [1000, 600], r: [760, 440] }), 6, .6);
       cam(ctx, ...K);
-      const fk = twos(seg(t, 66.68, 66.92)) * 2;
-      if (fk <= 0) { const lift = seg(t, 66.55, 66.68); ctx.save(); ctx.translate(990, 610); ctx.rotate(-.03 * lift); ctx.scale(1 + .03 * lift, 1 + .03 * lift); ctx.translate(-990, -610); poemCard(ctx, t, { all: true }); ctx.restore();
-        bigPaw(ctx, 1400 + 500 * easeIn(lift), 870 + 300 * easeIn(lift), 62, D(40), { pen: [1330 + 500 * easeIn(lift), 830 + 300 * easeIn(lift)], len: 1100 }); }
-      else if (aL < 0) paperPlane(ctx, 990, 610, lerp(1020, 520, fk / 2), -.03 - .1 * fk, fk);
-      else { const e = expoOut(clamp(aL / .18)); paperPlane(ctx, lerp(990, 1700, e), lerp(610, 200, e), lerp(520, 150, e), lerp(-.23, -.35, e), 2); streaks(ctx, [900, 200, 1700, 700], { dir: [.86, -.5], n: 14, len: 300, w: 6, color: INK.pink }); }
-      ctx.restore();
-      return;
-    }
-    if (t < FLASH30 - VLEAD || (t >= FLASH30 - VLEAD + 4 / 24 && t < FLOOR)) { // glide across the frozen world, land, get resolved
-      const p = seg(t, 67.12, FLOOR), [dx, dy] = drift(t, 6, .5), rk = kick(t, RESOLVE, 8);
-      const K = [960 + dx, 560 + dy + 20 * p, 1.0 + .08 * easeInOut(p) + .04 * rk, 0];
-      BOIL = 0; bg(ctx, K, c => { moodWash(c, FREEZE, 'hurt', 11, { c: [980, 520] }); pauseScene(c, FREEZE - .01, { noCursor: true, greyLaptop: true, rabbitFn: () => {} }); }, 0, 1); BOIL = 1;
-      ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); duotone(ctx, INK.ink, mix(INK.paper, INK.white, .3), 1.2); ctx.restore();
-      cam(ctx, ...K);
-      // the rabbit (still in colour) watches it go
-      const done = ago(t, RESOLVE) > .1, fold = backOut(seg(t, RESOLVE + .08, RESOLVE + .2), 2);
-      rabbit(ctx, RX - 170, RY, 32, { bags: BAGS, turn: -.45, lx: -.8, ly: done ? .2 : -.3, lids: done ? .5 : .15, mouth: done ? 'flat' : 'smile', armR: { a: lerp(120, 20, seg(t, 67.1, 67.5)), e: 10 }, pawR: 'open', armL: { a: 16, e: 20 }, earL: { a: -12, b: lerp(0, -100, fold) }, earR: { a: 14, b: 0 } });
-      // the flight: a long floaty S across the frame, a dashed pink trail
-      const fl = seg(t, 67.12, LAND), path = f => [lerp(1500, 520, f) + Math.sin(f * 5.2) * 90, 180 + Math.sin(f * Math.PI) * -40 + f * f * 740 + Math.sin(f * 9) * 18];
-      const trail = []; for (let i = 0; i <= 30; i++) { const f = fl * i / 30; trail.push(path(f)); }
-      if (fl > 0) { ctx.save(); ctx.setLineDash([18, 16]); ctx.lineWidth = 5; ctx.strokeStyle = INK.pink; ctx.beginPath(); tracePath(ctx, trail, false, true); ctx.stroke(); ctx.restore(); }
-      const aR = ago(t, RESOLVE), land = seg(t, LAND - .02, LAND + .1);
-      if (aR < 0) {
-        const q = path(Math.min(1, fl)), q2 = path(Math.min(1, fl + .02)), ang = Math.atan2(q2[1] - q[1], q2[0] - q[0]);
-        const lx = fl >= 1 ? q[0] - 60 * easeOut(land) : q[0], ly = fl >= 1 ? q[1] + 10 * easeOut(land) : q[1];
-        paperPlane(ctx, lx, ly, 170, fl >= 1 ? lerp(ang, Math.PI + .1, easeOut(land)) : ang, 2);
-        if (land > 0 && land < 1) krackle(ctx, lx, ly + 30, 60, { n: 10, size: 10 });
-      } else { // collapsed into a Resolved bar (squash on twos)
-        const sq = backOut(clamp(twos(aR) / .12), 2.2);
-        ctx.save(); ctx.translate(480, 930); ctx.scale(lerp(.3, 1, sq), lerp(2.2, 1, sq));
-        commentCard(ctx, -330, -28, 660, t, { state: 'resolved', author: 'coderabbitai', by: 'you', size: 30 }); ctx.restore();
+      const step = t < 66.62 ? 0 : t < 66.70 ? 1 : t < 66.78 ? 2 : 3;
+      if (step === 0) {
+        const lift = seg(t, 66.55, 66.62); ctx.save(); ctx.translate(990, 610); ctx.rotate(-.03 * lift); ctx.translate(-990, -610); poemCard(ctx, t, { all: true }); ctx.restore();
+        bigPaw(ctx, 1400 + 600 * easeIn(lift), 870 + 360 * easeIn(lift), 62, D(40), { pen: [1330 + 600 * easeIn(lift), 830 + 360 * easeIn(lift)], len: 1100 });
+      } else {
+        const e = aL < 0 ? 0 : expoOut(clamp(aL / .12));
+        ctx.save(); ctx.translate(lerp(990, -500, e), lerp(610, 150, e)); ctx.rotate(.03 * step + .25 * e); const q = lerp(1 - .1 * step, .25, e); ctx.scale(-q, q);
+        foldPose(ctx, step, 1020, 560); ctx.restore();
+        if (aL < 0) for (let i = 0; i < 6; i++) { const an = i / 6 * TAU + step; inkLine(ctx, [[990 + Math.cos(an) * 420, 680 + Math.sin(an) * 250], [990 + Math.cos(an) * 480, 680 + Math.sin(an) * 290]], 6, INK.ink, { taper: [0, .7] }); }
+        else streaks(ctx, [-200, 150, 1100, 700], { dir: [-.93, -.36], n: 16, len: 420, w: 7, color: INK.pink });
       }
-      // the cursor, in colour, arrives and clicks without looking
-      const cin = expoOut(seg(t, 68.0, 68.16)), cout = easeIn(seg(t, 68.3, 68.55));
-      if (cin > 0 && cout < 1) cursor(ctx, lerp(-100, 700, cin) + 900 * cout, lerp(1200, 960, cin) - 500 * cout, 150, { click: aR >= 0 && aR < .3 ? aR / .3 : 0 });
       ctx.restore();
       return;
     }
-    if (t < FLOOR) { // 4-frame insert: the watch flashes T-30
-      const a = ago(t, FLASH30);
+    const inFlash = t >= FLASH30 - VLEAD && t < FLASH30 - VLEAD + 4 / 24;
+    if (inFlash) { // D: 4-frame insert, the watch flashes T-30
+      const a = ago(t, FLASH30), r = 420 * (1.06 - .06 * clamp(a / .12));
       fillPts(ctx, rect(0, 0, W, H), INK.red, false);
-      speedLines(ctx, 960, 540, { r0: 480, r1: 1800, n: 70, w: 14, color: INK.redDk });
-      pocketWatch(ctx, 960, 560, 440 * (1.05 - .05 * clamp(a / .1)), { secs: clockSecs(16, 59, 30), left: 30, total: 90, digital: 'T\u221230s', rot: .04 });
+      speedLines(ctx, 960, 560, { r0: 470, r1: 1800, n: 70, w: 14, color: INK.redDk });
+      pocketWatch(ctx, 960, 580, r, { secs: clockSecs(16, 59, 30), left: 30, total: 90, digital: false, rot: .04 });
+      watchLCD(ctx, 960, 580, r, .04, 'T\u221230s', a);
       return;
     }
-    // the Resolved bar grows into the chorus-2 stage floor
-    const g = seg(t, FLOOR, 69.2), e = easeInOut(g), hz = 660;
-    fillPts(ctx, rect(0, 0, W, H), mix(mix(INK.paper, INK.ink, .3), INK.blue, smooth(seg(t, 68.85, 69.15))), false);
-    if (t > 68.9) dotsIn(ctx, [0, 0, W, hz], { spacing: 40, color: rgba(INK.ink, .22), dir: [0, 1], from: 0, to: H, min: 0, max: .6 });
-    const bar = [[480 - 330, 902], [480 + 330, 902], [480 + 330, 959], [480 - 330, 959]], fl = [[-200, hz], [W + 200, hz], [W + 900, H + 60], [-900, H + 60]];
-    const zoomed = bar.map(([x, y]) => [lerp(960, (x - 480) * 3.2 + 960, easeOut(clamp(g * 2))), lerp(540, (y - 930) * 3.2 + 700, easeOut(clamp(g * 2)))]);
-    const Q = zoomed.map((p, i) => [lerp(p[0], fl[i][0], smooth(clamp(g * 1.6 - .5))), lerp(p[1], fl[i][1], smooth(clamp(g * 1.6 - .5)))]);
-    ink(ctx, Q, { fill: mix('#E9E4DA', INK.white, e), line: 6, smooth: false, boil: .8 });
-    const tk = 1 - clamp(g * 2.2);
-    if (tk > 0) { ctx.save(); ctx.globalAlpha = tk; const c = [(Q[0][0] + Q[2][0]) / 2, (Q[0][1] + Q[2][1]) / 2], sc = (Q[1][0] - Q[0][0]) / 660;
-      txt(ctx, '\u2713 Resolved \u00B7 coderabbitai \u00B7 by you', c[0], c[1] + 10 * sc, { font: 'ui', weight: 700, size: 27 * sc, color: '#6E6A78', align: 'center' }); ctx.restore(); }
-    const fk = smooth(clamp(g * 1.6 - .5));
-    if (fk > .3) { ctx.save(); clipPts(ctx, Q, false); ctx.globalAlpha = (fk - .3) / .7;
+    const PUSH = FLASH30 - VLEAD + 4 / 24, push = easeIn(seg(t, PUSH, 68.86)), lay = smooth(seg(t, 68.86, 69.1));
+    if (t < 68.86) { // B/C: glide across the frozen world, land in the thread, get resolved in one click; E1: push into the bar
+      const K0 = GLIDE_K(Math.min(t, PUSH)), K = push > 0 ? [lerp(K0[0], BAR[0], push), lerp(K0[1], BAR[1], push), lerp(K0[2], 3.3, push), 0] : GLIDE_K(t);
+      greyWorld(ctx, K);
+      cam(ctx, ...K);
+      // the rabbit (still in colour) watches it go; an ear folds when it's resolved
+      const done = aR > .06, fold = backOut(seg(t, RESOLVE + .06, RESOLVE + .18), 2);
+      rabbit(ctx, RX - 170, RY, 32, { bags: BAGS, turn: -.45, lx: lerp(.2, -.9, seg(t, 67.1, 67.6)), ly: done ? .3 : lerp(-.6, .2, seg(t, 67.1, 67.9)), lids: done ? .5 : .15, mouth: done ? 'flat' : 'smile',
+        armR: { a: lerp(130, 20, seg(t, 67.1, 67.5)), e: 10 }, pawR: 'open', armL: { a: 16, e: 20 }, earL: { a: -12, b: lerp(0, -100, fold) }, earR: { a: 14, b: 0 } });
+      // the flight: a long floaty S, a dashed pink trail
+      const fl = seg(t, FLY, LAND), trail = [];
+      for (let i = 0; i <= 36; i++) trail.push(glidePath(fl * i / 36));
+      if (fl > 0 && aR < .2) { ctx.save(); ctx.setLineDash([22, 18]); ctx.lineWidth = 7; ctx.strokeStyle = INK.pink; ctx.beginPath(); tracePath(ctx, trail, false, true); ctx.stroke(); ctx.restore(); }
+      if (aR < 0) {
+        const q = glidePath(Math.min(1, fl)), q2 = glidePath(Math.min(1, fl + .02)), ang = Math.atan2(q2[1] - q[1], q2[0] - q[0]), land = seg(t, LAND - VLEAD, LAND - VLEAD + .1);
+        paperPlane(ctx, q[0] - 50 * easeOut(land), q[1] + 12 * easeOut(land), 280, lerp(ang - Math.PI, -.22, easeOut(clamp(land * 2))), true);
+        if (land > 0 && land < 1) for (let i = 0; i < 5; i++) { const an = D(195 + i * 28), x0 = q[0] - 40, y0 = q[1] + 40; // skid strokes
+          inkLine(ctx, [[x0 + Math.cos(an) * 70, y0 + Math.sin(an) * 40], [x0 + Math.cos(an) * (120 + 60 * land), y0 + Math.sin(an) * (70 + 30 * land)]], 6, INK.ink, { taper: [0, .7] }); }
+      } else { // one click: collapsed into a Resolved bar (squash on twos)
+        const sq = backOut(clamp(twos(aR) / .12), 2.2);
+        ctx.save(); ctx.translate(...BAR); ctx.scale(lerp(1.3, 1, sq), lerp(.25, 1, sq));
+        commentCard(ctx, -330, -28, 660, t, { state: 'resolved', author: 'coderabbitai', by: 'you', size: 30 }); ctx.restore();
+        if (aR < .2) for (let i = 0; i < 8; i++) { const an = i / 8 * TAU; inkLine(ctx, [[BAR[0] + Math.cos(an) * 360, BAR[1] + Math.sin(an) * 70], [BAR[0] + Math.cos(an) * 430, BAR[1] + Math.sin(an) * 100]], 6, INK.ink, { taper: [0, .7] }); }
+      }
+      // the cursor, in colour, zips in and clicks without reading
+      const cin = expoOut(seg(t, 68.02, 68.16)), cout = easeIn(seg(t, 68.3, 68.5));
+      if (cin > 0 && cout < 1) cursor(ctx, lerp(-150, BAR[0] + 120, cin) - 900 * cout, lerp(1250, BAR[1] + 10, cin) + 300 * cout, 170, { click: aR >= 0 && aR < .3 ? aR / .3 : 0 });
+      ctx.restore();
+      if (push > 0) speedLines(ctx, 960, 540, { r0: 700, r1: 1500, n: 50, w: 10, color: rgba(INK.ink, .55 * push) });
+      return;
+    }
+    // E2: the Resolved bar lays down and becomes the stage floor; the frozen world gives way to chorus blue
+    const Kz = [BAR[0], BAR[1], 3.3, 0];
+    greyWorld(ctx, Kz);
+    dotWipe(ctx, smooth(seg(t, 68.86, 69.08)) * 1.001, INK.blue, { dir: [0, 1], spacing: 40 });
+    // the floor lands exactly on chapter 5's first frame: stage(horizon 640) under cam(960, 560, 1.18)
+    const Z5 = 1.18, hz = 640, s5 = ([x, y]) => [960 + (x - 960) * Z5, 540 + (y - 560) * Z5];
+    const fl = [[-200, hz], [W + 200, hz], [W + 900, H + 60], [-900, H + 60]].map(s5), hzs = fl[0][1];
+    if (t > 68.96) { ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, hzs); ctx.clip(); cam(ctx, 960, 560, Z5); dotsIn(ctx, [0, 0, W, H], { spacing: 40, color: rgba(INK.ink, .22), dir: [0, 1], from: 0, to: H, min: 0, max: .6 }); ctx.restore(); ctx.restore(); }
+    const z = 3.3, bar = [[-330, -28], [330, -28], [330, 29], [-330, 29]].map(([x, y]) => [960 + x * z, 540 + y * z]);
+    const Q = bar.map((p, i) => [lerp(p[0], fl[i][0], lay), lerp(p[1], fl[i][1], lay)]);
+    ink(ctx, Q, { fill: mix('#E9E4DA', INK.white, lay), line: 6, smooth: false, boil: .8 });
+    ctx.save(); clipPts(ctx, Q, false);
+    if (lay < .8) { ctx.globalAlpha = 1 - lay / .8; const cy = (Q[0][1] + Q[3][1]) / 2, sy = (Q[3][1] - Q[0][1]) / (57 * z);
+      ctx.save(); ctx.translate(960, cy); ctx.scale(1, sy); txt(ctx, '\u2713 Resolved \u00B7 coderabbitai \u00B7 by you', 0, 10 * z, { font: 'ui', weight: 700, size: 27 * z, color: '#6E6A78', align: 'center' }); ctx.restore(); ctx.globalAlpha = 1; }
+    if (lay > .3) { ctx.globalAlpha = clamp((lay - .3) / .5); cam(ctx, 960, 560, Z5);
       for (let i = 0; i < 26; i++) { const k0 = Math.pow(i / 26, 1.9), k1 = Math.pow((i + .8) / 26, 1.9), y0 = hz + k0 * (H - hz + 60), y1 = hz + k1 * (H - hz + 60), kind = hash(i * 7 + 3); if (kind < .55) continue; fillPts(ctx, rect(-900, y0, W + 1800, y1 - y0), kind < .8 ? '#D8F3E1' : '#FBDADF', false); }
+      for (let i = -8; i <= 8; i++) inkLine(ctx, [[960 + i * 60, hz], [960 + i * 330, H + 60]], 2, rgba(INK.ink, .25), { taper: [0, 0], smooth: false });
       ctx.restore(); }
-    if (g > 0 && g < .5) streaks(ctx, [0, 400, W, 1080], { dir: [0, 1], n: 20, len: 300, w: 6, color: rgba(INK.ink, .5) });
+    ctx.restore();
+    if (lay > 0 && lay < 1) streaks(ctx, [0, hzs, W, H], { dir: [0, 1], n: 18, len: 260, w: 6, color: rgba(INK.ink, .45) });
   }
 
   chapter('verse2', 47.74, 69.27, [

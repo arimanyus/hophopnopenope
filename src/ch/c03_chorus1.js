@@ -120,10 +120,10 @@
   }
   function slam(ctx, t, lt, dur) {
     const tc = twos(t), h = Math.exp(-lt * 8), [sx, sy] = shake(t, 30 * h * h);
-    const C = [960 + sx, 548 + sy, 1 + .2 * h * h + .04 * easeInOut(lt / dur), 0];
+    const C = [960 + sx, 630 + sy, 1.38 + .22 * h * h + .06 * easeInOut(lt / dur), 0];
     plate(ctx, C, 5, c => stage(c, t, { marquee: false, spin: .05 }));
+    ctx.save(); ctx.translate(sx, sy); marquee(ctx, t, 3); ctx.restore();
     cam(ctx, ...C);
-    marquee(ctx, t, 3);
     const G = 905;
     popBunny(ctx, t, POPS[0], 530, G, 185, .7);
     popBunny(ctx, t, POPS[1], 1390, G, 185, -.7);
@@ -147,15 +147,15 @@
 
   // ---------- 2. Chorus line: arm in arm, a wave of hops rippling across the line ----------
   function line(ctx, t, lt, dur) {
-    const tc = twos(t), z = lerp(1.1, 1.24, easeInOut(lt / dur)), [dx, dy] = drift(t, 8);
-    const C = [960 + dx, 680 + dy, z, 0];
+    const tc = twos(t), z = lerp(1.4, 1.52, easeInOut(lt / dur)), [dx, dy] = drift(t, 8);
+    const C = [960 + dx, 1075 - 515 / z + dy, z, 0];                              // feet pinned near the frame bottom through the push-in
     plate(ctx, C, 6, c => stage(c, t, { a: INK.yellow, b: INK.pink, spin: -.06, marquee: false }));
     cam(ctx, ...C);
     const G = 1075, sway = Math.sin(beatAt(tc + VLEAD) * Math.PI);
-    const hops = i => { let h = 0, sq = 0, vy = 0; for (let b = 79; b <= 83; b++) { const r = hopArc(t, beatTime(b) - VLEAD + i * .07, .27, 1.5); h += r.h; sq += r.sq; vy += r.vy; } return { h, sq, vy }; };
+    const hops = (i, ht = 1.5) => { let h = 0, sq = 0, vy = 0; for (let b = 79; b <= 83; b++) { const r = hopArc(t, beatTime(b) - VLEAD + i * .07, .27, ht); h += r.h; sq += r.sq; vy += r.vy; } return { h, sq, vy }; };
     const xs = [700, 960, 1220];
     [0, 2].forEach(i => { const hp = hops(i); bun(ctx, xs[i], G - 8, 185, { hop: hp.h * 30 / 18.5, sq: hp.sq, rot: sway * .08, ears: -hp.vy * .6, eyes: hp.h > .3 ? 'happy' : 'dot', look: i ? -.5 : .5 }); });
-    const hp = hops(1);
+    const hp = hops(1, .9);
     const a = rabbit(ctx, xs[1], G, 30, pose({ hop: hp.h, sq: hp.sq, legs: 'hop', lean: sway * 6, ...earsFor(hp.vy),
       armL: { a: 100, e: -10 }, armR: { a: 100, e: -10 }, pawL: 'open', pawR: 'open', eyes: hp.h > .3 ? 'happy' : 'open', mouth: 'grin', blush: .4, lx: sway * .3 }));
     pocketBun(ctx, a, 30, { eyes: hp.h > .3 ? 'happy' : 'dot', ears: -hp.vy * .5 });
@@ -183,13 +183,14 @@
 
   // ---------- 4. The cursor whooshes past, not reading; every eye follows it ----------
   const PASSES = [[35.87, 36.13, -1, 640], [36.58, 36.82, 1, 690]];              // [start, end, direction, tip y]
-  const passX = ([a, b, d], tt) => { const k = (tt - a) / (b - a); return d < 0 ? lerp(2200, -300, k) : lerp(-300, 2200, k); };
+  const X0 = 20, X1 = 1900;                                                       // pass span in stage coords (just past the zoomed frame)
+  const passX = ([a, b, d], tt) => { const k = (tt - a) / (b - a); return d < 0 ? lerp(X1, X0, k) : lerp(X0, X1, k); };
   const cursorX = tt => { let x = 2600; for (const p of PASSES) if (tt >= p[0]) x = passX(p, tt); return x; };
-  const passT = ([a, b, d], bx) => a + (d < 0 ? 2200 - bx : bx + 300) / 2500 * (b - a);
+  const passT = ([a, b, d], bx) => a + (d < 0 ? X1 - bx : bx - X0) / (X1 - X0) * (b - a);
   function whoosh(ctx, t, lt, dur) {
     const tc = twos(t), cxN = cursorX(t), pass = PASSES.filter(p => t >= p[0]).pop() || PASSES[0];
-    const onScreen = cxN > -300 && cxN < 2200, [sx, sy] = shake(t, onScreen ? 7 : 0);
-    const C = [960 + clamp((cxN - 960) * .03, -30, 30) + sx, 560 + sy, 1, 0];
+    const onScreen = cxN > X0 && cxN < X1, [sx, sy] = shake(t, onScreen ? 7 : 0);
+    const C = [960 + clamp((cxN - 960) * .03, -30, 30) + sx, 641 + sy, 1.3, 0];
     plate(ctx, C, 6, c => stage(c, t, { marquee: false, spin: .05 }));
     cam(ctx, ...C);
     const G = 1035, lookAt = bx => clamp((cursorX(tc - .04) - bx) / 480, -1, 1), after = seg(tc, 36.9, 37.12);
@@ -197,7 +198,7 @@
     [560, 1360].forEach(bx => { const b = bump(bx); bun(ctx, bx, G, 200, { hop: 2.6 * b, sq: -.3 * b + .12 * after, look: lookAt(bx), eyes: after > .3 ? 'sad' : b > .3 ? 'wide' : 'dot', ears: b * .6 - after * .8 + pass[2] * b * .5 }); });
     const b = bump(960), wave = tc < 36.3 ? 1 : 1 - seg(tc, 36.84, 37.05);
     const a = rabbit(ctx, 960, G + 10, 38, pose({ hop: b * .7, sq: -.2 * b, turn: lookAt(960) * .5, lx: lookAt(960), ly: -.2 * b,
-      armR: { a: lerp(15, 160 + wob(tc, 4) * 14, wave), e: lerp(10, 30 + wob(tc, 4, .25) * 25, wave) }, pawR: 'open', armL: { a: 12, e: 12 },
+      armR: { a: lerp(15, 140 + wob(tc, 4) * 6, wave), e: lerp(10, 8 + wob(tc, 4, .25) * 28, wave) }, pawR: 'open', armL: { a: 12, e: 12 },
       earL: { a: -14 - after * 20, b: pass[2] * 40 * b }, earR: { a: 12 + after * 16, b: pass[2] * 40 * b + after * 60 },
       eyes: b > .3 ? 'wide' : 'open', mouth: after > .3 ? 'flat' : 'open', open: .5 * (1 - after), blush: .3 * (1 - after) }));
     pocketBun(ctx, a, 38, { look: lookAt(960), eyes: after > .3 ? 'sad' : 'dot' });
@@ -268,8 +269,8 @@
       for (const k of [.66, .33]) rabbit(c, 960, 985, 40, { ...P(lerp(T, t, 1 - k) - .02), noShadow: true });
       c.restore(); popLayer(); ctx.save(); ctx.globalAlpha = .45; ctx.drawImage(c.canvas, 0, 0); ctx.restore(); } }
     rabbit(ctx, 960, 985, 40, P(t));
-    stamp(ctx, 'NOPE', 430, 330, 200, t - n1, { color: INK.white, paper: INK.red, rot: -.14 });
-    stamp(ctx, 'NOPE', W - 430, 330, 200, t - n2, { color: INK.white, paper: INK.red, rot: .12 });
+    stamp(ctx, 'NOPE', 400, 610, 170, t - n1, { color: INK.white, paper: INK.red, rot: -.14 });
+    stamp(ctx, 'NOPE', W - 400, 610, 170, t - n2, { color: INK.white, paper: INK.red, rot: .12 });
   }
 
   // ---------- 7. Cursor swarm: a dozen "you" cursors stomp in unison ----------
