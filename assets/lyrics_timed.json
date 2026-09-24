@@ -1,0 +1,252 @@
+{
+ "duration": 128.64,
+ "bpm": 142.2,
+ "note": "Beat grid drifts up to ~0.13 s from a constant tempo; use beats[] for sync, not a fixed BPM.",
+ "lines": [
+  {
+   "section": "intro",
+   "text": "Ninety seconds on the clock",
+   "start": 1.36,
+   "end": 2.6,
+   "confidence": "high"
+  },
+  {
+   "section": "intro",
+   "text": "Down the rabbit hole, tick, tick, tock",
+   "start": 4.36,
+   "end": 7.55,
+   "confidence": "high"
+  },
+  {
+   "section": "verse1",
+   "text": "Ping in the burrow, my ears stand tall",
+   "start": 10.45,
+   "end": 13.42,
+   "confidence": "high"
+  },
+  {
+   "section": "verse1",
+   "text": "\"Small fix,\" fourteen thousand lines in all",
+   "start": 13.86,
+   "end": 16.83,
+   "confidence": "high"
+  },
+  {
+   "section": "verse1",
+   "text": "Nested ternaries, a function called \"fix\"",
+   "start": 17.25,
+   "end": 20.22,
+   "confidence": "high"
+  },
+  {
+   "section": "verse1",
+   "text": "Forty-six console logs left in the mix",
+   "start": 20.64,
+   "end": 23.61,
+   "confidence": "high"
+  },
+  {
+   "section": "verse1",
+   "text": "A secret key committed, plain as day",
+   "start": 24.03,
+   "end": 27.03,
+   "confidence": "high"
+  },
+  {
+   "section": "verse1",
+   "text": "The tests all pass 'cause they're skipped anyway",
+   "start": 27.45,
+   "end": 30.42,
+   "confidence": "high"
+  },
+  {
+   "section": "chorus1",
+   "text": "Three little comments on your PR (hop! hop!)",
+   "start": 32.09,
+   "end": 35.5,
+   "confidence": "high"
+  },
+  {
+   "section": "chorus1",
+   "text": "Did anybody read a single one? (nope! nope!)",
+   "start": 35.5,
+   "end": 38.87,
+   "confidence": "high"
+  },
+  {
+   "section": "chorus1",
+   "text": "Click, click, resolve all, thumbs up, amen",
+   "start": 38.87,
+   "end": 42.24,
+   "confidence": "high"
+  },
+  {
+   "section": "chorus1",
+   "text": "Hop, hop, guess I'll write 'em all again",
+   "start": 42.24,
+   "end": 45.63,
+   "confidence": "high"
+  },
+  {
+   "section": "verse2",
+   "text": "Sixty seconds, force-push on the branch",
+   "start": 45.63,
+   "end": 48.99,
+   "confidence": "medium"
+  },
+  {
+   "section": "verse2",
+   "text": "Whole review gone, never had a chance",
+   "start": 48.99,
+   "end": 52.36,
+   "confidence": "medium"
+  },
+  {
+   "section": "verse2",
+   "text": "You said \"it's never null\" like you're the king",
+   "start": 52.36,
+   "end": 55.75,
+   "confidence": "medium"
+  },
+  {
+   "section": "verse2",
+   "text": "I drew a diagram, you didn't read a thing",
+   "start": 55.75,
+   "end": 59.14,
+   "confidence": "low"
+  },
+  {
+   "section": "verse2",
+   "text": "You typed \"CodeRabbit, pause,\" like I'm to blame",
+   "start": 59.14,
+   "end": 62.51,
+   "confidence": "low"
+  },
+  {
+   "section": "verse2",
+   "text": "I wrote a poem for you all the same",
+   "start": 62.51,
+   "end": 65.88,
+   "confidence": "low"
+  },
+  {
+   "section": "verse2_extra",
+   "text": "(unlisted: one extra 8-beat vocal slot somewhere in verse 2, placed here as a guess)",
+   "start": 65.88,
+   "end": 69.27,
+   "confidence": "unknown"
+  },
+  {
+   "section": "chorus2",
+   "text": "Forty little comments on your PR (hop! hop!)",
+   "start": 69.27,
+   "end": 72.66,
+   "confidence": "high"
+  },
+  {
+   "section": "chorus2",
+   "text": "Did anybody read a single one? (nope! nope!)",
+   "start": 72.66,
+   "end": 76.0,
+   "confidence": "high"
+  },
+  {
+   "section": "chorus2",
+   "text": "Click, click, resolve all, thumbs up, amen",
+   "start": 76.0,
+   "end": 79.37,
+   "confidence": "high"
+  },
+  {
+   "section": "chorus2",
+   "text": "Hop, hop, guess I'll write 'em all again",
+   "start": 79.37,
+   "end": 82.76,
+   "confidence": "high"
+  },
+  {
+   "section": "chorus2_tag",
+   "text": "(unlisted: extra vocals, likely a repeated hook or ad-lib)",
+   "start": 82.76,
+   "end": 85.25,
+   "confidence": "unknown"
+  },
+  {
+   "section": "bridge",
+   "text": "Line nine thousand twelve, now what is this?",
+   "start": 87.79,
+   "end": 91.16,
+   "confidence": "medium"
+  },
+  {
+   "section": "bridge",
+   "text": "Unsanitized input, there it is",
+   "start": 91.16,
+   "end": 94.55,
+   "confidence": "medium"
+  },
+  {
+   "section": "bridge",
+   "text": "I flagged it red, in all caps, with my paw",
+   "start": 94.55,
+   "end": 97.9,
+   "confidence": "medium"
+  },
+  {
+   "section": "bridge",
+   "text": "You clicked on merge and then you shipped the flaw",
+   "start": 97.9,
+   "end": 101.29,
+   "confidence": "medium"
+  },
+  {
+   "section": "bridge_tag",
+   "text": "(unlisted: extra vocals, likely a repeated last line)",
+   "start": 101.29,
+   "end": 104.63,
+   "confidence": "unknown"
+  },
+  {
+   "section": "final_chorus",
+   "text": "Four hundred comments on your PR (hop! hop!)",
+   "start": 104.63,
+   "end": 108.0,
+   "confidence": "high"
+  },
+  {
+   "section": "final_chorus",
+   "text": "So now you wanna read a single one? (yep! yep!)",
+   "start": 108.0,
+   "end": 111.34,
+   "confidence": "high"
+  },
+  {
+   "section": "final_chorus",
+   "text": "It's three a.m., prod's down, who could've known?",
+   "start": 111.34,
+   "end": 114.73,
+   "confidence": "medium"
+  },
+  {
+   "section": "final_chorus",
+   "text": "You scroll back to my comment and you groan",
+   "start": 114.73,
+   "end": 118.1,
+   "confidence": "medium"
+  },
+  {
+   "section": "final_tag",
+   "text": "(unlisted: extra vocals, likely a repeated last line)",
+   "start": 118.1,
+   "end": 121.8,
+   "confidence": "unknown"
+  },
+  {
+   "section": "outro_spoken",
+   "text": "As mentioned above.",
+   "start": 125.6,
+   "end": 126.7,
+   "confidence": "high"
+  }
+ ]
+}
