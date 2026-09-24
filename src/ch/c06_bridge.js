@@ -24,11 +24,11 @@
   const segs = n => n === 9012 ? [['  ' + Q[0][0], null], [Q[1][0], 'red'], [Q[2][0], null]] : [[code(n), null]];
 
   // ---------- pinhole camera for the 3D sets (y down, floor at Y = 0, up is -Y) ----------
-  // C = {x, y, z, f, cx, cy, yaw (+ looks left)}
+  // C = {x, y, z, f, cx, cy, yaw (+ looks left), pitch (+ looks up)}
   const pj = (C, X, Y, Z) => {
-    const c = Math.cos(C.yaw || 0), s = Math.sin(C.yaw || 0), dx = X - C.x, dz = Z - C.z;
-    const x = dx * c + dz * s, z = Math.max(.5, -dx * s + dz * c);
-    return [C.cx + C.f * x / z, C.cy + C.f * (Y - C.y) / z, z];
+    const c = Math.cos(C.yaw || 0), s = Math.sin(C.yaw || 0), cp = Math.cos(C.pitch || 0), sp = Math.sin(C.pitch || 0), dx = X - C.x, dy = Y - C.y, dz = Z - C.z;
+    const x = dx * c + dz * s, z0 = -dx * s + dz * c, y = dy * cp + z0 * sp, z = Math.max(.5, z0 * cp - dy * sp);
+    return [C.cx + C.f * x / z, C.cy + C.f * y / z, z];
   };
 
   // ---------- noir rabbit ----------
@@ -90,7 +90,8 @@
       const e = tube(sp, s2 => 1.15 * Math.pow(Math.sin(Math.PI * (.18 + .8 * s2)), .55) * (1 - .12 * s2) + .05, 16, sd < 0 ? [.74, .07, .45] : null);
       ink(ctx, e, { fill: WH, shade: { color: G3, spacing: 9 * px, dir: [.6, .8], from: -.2, to: 2.2, max: .8 }, line: 4.2 * px, boil: 1.3 * px, seed: sd < 0 ? 75 : 76 });
       L([[bx - .6, by + .25], [bx, by + .5], [bx + .6, by + .25]], 4.2); };
-    ear(-1, -12 + (o.earA || 0), -4 + sway * 6); ear(1, 10 + (o.earA || 0), 3 + sway * 6);
+    const pk = 1 - clamp(o.perk || 0) * .7;
+    ear(-1, -12 * pk + (o.earA || 0), (-4 + sway * 6) * pk); ear(1, 10 * pk + (o.earA || 0), (3 + sway * 6) * pk);
     ctx.save(); ctx.translate(1.9, -9.1); ctx.rotate(deg(58)); ink(ctx, rrect(-1.3, -.18, 2.6, .36, .12), { fill: R, line: 3 * px, boil: .5 * px, smooth: false }); ctx.restore();
     UPX = U0; ctx.restore();
     return { lamp: [x + (2.2 + look * .4) * s, y - (4.7 + bob) * s] };
@@ -134,79 +135,567 @@
   }
   const lenOf = n => code(n).length;
 
-  // ---------- SHOT 1 (87.74-91.10): the canyon of code ----------
-  const CAN = { sp: 6, fw: 5.2, WL: -26, WR: 30, gs: 3.2, first: 8960, last: 9090 };
-  const zOf = n => (n - 9000) * CAN.sp;                                  // near edge of tower n (both walls)
-  const towerH = n => (lenOf(n) + 6) * CAN.gs * .6 + 10 + hash(n * 5.1) * 30;
-  const PLANTS = [87.74, 88.236, 88.631, 89.072, W12.now];
-  function canyonCam(t) {
-    const k = PLANTS.filter(p => p - 1 / 24 <= t).length - 1, i = clamp(k, 0, 4);
-    const p0 = PLANTS[i], p1 = PLANTS[Math.min(4, i + 1)], f = i >= 4 ? 0 : clamp((t - p0) / (p1 - p0));
-    const zr = zOf(9008 + i) + CAN.fw / 2 - 5 + (i >= 4 ? 0 : easeInOut(f) * CAN.sp);
-    return { i, f, zr };
+  // ---------- print depth in two inks ----------
+  // The shared depth() splits RGB plates (blue/cyan fringes). In the noir world the out-of-focus plane is instead a
+  // misregistered grey screen plate under the ink plate, so the palette stays paper + ink (+ red where it is drawn red).
+  function nd(ctx, px, fn, ghost = G3) {
+    if (!px) { fn(ctx); return; }
+    const c = pushLayer(); fn(c); popLayer();
+    const g = layer(30 + LDEPTH); g.drawImage(c.canvas, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = ghost; g.fillRect(0, 0, W, H);
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(g.canvas, -px, px * .35); ctx.drawImage(c.canvas, px * .5, 0); ctx.restore();
   }
-  function canyonScene(c, C, t, lit, litSign, face) {
-    const ink0 = lit ? P : K, txt0 = lit ? K : G2, red0 = lit ? R : RD;
-    // sky, then the far exit slot of light and the floor
-    fillPts(c, rect(-50, -50, W + 100, H + 100), P, false);
-    const fl = [pj(C, CAN.WL, 0, C.z + 3), pj(C, CAN.WL, 0, C.z + 4000), pj(C, CAN.WR, 0, C.z + 4000), pj(C, CAN.WR, 0, C.z + 3)];
-    fillPts(c, [[fl[0][0] - 3000, fl[0][1] + 2000], [fl[1][0], fl[1][1]], [fl[2][0], fl[2][1]], [fl[3][0] + 3000, fl[3][1] + 2000]], ink0, false);
-    // floor seams: gutter lines toward the vanishing point and one cross line per code line
-    c.save(); c.lineWidth = 3; c.strokeStyle = lit ? G2 : G1; c.beginPath();
-    for (const X of [-18, -9, 0, 9, 18]) { const a = pj(C, X, 0, C.z + 6), b = pj(C, X, 0, C.z + 3000); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); }
-    for (let n = CAN.first; n < CAN.last; n++) { const z = zOf(n); if (z < C.z + 4) continue; const a = pj(C, CAN.WL, 0, z), b = pj(C, CAN.WR, 0, z); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); }
-    c.stroke(); c.restore();
-    // towers, far to near, both walls
+
+  // Impact "plate slip" for the whole frame: a multiplied, offset copy (stays in the frame's own inks).
+  function ghostFrame(ctx, dx, dy, a) {
+    const c = layer(31); c.drawImage(ctx.canvas, 0, 0);
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = 'multiply'; ctx.globalAlpha = a; ctx.drawImage(c.canvas, dx, dy); ctx.restore();
+  }
+
+  // ---------- SHOT 1 (87.74-91.10): the canyon of code ----------
+  // Every line of code is a tower standing on end (its text reads bottom to top). A blade sign on each tower carries its
+  // line number: the gutter. The rabbit walks down the street one line per step and stops at 9012 on "now".
+  const CAN = { sp: 6, fw: 5.2, WL: -26, WR: 30, gs: 2.5, first: 8996, last: 9100 };
+  const zOf = n => (n - 9000) * CAN.sp;
+  const towerH = n => (lenOf(n) + 4) * 1.9 + 12 + hash(n * 5.1) * 34;
+  const PLANTS = [87.74, 88.236, 88.631, 89.072, W12.now];
+  function walk(t) {
+    const i = clamp(PLANTS.filter(p => p - 1 / 24 <= t).length - 1, 0, 4), f = i >= 4 ? 0 : clamp((t - PLANTS[i]) / (PLANTS[i + 1] - PLANTS[i]));
+    return { i, f, z: zOf(9008 + i) + CAN.fw / 2 - 5 + (i >= 4 ? 0 : easeInOut(f) * CAN.sp) };
+  }
+  const q2 = ps => ps.map(p => [p[0], p[1]]);
+  // o: {lit, sign: lit number, pop: 0..1 sign pop, face: lit tower, band: [z0, z1] relative depths, floor, mirror(c), shadow(c)}
+  function canyonScene(c, C, t, o) {
+    const lit = o.lit, [b0, b1] = o.band || [0, 1e9], inBand = z => z - C.z >= b0 && z - C.z < b1;
+    const wall = lit ? P : K, txt0 = lit ? K : G2, red0 = lit ? R : RD, near = C.z + 3;
+    const towers = [];
     for (let n = CAN.last; n >= CAN.first; n--) for (const X of [CAN.WL, CAN.WR]) {
-      const z0 = zOf(n) + (X > 0 ? 2.1 : 0), z1 = z0 + CAN.fw; if (z1 < C.z + 3) continue;
-      const hN = X > 0 ? towerH(n + 400) : towerH(n), za = Math.max(z0, C.z + 3);
-      const q = [pj(C, X, 0, za), pj(C, X, 0, z1), pj(C, X, -hN, z1), pj(C, X, -hN, za)];
-      if (Math.max(q[0][0], q[1][0]) < -40 || Math.min(q[0][0], q[1][0]) > W + 40) continue;
-      // the tower's near side face (depth into the wall), so the skyline reads as separate slabs
-      const d = X < 0 ? -6 : 6, s0 = [pj(C, X, 0, za), pj(C, X + d, 0, za), pj(C, X + d, -hN, za), pj(C, X, -hN, za)];
-      if (za === z0) fillPts(c, s0.map(p => [p[0], p[1]]), lit ? G3 : mix(K, P, .08), false);
-      fillPts(c, q.map(p => [p[0], p[1]]), ink0, false);
-      const on = n === face && X < 0;
-      if (C.f / ((z0 + z1) / 2 - C.z) * CAN.gs > 3) wallLine(c, C, X, (z0 + z1) / 2, CAN.gs, X > 0 ? n + 400 : n, { text: on && lit ? K : txt0, red: red0 }, -1.8, -hN + 2);
-      // roof line
-      c.strokeStyle = lit ? K : G1; c.lineWidth = 2; c.beginPath(); c.moveTo(q[2][0], q[2][1]); c.lineTo(q[3][0], q[3][1]); c.stroke();
+      const z0 = zOf(n) + (X > 0 ? 2.1 : 0), z1 = z0 + CAN.fw; if (z1 < near) continue;
+      towers.push({ n, X, z0, z1, za: Math.max(z0, near), h: X > 0 ? towerH(n + 400) : towerH(n) });
     }
-    // blade signs: the gutter, one number per line, facing the camera
-    for (let n = 9030; n >= 8990; n--) {
-      const z = zOf(n) + CAN.fw * .5; if (z < C.z + 4) continue;
-      const a = pj(C, CAN.WL, -19, z), b = pj(C, CAN.WL + 3.8, -5, z), w = b[0] - a[0], h = b[1] - a[1]; if (b[0] < -10 || a[0] > W) continue;
-      const on = n === litSign, fillS = on ? (lit ? WH : P) : (lit ? P : K), tc = on ? K : (lit ? K : G2);
-      fillPts(c, [pj(C, CAN.WL, -17, z), pj(C, CAN.WL + 1.2, -17, z), pj(C, CAN.WL + 1.2, -16.4, z), pj(C, CAN.WL, -16.4, z)].map(p => [p[0], p[1]]), lit ? K : G1, false);
+    if (o.floor) {
+      fillPts(c, rect(-50, -50, W + 100, H + 100), P, false);
+      const fl = q2([pj(C, CAN.WL, 0, near), pj(C, CAN.WL, 0, C.z + 5000), pj(C, CAN.WR, 0, C.z + 5000), pj(C, CAN.WR, 0, near)]);
+      c.save(); clipPts(c, fl, false);
+      fillPts(c, rect(-50, -50, W + 100, H + 100), P, false);
+      // wet street: the towers mirror in the floor, so the sky slit reflects as a white road broken by ripples
+      if (!lit) { for (const T of towers) fillPts(c, q2([pj(C, T.X, 0, T.za), pj(C, T.X, 0, T.z1), pj(C, T.X, T.h, T.z1), pj(C, T.X, T.h, T.za)]), K, false);
+        for (const T of towers) if (T.z0 === T.za) fillPts(c, q2([pj(C, T.X, 0, T.za), pj(C, T.X + (T.X < 0 ? -6 : 6), 0, T.za), pj(C, T.X + (T.X < 0 ? -6 : 6), T.h, T.za), pj(C, T.X, T.h, T.za)]), K, false); }
+      if (o.mirror && !lit) o.mirror(c);
+      c.beginPath();
+      for (let n = CAN.first; n < CAN.last; n++) for (let r = 0; r < 2; r++) {
+        const za = zOf(n) + r * 3 + hash(n * 9 + r) * 1.5, zb = za + (lit ? .4 : .5 + hash(n * 5 + r) * 1.6); if (zb < near) continue;
+        for (let k = 0; k < 4; k++) { if (hash(n * 11 + r * 5 + k) < .3) continue; const xa = lerp(CAN.WL, CAN.WR, k / 4 + hash(n * 3 + k + r) * .12), xb = lerp(CAN.WL, CAN.WR, (k + 1) / 4 - hash(n * 7 + k + r) * .12);
+          const p = q2([pj(C, xa, 0, Math.max(za, near)), pj(C, xb, 0, Math.max(za, near)), pj(C, xb, 0, zb), pj(C, xa, 0, zb)]); c.moveTo(...p[0]); p.slice(1).forEach(q => c.lineTo(...q)); c.closePath(); }
+      }
+      c.fillStyle = lit ? G3 : K; c.fill();
+      if (o.shadow) o.shadow(c);
+      c.restore();
+    }
+    for (const T of towers) {
+      if (!inBand((T.z0 + T.z1) / 2)) continue;
+      const { n, X, za, z1, h } = T, q = q2([pj(C, X, 0, za), pj(C, X, 0, z1), pj(C, X, -h, z1), pj(C, X, -h, za)]);
+      if (Math.max(q[0][0], q[1][0]) < -40 || Math.min(q[0][0], q[1][0]) > W + 40) continue;
+      const d = X < 0 ? -6 : 6;
+      if (za === T.z0) fillPts(c, q2([pj(C, X, 0, za), pj(C, X + d, 0, za), pj(C, X + d, -h, za), pj(C, X, -h, za)]), lit ? G3 : mix(K, P, .07), false);
+      fillPts(c, q, wall, false);
+      const on = n === o.face && X < 0, zc = (T.z0 + z1) / 2;
+      if (C.f / (zc - C.z) * CAN.gs > 3.5) wallLine(c, C, X, zc, CAN.gs, X > 0 ? n + 400 : n, { text: on ? (lit ? K : G3) : txt0, red: on ? R : red0 }, -1.8, -h + 2);
+    }
+    // blade signs (the gutter): one line number per tower, facing the camera
+    for (const n of [...Array(18)].map((_, j) => 9024 - j).filter(n => n !== o.sign).concat([o.sign])) {
+      const z = zOf(n) + CAN.fw * .5; if (z < C.z + 4 || !inBand(z)) continue;
+      const on = n === o.sign, pop = on ? 1.08 + (o.pop || 0) * .18 : 1;
+      const a = pj(C, CAN.WL, -12 - 7 * pop, z), b = pj(C, CAN.WL + 3.8 * pop, -12 + 7 * pop, z), w = b[0] - a[0], h = b[1] - a[1]; if (b[0] < -10 || a[0] > W + 10) continue;
+      fillPts(c, q2([pj(C, CAN.WL, -17.2, z), pj(C, CAN.WL + 1.2, -17.2, z), pj(C, CAN.WL + 1.2, -16.6, z), pj(C, CAN.WL, -16.6, z)]), lit ? K : G1, false);
       c.save(); c.setTransform(1, 0, 0, 1, 0, 0);
-      fillPts(c, rect(a[0], a[1], w, h), fillS, false);
-      c.strokeStyle = on || lit ? K : G2; c.lineWidth = Math.max(1.5, w * .06); c.strokeRect(a[0] + w * .1, a[1] + w * .1, w * .8, h - w * .2);
-      const ds = String(n); for (let j = 0; j < 4; j++) txt(c, ds[j], a[0] + w / 2, a[1] + h * (.24 + j * .205), { font: 'mono', weight: 800, size: w * .78, color: n === 9012 && on ? R : tc, align: 'center', base: 'middle' });
+      fillPts(c, rect(a[0], a[1], w, h), on || lit ? (on && lit ? WH : P) : K, false);
+      c.strokeStyle = on || lit ? K : G1; c.lineWidth = Math.max(1.5, w * .07); c.strokeRect(a[0] + w * .12, a[1] + w * .12, w * .76, h - w * .24);
+      const ds = String(n); for (let j = 0; j < 4; j++) txt(c, ds[j], a[0] + w / 2, a[1] + h * (.2 + j * .2), { font: 'mono', weight: 800, size: w * .74, color: on ? (n === 9012 ? R : K) : (lit ? K : G2), align: 'center', base: 'middle' });
       c.restore();
     }
   }
   function canyon(ctx, t, lt, dur) {
-    const tc = twos(t), { i, f, zr } = canyonCam(tc), zs = canyonCam(t).zr;
-    const stopK = seg(t, W12.now + .1, 91.1), push = easeInOut(stopK);
-    const C = { x: lerp(4, -2, push), y: -21 + push * 3, z: zs - lerp(50, 38, seg(t, 87.74, 91.1)), f: 1100, cx: 960 + drift(t, 5)[0], cy: 360 + drift(t, 5)[1] };
-    const litSign = 9008 + i, face = t >= W12.now + .12 ? 9012 : -1;
-    canyonScene(ctx, C, t, false, litSign, face);
-    // the rabbit: steps planted on the plant times (twos), head turns to the 9012 tower after 'now'
-    const X = -13.5, gp = pj(C, X, 0, zr), s = C.f / gp[2];
-    const step = i >= 4 ? 0 : Math.sin(f * Math.PI), side = i % 2;
-    const look = kf(tc, [[W12.now + .1, 0], [W12.now + .45, -.9]]);
-    const lift = i >= 4 ? [0, 0] : side ? [step, 0] : [0, step];
-    const stopHit = hit(t, [W12.now], 10);
-    // where the beam points: the lit sign ahead, then it swings onto the 9012 tower face
-    const zsg = zOf(litSign) + CAN.fw * .5, sign = pj(C, CAN.WL + 1.9, -12, zsg), tower = pj(C, CAN.WL, -26, zOf(9012) + CAN.fw * .5);
-    const sw = easeInOut(seg(t, W12.now + .12, W12.now + .6)), T = [lerp(sign[0], tower[0], sw), lerp(sign[1], tower[1], sw)];
-    const A0 = [gp[0] + (2.2 + look * .4) * s, gp[1] - (4.7 + step * .25) * s];
-    light(ctx, A0, T, lerp(.13, .16, sw), c => canyonScene(c, C, t, true, litSign, face));
-    bunnyBack(ctx, gp[0], gp[1], s, { lift, bob: step * .25 - stopHit * .2, look, sway: i >= 4 ? stopHit * .6 : Math.sin((i + f) * Math.PI) * .6, earA: stopHit * 6 });
+    const tc = twos(t), wk = walk(tc), ws = walk(t), { i, f } = wk;
+    // camera: follows the walk; on "what is this?" it pans onto the lit 9012 sign and pushes in
+    const pan = easeInOut(seg(t, 89.66, 91.1)), dr = drift(t, 4);
+    const C = { x: 3 - pan * 7, y: -12 - pan * 2, z: ws.z - lerp(44, 40, seg(t, 87.74, W12.now)) + pan * 14, f: 1100, yaw: pan * .3, cx: 960 + dr[0], cy: 500 + dr[1] };
+    const litSign = 9008 + i, pop = hit(t, PLANTS, 9), face = t >= W12.now + .2 ? 9012 : -1;
+    const X = -8, gp = pj(C, X, 0, wk.z), s = C.f / gp[2];
+    const step = i >= 4 ? 0 : Math.sin(f * Math.PI), stopHit = hit(t, [W12.now], 9);
+    const look = kf(tc, [[W12.now + .1, 0], [W12.now + .45, -.95]]);
+    const perk = tc >= 90.0 ? 1 : 0;
+    const pose = { lift: i >= 4 ? [0, 0] : i % 2 ? [step, 0] : [0, step], bob: step * .3 - stopHit * .25 + perk * .15, look, sway: i >= 4 ? stopHit * .8 : Math.sin((i + f) * Math.PI) * .6, earA: stopHit * 8, perk };
+    const mirror = c => { c.save(); c.translate(gp[0], gp[1]); c.scale(1, -.9); c.globalAlpha = .9; bunnyBack(c, 0, 0, s, pose); c.restore(); };
+    const shadow = c => fillPts(c, q2([pj(C, X - 2.2, 0, wk.z), pj(C, X + 2.2, 0, wk.z), pj(C, X + 3.4, 0, wk.z - 16), pj(C, X - 3.0, 0, wk.z - 16)]), K);
+    const sc = { sign: litSign, pop, face };
+    canyonScene(ctx, C, t, { ...sc, floor: true, band: [1e9, 1e9], mirror, shadow });
+    nd(ctx, 5, c => canyonScene(c, C, t, { ...sc, band: [130, 1e9] }));
+    canyonScene(ctx, C, t, { ...sc, band: [24, 130] });
+    nd(ctx, 9, c => canyonScene(c, C, t, { ...sc, band: [0, 24] }));
+    // the beam: on the lit sign ahead, then it swings to the base of tower 9012 and climbs the line, reading it
+    const sign = pj(C, CAN.WL + 1.9, -12, zOf(litSign) + CAN.fw * .5), zt = zOf(9012) + CAN.fw * .5;
+    const tr = shake(t, 3 * hit(t, [90.02], 5)), T = [sign[0] + tr[0], sign[1] + tr[1]];
+    const A0 = [gp[0] + (2.2 + look * .45) * s, gp[1] - (4.7 + pose.bob) * s];
+    light(ctx, A0, T, .12, c => canyonScene(c, C, t, { ...sc, lit: true, floor: true }));
+    bunnyBack(ctx, gp[0], gp[1], s, pose);
+    // "this?": ears snap up and the rabbit-sense squiggles fire around the hood
+    const sense = t >= 90.0 ? clamp(hit(t, [90.02], 2.2) * 1.6) : 0;
+    if (sense > .02) senseAt(ctx, gp[0] + look * .45 * s, gp[1] - 9.5 * s, s * 1.15, sense, P);
+  }
+  // private rabbit-sense squiggles around a point (the rig's version only exists on the front-view head)
+  function senseAt(ctx, x, y, s, k, col = K) {
+    ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+    for (let i = 0; i < 7; i++) {
+      const a = -Math.PI * .92 + i / 6 * Math.PI * .84, r0 = 3.4 + hash(i) * .3, r1 = r0 + 1.3 * k + hash(i + 9) * .4, pts = [];
+      for (let j = 0; j <= 8; j++) { const r = lerp(r0, r1, j / 8), w = Math.sin(j * 2.2 + boilN(BOIL_T) * 1.7) * .18; pts.push([Math.cos(a) * r - Math.sin(a) * w, Math.sin(a) * r + Math.cos(a) * w]); }
+      inkLine(ctx, pts, 5 / s, col, { taper: [.1, .5] });
+    }
+    ctx.restore();
+  }
+
+  // ---------- the code wall seen head-on (shots 2 and 3): rows of lines, a sticky gutter, a beam spot ----------
+  const CW = { size: 58, cw: 34.8, lh: 104, y: 540, x: 1080 - Q[0][0].length * 34.8 };   // req.query.name starts at x 1080
+  const rowY = n => CW.y + (n - 9012) * CW.lh;
+  const redX0 = 1080, redX1 = 1080 + Q[1][0].length * CW.cw;
+  function codeWall(c, lit, o = {}) {
+    fillPts(c, rect(-600, -600, W + 1200, H + 1200), lit ? P : K, false);
+    const other = o.pale ? mix(P, K, .1) : lit ? G2 : G1;
+    for (let n = 9006; n <= 9018; n++) {
+      if (n === 9012) { let x = CW.x; for (const [s, kind] of Q) { txt(c, s, x, rowY(n), { font: 'mono', weight: 700, size: CW.size, color: kind ? (lit ? R : RD) : (lit ? K : G2) }); x += s.length * CW.cw; } }
+      else txt(c, code(n), CW.x, rowY(n), { font: 'mono', weight: 700, size: CW.size, color: other });
+    }
+    if (o.pale) return;
+    // sticky gutter with the line numbers
+    fillPts(c, rect(-600, -600, 790, H + 1200), lit ? mix(P, K, .08) : mix(K, P, .05), false);
+    inkLine(c, [[190, -600], [190, H + 600]], 3, lit ? K : G1, { taper: [0, 0], smooth: false });
+    for (let n = 9006; n <= 9018; n++) txt(c, String(n), 170, rowY(n), { font: 'mono', weight: 800, size: CW.size * .8, color: n === 9012 ? (lit ? R : RD) : (lit ? G2 : G1), align: 'right' });
+  }
+  // a hard-edged elliptical spot with a halftone falloff ring; drawLit repaints the lit world inside it
+  function spot(ctx, x, y, rx, ry, rot, drawLit, ring = 90) {
+    const e = ell(x, y, rx, ry, 48, rot);
+    ctx.save(); clipPts(ctx, e); drawLit(ctx); ctx.restore();
+    const ca = Math.cos(-rot), sa = Math.sin(-rot);
+    ctx.save(); const tr = ctx.getTransform();
+    dotsIn(ctx, [x - rx - ring * 2, y - ry - ring * 2, x + rx + ring * 2, y + ry + ring * 2], { spacing: 20, color: P, angle: .3,
+      k: (px, py) => { const dx = px - x, dy = py - y, u = (dx * ca - dy * sa) / rx, v = (dx * sa + dy * ca) / ry, d = Math.hypot(u, v); return d < 1 ? 0 : clamp(1 - (d - 1) * Math.min(rx, ry) / ring) * .95; } });
+    ctx.restore();
+  }
+  // the injected input, slithering: chars ride a travelling wave; the head is the first char
+  function snake(c, t, hx, y, o = {}) {
+    const size = o.size || 40, cw = size * .6, rear = o.rear || 0;
+    for (let i = 0; i < EVIL.length; i++) {
+      const x = hx + i * cw, ph = x * .018 - t * 7, rise = rear * Math.max(0, 1 - i / 6) * (6 - i) * 9;
+      const yy = y + Math.sin(ph) * size * .22 * (o.amp ?? 1) - rise, rot = Math.cos(ph) * .22 - rear * Math.max(0, 1 - i / 6) * .5;
+      txt(c, EVIL[i], x, yy, { font: 'mono', weight: 800, size, color: o.color || K, rot, align: 'center', base: 'middle' });
+    }
+  }
+  function beamLine(ctx, t, lt, dur) {
+    const k = easeInOut(seg(t, 91.1, 92.86)), tc = twos(t);
+    const bx = lerp(700, 1240, easeInOut(seg(t, 91.1, 92.3))), by = CW.y - 20, rx = 640, ry = 250;
+    const hx = kf(tc, [[91.1, 2300], [92.55, 1100], [92.86, 1080]], x => x), rear = easeOut(seg(tc, 92.5, 92.86));
+    const zoom = lerp(1, 1.32, k), rot = lerp(-.03, -.055, k), dr = drift(t, 5);
+    cam(ctx, lerp(880, 1180, k) + dr[0], CW.y + 20 + dr[1], zoom, rot);
+    codeWall(ctx, false);
+    spot(ctx, bx, by, rx, ry, -.02, c => { codeWall(c, true); snake(c, t, hx, CW.y + 54, { rear, size: 44 }); });
+    // the red taint trembles as the input arrives
+    const tremble = clamp((2100 - hx) / 900) * .8;
+    if (tremble > .05) { ctx.save(); clipPts(ctx, ell(bx, by, rx, ry, 48, -.02)); const j = shake(t, 3 * tremble); fillPts(ctx, rect(redX0 - 4, CW.y - 48, redX1 - redX0 + 8, 60), P, false); txt(ctx, Q[1][0], redX0 + j[0], CW.y + j[1], { font: 'mono', weight: 700, size: CW.size, color: R }); ctx.restore(); }
+    ctx.restore();
+    // dust motes adrift in the beam, out of focus in front of the wall
+    nd(ctx, 8, c => { for (let i = 0; i < 26; i++) { const x = mod(hash(i) * 2400 - t * (20 + hash(i + 3) * 40), 2400) - 240, y = 330 + hash(i + 7) * 420 + wob(t, .2, i) * 30, r = 3 + hash(i + 11) * 6;
+      if (((x - bx) / 700) ** 2 + ((y - by) / 300) ** 2 < 1) fillPts(c, ell(x, y, r, r, 8), P); } });
+  }
+
+  // ---------- EXTREME CLOSE-UP (92.86-94.40): the eye, with the red line reflected in the pupil ----------
+  function eyeShot(ctx, t, lt, dur) {
+    const tc = twos(t), s = 400, ex = 1110, ey = 470;
+    const push = lerp(1, 1.16, easeInOut(seg(t, 92.86, 94.4))) * (1 + hit(t, [93.3], 7) * .07), j = shake(t, 5 * hit(t, [W12.there, 93.1, 93.3], 9));
+    fillPts(ctx, rect(0, 0, W, H), K, false);
+    cam(ctx, ex - j[0], ey - j[1], push, -.02);
+    const lids = kf(tc, [[93.06, 0], [93.14, .32]]), pose = { eyes: 'open', lids, browTilt: kf(tc, [[93.06, .5], [93.14, 2.2]]), mouth: 'flat', sense: 1, lx: 0, ly: 0, earL: { a: -6 }, earR: { a: 6 } };
+    const x = ex - .95 * s, y = ey + 7.75 * s;
+    noirRabbit(ctx, x, y, s, pose);
+    const M = ctx.getTransform().multiply(headM(x, y, s, noirPose(pose))), base = ctx.getTransform();
+    ctx.save(); ctx.setTransform(M);
+    const px = 1 / s;
+    // noir light: one hard band across the eyes, the rest of the face in hatched shadow
+    ctx.save(); clipPts(ctx, headPts(0));
+    hatch(ctx, [[-3, .78], [3, .72], [3, 3], [-3, 3]], { color: K, spacing: 12 * px, width: 4.5 * px, angle: -Math.PI / 4, jit: 3 * px });
+    hatch(ctx, [[-3, 1.25], [3, 1.2], [3, 3], [-3, 3]], { color: K, spacing: 12 * px, width: 4.5 * px, angle: Math.PI / 4, jit: 3 * px });
+    ctx.restore();
+    // the pupil: redrawn big and dark, holding a tiny copy of the beam spot with the red line in it
+    for (const [eX, big] of [[-.95, 0], [.95, 1]]) {
+      const pxc = eX, pyc = -.15 + .08, rx = .4, ry = .52;
+      ctx.save(); clipPts(ctx, ell(eX, -.15, .6, .8, 20)); if (lids > .02) clipPts(ctx, rect(-9, -.15 - .8 + lids * 1.6, 18, 9), false);
+      fillPts(ctx, ell(pxc, pyc, rx, ry, 24), K);
+      ctx.save(); clipPts(ctx, ell(pxc, pyc, rx, ry, 24));
+      fillPts(ctx, ell(pxc, pyc + .02, .36, .11, 24), P);
+      if (big) { ctx.save(); ctx.translate(pxc, pyc + .045); ctx.scale(1 / 300, 1 / 300); txt(ctx, 'req.query.name', 0, 0, { font: 'mono', weight: 800, size: 25, color: R, align: 'center' }); ctx.restore(); }
+      ctx.restore();
+      fillPts(ctx, ell(pxc - .16, pyc - .26, .1, .1, 12), WH); fillPts(ctx, ell(pxc + .13, pyc + .22, .045, .045, 8), WH);
+      ctx.restore();
+      if (lids > .02) inkLine(ctx, [[eX - .62, -.95 + lids * 1.6], [eX, -.9 + lids * 1.6], [eX + .62, -.95 + lids * 1.6]], 6 * px, K, { taper: [.1, .1] });
+    }
+    ctx.restore(); ctx.setTransform(base);
+    // rabbit-sense at maximum, radiating from the eye
+    const sk = .7 + .3 * hit(t, [W12.there, 93.1, 93.3], 5);
+    ctx.save(); ctx.translate(ex, ey);
+    for (let i = 0; i < 9; i++) {
+      const a = -Math.PI * .98 + i / 8 * Math.PI * 1.2, r0 = 330 + hash(i) * 40, r1 = r0 + 170 * sk + hash(i + 9) * 60, pts = [];
+      for (let q = 0; q <= 10; q++) { const r = lerp(r0, r1, q / 10), w = Math.sin(q * 2 + boilN(BOIL_T) * 1.9 + i) * 16; pts.push([Math.cos(a) * r - Math.sin(a) * w, Math.sin(a) * r + Math.cos(a) * w]); }
+      inkLine(ctx, pts, 11, K, { taper: [.1, .5] });
+    }
+    ctx.restore();
+    ctx.restore();
+  }
+
+  // ---------- the paw ----------
+  // Red paw-print stamp: pad + four toe beans, boiling edges, paper specks knocked out like a rubber stamp.
+  function pawPrint(ctx, x, y, r, rot, color = R, seed = 1) {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
+    const pad = [[-1, .2], [-.8, -.3], [-.35, -.5], [0, -.45], [.35, -.5], [.8, -.3], [1, .2], [.7, .72], [0, .86], [-.7, .72]].map(([a, b]) => [a * r, b * r]);
+    const toes = [[-1.12, -.98, .3, .38, -.35], [-.42, -1.42, .31, .4, -.12], [.42, -1.42, .31, .4, .12], [1.12, -.98, .3, .38, .35]].map(([a, b, rx, ry, q]) => ell(a * r, b * r, rx * r, ry * r, 16, q));
+    const parts = [pad, ...toes].map(p => boil(p, r * .03, seed));
+    ctx.beginPath(); for (const p of parts) tracePath(ctx, p, true, true); ctx.fillStyle = color; ctx.fill();
+    ctx.save(); ctx.beginPath(); for (const p of parts) tracePath(ctx, p, true, true); ctx.clip();
+    dotsIn(ctx, [-r * 1.6, -r * 2, r * 1.6, r], { spacing: r * .13, color: P, k: (a, b) => clamp(.1 + noise2(a / r * 2.3 + seed, b / r * 2.3) * .55) });
+    ctx.restore(); ctx.restore();
+  }
+  // The back of a big paw coming down on the page (fur mitt with finger grooves) on the end of a noir sleeve.
+  function bigPaw(ctx, x, y, s, rot = 0) {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(s, s);
+    const px = 1 / s, U0 = UPX; UPX = px;
+    ink(ctx, tube([[5.2, -7.5], [3.2, -4.4], [1.2, -1.6]], k => lerp(3.1, 2.4, k), 10), { fill: G1, shade: { color: K, spacing: 14 * px, dir: [.6, .8], from: -1, to: 2 }, line: 6 * px, boil: 1.4 * px });
+    ink(ctx, tube([[2.1, -2.9], [1.25, -1.7]], () => 2.75, 4), { fill: K, line: 5 * px, boil: 1 * px, smooth: false });
+    const m = blob(0, 0, 1.9, 4, .06, 18, 1.75);
+    ink(ctx, m, { fill: WH, shade: { color: G3, spacing: 12 * px, dir: [.6, .8], from: -.2, to: 1.8 }, line: 6.5 * px, boil: 1.5 * px });
+    for (const k of [-.6, 0, .6]) inkLine(ctx, [[k * 1.3 - .5, -1.3 + Math.abs(k) * .4], [k * 1.55 - .7, .1], [k * 1.4 - .5, 1.2]], 4.5 * px, K, { taper: [.3, .3] });
+    UPX = U0; ctx.restore();
+  }
+  const noirAvatar = (ctx, x, y, r) => { ink(ctx, ell(x, y, r, r, 20), { fill: K, line: Math.max(2.5, r * .1), boil: .4 });
+    ctx.save(); clipPts(ctx, ell(x, y, r, r, 20)); for (const sd of [-1, 1]) fillPts(ctx, ell(x + sd * r * .32, y - r * .55, r * .16, r * .5, 12, sd * .2), WH); fillPts(ctx, ell(x, y + r * .25, r * .5, r * .45, 14), WH);
+      for (const sd of [-1, 1]) fillPts(ctx, ell(x + sd * r * .18, y + r * .15, r * .07, r * .09, 8), K); ctx.restore(); };
+  const CARD = ['\u26A0 CRITICAL:', 'SQL INJECTION.', 'SANITIZE THIS INPUT.'];
+  function noirCard(ctx, x, y, w, t, t0, size = 46) {
+    let n = Math.max(0, Math.floor((t - t0) * 70)); const total = CARD.join('').length, caret = n < total && Math.floor(t * 8) % 2 ? '\u258D' : '';
+    const body = CARD.map(l => { const s = l.slice(0, n); n -= l.length; return s; });
+    const cur = body.findIndex((s, i) => s.length < CARD[i].length); if (cur >= 0) body[cur] += caret;
+    body.push('');
+    commentCard(ctx, x, y, w, t, { author: 'coderabbitai', time: 'just now', chip: 'critical', body, buttons: false, size, bold: true });
+    noirAvatar(ctx, x + 44, y + 44, 26);
+  }
+
+  // ---------- SHOT 3a (94.40-95.84): the paw comes down on the line ----------
+  const PAWX = redX0 + (redX1 - redX0) * .5, PAWY = CW.y - 18;
+  function pawShot(ctx, t, lt, dur) {
+    const tc = twos(t), slam = W12.flag, f = fr(t), f0 = fr(slam), imp = hit(t, [slam], 7);
+    const j = shake(t, 16 * imp), zoom = 1 + .05 * imp;
+    if (f === f0 || f === f0 + 1) FRAME.post.push(c => ghostFrame(c, 16 - (f - f0) * 8, 5, .55));
+    cam(ctx, 1170 + j[0], CW.y - 170 + j[1], zoom, -.035);
+    codeWall(ctx, true, { pale: true });
+    // the input, coiled under the red slot; the slam scatters its letters
+    if (t < slam - 1 / 24) snake(ctx, t, 1080, CW.y + 54, { rear: 1, size: 44 });
+    else { const age = t - slam; for (let i = 0; i < EVIL.length; i++) { const a = -Math.PI * .95 + hash(i * 3.1) * Math.PI * .9 + (i % 2 ? Math.PI : 0) * .0, v = 900 + hash(i) * 900;
+      const x = 1080 + i * 26.4 + Math.cos(a) * v * age, y = CW.y + 54 + Math.sin(a) * v * age * .6 + 1400 * age * age;
+      if (y < H + 400) txt(ctx, EVIL[i], x, y, { font: 'mono', weight: 800, size: 44, color: K, rot: age * (hash(i + 5) - .5) * 20, align: 'center', base: 'middle' }); } }
+    // the stamp, then the ink splatter
+    if (t >= slam - 1 / 24) {
+      pawPrint(ctx, PAWX, PAWY, 108, -.12, R, 3);
+      for (let i = 0; i < 14; i++) { const a = hash(i * 7.7) * TAU, d = 170 + hash(i * 2.3) * 260, g = easeOut(clamp((t - slam) / .12)), r = 6 + hash(i * 5.5) * 22;
+        ink(ctx, blob(PAWX + Math.cos(a) * d * g, PAWY + Math.sin(a) * d * g * .8, r * (.6 + .4 * g), i, .3, 10), { fill: R, line: 0, boil: 1.5 }); }
+    }
+    // the paw: raised (anticipation) -> down on the frame of the sound -> pressed -> lifted away
+    const up = t < slam - 1 / 24 ? (1 + .12 * easeOut(seg(tc, 94.4, 94.54))) * (1 - easeIn(seg(t, 94.54, slam - 1 / 24))) : 0;
+    const lift = easeIn(seg(tc, 94.76, 94.92)), press = t >= slam - 1 / 24 ? Math.exp(-(t - slam) * 12) : 0;
+    if (lift < 1) {
+      const px = PAWX + 20 + up * 260 + lift * 700, py = PAWY - 10 - up * 330 - lift * 900, s = 80 * (1 + up * .45 + lift * .5) * (1 - press * .06);
+      if (t >= slam - 2 / 24 && t < slam + 1 / 24) streaks(ctx, [px - 300, py - 700, px + 300, py], { dir: [-.3, 1], n: 18, len: 500, w: 7, color: K });
+      if (up > .3 || lift > .2) nd(ctx, 9 * Math.max(up, lift), c => bigPaw(c, px, py, s, -.25)); else bigPaw(ctx, px, py, s, -.25);
+    }
+    if (imp > .15) { krackle(ctx, PAWX, PAWY, 260, { n: 30, size: 16, color: K }); speedLines(ctx, PAWX, PAWY, { n: 40, r0: 330, r1: 1400, w: 9, color: rgba(K, .8) }); }
+    ctx.restore();
+    // the comment, typed in all caps (screen space, right half)
+    const ck = backOut(seg(t, 94.8, 94.96), 1.6);
+    if (ck > 0) { ctx.save(); ctx.translate(1010 + 400, 56 + 200); ctx.scale(ck, ck); ctx.rotate(.018); ctx.translate(-400, -200); noirCard(ctx, 0, 0, 800, t, 94.86, 54); ctx.restore(); }
+  }
+
+  // ---------- SHOT 3b (95.84-97.60): leap of faith. The camera rolls 180 degrees ----------
+  // Drawn as the final (rolled) composition; the roll rotates it from upside down to upright around the frame centre.
+  function cityTower(c, x, w, len, n, top) {                       // a tower hanging from y = top, len px long
+    fillPts(c, rect(x, top, w, len), K, false);
+    c.save(); c.translate(x + w * .5 + w * .18, top + 30); c.rotate(Math.PI / 2);
+    txt(c, code(n).trim(), 0, 0, { font: 'mono', weight: 700, size: w * .5, color: G2 }); c.restore();
+    inkLine(c, [[x, top + len], [x + w, top + len]], 4, G2, { taper: [0, 0], smooth: false });
+  }
+  function flipWorld(c, t, tc) {
+    fillPts(c, rect(-500, -700, W + 1000, H + 1400), P, false);
+    // the city of code hanging from the top: far towers (grey, defocused), near towers (ink); short over the lyric
+    nd(c, 6, d => { for (let i = 0; i < 30; i++) { const x = -460 + i * 92 + hash(i * 13) * 30, w = 50 + hash(i * 17) * 30, lyr = x < 980 && x > 60;
+      fillPts(d, rect(x, -700, w, 700 + (lyr ? 60 + hash(i) * 40 : 330 + hash(i * 19) * 330)), G2, false); } });
+    for (let i = 0; i < 22; i++) { const x = -420 + i * 128 + hash(i * 3) * 40, w = 76 + hash(i * 5) * 44, lyr = x + w > 40 && x < 990;
+      cityTower(c, x, w, lyr ? 640 + hash(i * 7) * 60 : 820 + hash(i * 7) * 380, 8990 + i, -700); }
+    // falling glyphs (they fall toward the city: upward on screen after the roll)
+    for (let i = 0; i < 18; i++) { const x = 1050 + hash(i) * 900, y = mod(900 - hash(i + 4) * 900 - (t - 95.84) * (160 + hash(i + 2) * 200), 1300) - 100;
+      txt(c, '{};=+()<>"\''[i % 11], x, y, { font: 'mono', weight: 800, size: 40 + hash(i + 8) * 30, color: G2, rot: t * (hash(i) - .5) * 3, align: 'center', base: 'middle' }); }
+    // the ledge: line 9012, stamped
+    const ly = 905; ink(c, rect(1000, ly, 1400, 220), { fill: K, line: 5, smooth: false, boil: .8 });
+    txt(c, 'WHERE name = \'" + req.query.name + "\'";', 1040, ly + 70, { font: 'mono', weight: 700, size: 40, color: G2 });
+    pawPrint(c, 1520, ly + 55, 34, -.15, R, 5);
+    // the rabbit (appears upright after the roll; the world is upside down), flag raised overhead
+    const flapT = tc * 5, pawUp = easeOut(seg(tc, W12.paw - .05, W12.paw + .2)), X = 1330, Y = ly + 4, s = 43;
+    const A = noirRabbit(c, X, Y, s, { turn: -.25, eyes: 'open', lids: .35, browTilt: 1.4, mouth: 'flat', lx: -.4, ly: -.2,
+      armR: { a: 168, e: 6 }, pawR: 'fist', armL: { a: lerp(35, 125, pawUp), e: lerp(40, 50, pawUp) }, pawL: 'mitt',
+      earL: { a: -8, b: wob(tc, 1.1) * 6 }, earR: { a: 8, b: wob(tc, 1.3, .3) * 6 } });
+    // "with my paw": the left paw turns to camera, its pad still inked red from the stamp
+    if (pawUp > .3) { const r = s * lerp(.2, .42, pawUp); ink(c, ell(A.pawL[0], A.pawL[1] - r * .4, r * 1.9, r * 2.2, 20), { fill: WH, line: 5, boil: 1 }); pawPrint(c, A.pawL[0], A.pawL[1] + r * .3, r, -.15, R, 9); }
+    // flag pole + red flag, flapping
+    const [hx, hy] = A.pawR, top = [hx + 18, hy - 520];
+    inkLine(c, [[hx - 6, hy + 60], top], 12, K, { taper: [0, 0], smooth: false });
+    const fp = []; for (let i = 0; i <= 10; i++) { const u = i / 10; fp.push([top[0] + u * 420, top[1] + 12 + Math.sin(u * 5 - flapT) * 26 * u]); }
+    for (let i = 10; i >= 0; i--) { const u = i / 10; fp.push([top[0] + u * 400, top[1] + 250 + Math.sin(u * 5 - flapT + .6) * 26 * u]); }
+    ink(c, fp, { fill: R, hatch: { color: RD, spacing: 14, width: 4, angle: -Math.PI / 5, dir: [0, 1], from: 40 }, line: 6, boil: 1.2 });
+    pawPrint(c, top[0] + 205, top[1] + 150 + Math.sin(2.5 - flapT) * 12, 52, -.1, P, 7);
+    return A;
+  }
+  function flipShot(ctx, t, lt, dur) {
+    const tc = twos(t), k = easeInOut(seg(t, 95.83, 96.7)), rot = Math.PI * (1 - k), zoom = lerp(1.55, 1, easeInOut(seg(t, 95.83, 96.85)));
+    ctx.save(); ctx.translate(W / 2, H / 2); ctx.rotate(rot); ctx.scale(zoom, zoom); ctx.translate(-lerp(1350, W / 2, k), -lerp(620, H / 2, k));
+    flipWorld(ctx, t, tc);
+    ctx.restore();
+    if (k > 0 && k < 1) { const w = Math.sin(k * Math.PI); streaks(ctx, [0, 0, W, H], { dir: [Math.cos(rot + 1.2), Math.sin(rot + 1.2)], n: 30, len: 600 * w, w: 6, color: rgba(K, .5 * w) }); }
+  }
+
+  // ---------- the pocket watch, in noir inks (the shared one is brass and orange) ----------
+  function noirWatch(ctx, x, y, r, secs, o = {}) {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(o.rot || 0);
+    const col = o.col || { case: G1, dk: K, face: P, ink: K, red: R };
+    if (o.chain !== false) inkLine(ctx, [[0, -r * 1.12], [r * .08, -r * 1.55], [r * .4, -r * 2.3], [r * .2, -r * 3.4]], r * .05, col.dk, { taper: [0, 0] });
+    ink(ctx, rrect(-r * .14, -r * 1.24, r * .28, r * .2, r * .05), { fill: col.case, line: r * .03, boil: .5, smooth: false });
+    ink(ctx, ell(0, -r * 1.03, r * .16, r * .12, 14), { fill: col.case, line: r * .03, boil: .5 });
+    ink(ctx, ell(0, 0, r * 1.07, r * 1.07, 44), { fill: col.case, shade: { color: col.dk, spacing: Math.max(12, r * .06), dir: [.55, .83], from: -r * .2, to: r }, line: r * .045, boil: .7 });
+    ink(ctx, ell(0, 0, r * .92, r * .92, 44), { fill: col.face, line: r * .025, boil: .4 });
+    for (let i = 0; i < 60; i++) { const a = i / 60 * TAU, big = i % 5 === 0, r0 = r * (big ? .72 : .8); inkLine(ctx, [[Math.sin(a) * r0, -Math.cos(a) * r0], [Math.sin(a) * r * .85, -Math.cos(a) * r * .85]], big ? r * .032 : r * .013, col.ink, { taper: [0, 0], smooth: false }); }
+    ['XII', 'III', 'VI', 'IX'].forEach((s, i) => { const a = i / 4 * TAU; txt(ctx, s, Math.sin(a) * r * .58, -Math.cos(a) * r * .58 + r * .075, { font: 'serif', weight: 900, size: r * .2, align: 'center', color: col.ink }); });
+    const h = secs / 3600 % 12, m = secs / 60 % 60, sc = o.smoothSec ? secs % 60 : Math.floor(secs % 60 + 1e-6);
+    if (o.digital !== false) { const H24 = Math.floor(secs / 3600) % 24, hh = (H24 + 11) % 12 + 1, mm = Math.floor(secs / 60) % 60, ss = Math.floor(secs % 60 + 1e-6);
+      const s = `${hh}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')} ${H24 < 12 ? 'AM' : 'PM'}`;
+      fillPts(ctx, rrect(-r * .5, r * .2, r, r * .24, r * .04), col.dk, false); txt(ctx, s, 0, r * .375, { font: 'mono', weight: 800, size: r * .15, align: 'center', color: o.hot ? col.red : col.face }); }
+    if (o.label) txt(ctx, o.label, 0, -r * .3, { font: 'ui', weight: 800, size: r * .085, align: 'center', color: col.red });
+    const hand = (a, L, w, c) => inkLine(ctx, [[-Math.sin(a) * L * .16, Math.cos(a) * L * .16], [Math.sin(a) * L, -Math.cos(a) * L]], w, c, { taper: [0, .6], smooth: false });
+    hand(h / 12 * TAU, r * .46, r * .07, col.ink); hand(m / 60 * TAU, r * .7, r * .05, col.ink); hand(sc / 60 * TAU, r * .8, r * .022, col.red);
+    fillPts(ctx, ell(0, 0, r * .055, r * .055, 12), col.ink);
+    ctx.save(); clipPts(ctx, ell(0, 0, r * .92, r * .92, 44)); fillPts(ctx, [[-r, -r * .45], [-r * .45, -r], [-r * .25, -r], [-r, -r * .25]], rgba(WH, .55), false); ctx.restore();
+    ctx.restore();
+  }
+
+  // ---------- SHOT 4a (97.60-99.88): slow motion. The cursor comes down on Merge at exactly 5:00:00 ----------
+  function mergeShot(ctx, t, lt, dur) {
+    const tc = twos(t), click = W12.merge, f = fr(t), fc = fr(click), after = t >= click - 1 / 24, age = t - click;
+    const dong = hit(t, [click], 3.5), j = shake(t, 14 * hit(t, [click], 6));
+    // slow push toward the button; everything on this side of the click is in slow motion
+    const push = easeInOut(seg(t, 97.6, click)), zoom = lerp(1, 1.12, push) * (1 + .05 * hit(t, [click], 8)) * lerp(1, 1.04, easeOut(seg(t, click, 99.88)));
+    fillPts(ctx, rect(0, 0, W, H), K, false);
+    cam(ctx, lerp(960, 1080, push) + j[0], 530 + j[1], zoom, .02);
+    // the page in the dark: a hard white spotlight on the button
+    spot(ctx, 1330, 560, 600, 350, .08, c => {
+      fillPts(c, rect(0, 0, W, H), P, false);
+      for (let i = 0; i < 5; i++) fillPts(c, rect(930, 250 + i * 40, 800 - hash(i) * 300, 14), mix(P, K, .14), false);
+      txt(c, after ? '\u2713 Pull request successfully merged' : '\u2713 This branch has no conflicts', 960, 480, { font: 'ui', weight: 800, size: 38, color: after ? K : G2 });
+    });
+    const press = after ? Math.exp(-age * 3) : clamp((t - (click - .12)) / .1);
+    button(ctx, 960, 530, 760, 140, after ? 'Merged' : 'Merge pull request', { fill: after ? K : WH, color: after ? P : K, press, size: 54 });
+    // the you-cursor, descending in slow motion, with time-smear echoes behind it
+    const cpos = k => [lerp(1680, 1380, easeInOut(k)), lerp(-140, 575, easeInOut(k))];
+    const ct = seg(t, 97.6, click), [cx, cy0] = cpos(ct), cy = cy0 - (after ? easeOut(seg(t, click, click + .8)) * 40 : 0);
+    if (!after) for (let e = 3; e >= 1; e--) { const p = cpos(clamp(ct - e * .045)); ctx.save(); ctx.globalAlpha = .16 * (4 - e) / 3; cursor(ctx, p[0], p[1], 200, { color: R, label: false }); ctx.restore(); }
+    cursor(ctx, cx, cy, 200, { color: R, click: after ? clamp(age / .5) : 0 });
+    ctx.restore();
+    // the watch, foreground left: the second hand crawls (slow motion) and hits 5:00:00 exactly on the click; DONG
+    const secs = clockSecs(17, 0, 0) - (after ? 0 : 1 - easeInOut(ct) * .999), wr = shake(t, 9 * dong);
+    noirWatch(ctx, 440 + wr[0], 480 + wr[1], 310, secs, { hot: after, rot: -.08 + wob(t, .25) * .02, smoothSec: true, label: 'DEPLOY \u00B7 FRI 5:00 PM' });
+    if (after) for (let i = 0; i < 3; i++) { const k = clamp((age - i * .22) / .9); if (k > 0 && k < 1) { ctx.save(); ctx.globalAlpha = 1 - k; outline(ctx, ell(440, 480, 340 + k * 520, 340 + k * 520, 48), 10 * (1 - k) + 2, R); ctx.restore(); } }
+    sfx(ctx, 'DONG', 560, 150, 250, age, { color: R, dotColor: K, shadow: K, rot: -.1, life: 1.25, stretch: 2 });
+    if (f === fc) flash(ctx, WH, 1);
+  }
+
+  // ---------- the harbour (shots 4b and 5) ----------
+  const SEA_TXT = [...Array(12)].map((_, i) => [...Array(8)].map((_, j) => code(9020 + i * 8 + j).trim()).join('    '));
+  // rows of code receding to the horizon; sun/moon reflection as broken dashes under (rx)
+  function seaOfCode(c, t, hz, o = {}) {
+    const tc = twos(t);
+    fillPts(c, rect(-600, hz, W + 1200, H + 900), o.sea || K, false);
+    if (o.under) o.under(c);
+    for (let k = 0; k < 40; k++) {
+      const q = Math.pow(.88, k), y = hz + (H + 120 - hz) * q, size = 54 * q; if (size < 4.5) break;
+      const dx = (k % 2 ? 1 : -1) * tc * 36 * q - hash(k) * 2400 * q, bob = Math.sin(tc * 2.2 + k * .9) * 7 * q;
+      txt(c, SEA_TXT[k % 12], -900 + mod(dx, 1200 * q + 1) - 600 * q, y + bob, { font: 'mono', weight: 700, size, color: o.text || G1 });
+      if (o.rx != null) { const w = (240 + hash(k * 3) * 160) * Math.max(q, .15), x = o.rx + Math.sin(tc * 3 + k) * 20 * q; fillPts(c, rect(x - w / 2, y - size * .9, w, size * .38), o.glint || P, false); }
+    }
+  }
+  function steamship(c, x, y, s, t, o = {}) {                   // (x, y) = waterline centre; s = 1 is ~470 px long
+    const tc = twos(t), bob = Math.sin(tc * 3.1) * 4, rock = Math.sin(tc * 2.3) * .02;
+    c.save(); c.translate(x, y + bob * s); c.rotate(rock); c.scale(s, s);
+    // smoke from the stack: puffs born on the beats, drifting back
+    for (let i = 3; i >= 0; i--) { const b = beatN(t) - i, age = t - beatTime(b); if (age < 0) continue; const r = 16 + age * 22, px = 70 - age * 120, py = -205 - age * 60;
+      ink(c, blob(px, py, r, b * 1.3, .22, 12), { fill: o.smoke || G2, line: 3.5, boil: 1.4 }); }
+    ink(c, [[48, -100], [96, -100], [104, -196], [42, -196]], { fill: K, line: 4, smooth: false, boil: .8 });
+    fillPts(c, rect(44, -178, 58, 16), P, false);
+    inkLine(c, [[-100, -100], [-106, -268]], 7, K, { taper: [0, .1], smooth: false });
+    ink(c, [[-150, -100], [110, -100], [120, -42], [-160, -42]], { fill: WH, line: 4.5, smooth: false, boil: .8 });
+    for (let i = 0; i < 5; i++) ink(c, ell(-118 + i * 50, -72, 10, 10, 12), { fill: K, line: 0, boil: .6 });
+    ink(c, [[-250, -44], [256, -44], [214, 36], [-206, 36]], { fill: K, line: 5, smooth: false, boil: 1 });
+    fillPts(c, rect(-240, -30, 486, 9), P, false);
+    txt(c, 'SHIP IT', -40, 20, { font: 'display', weight: 900, stretch: -1, size: 40, color: P, align: 'center' });
+    // bow wave
+    inkLine(c, [[256, 30], [300, 36], [340, 30]], 6, o.wake || P, { taper: [.2, .8] });
+    c.restore();
+    return { mast: [x + (-106 * Math.cos(rock) + 268 * Math.sin(rock)) * s, y + bob * s + (-268 * Math.cos(rock) - 106 * Math.sin(rock)) * s] };
+  }
+  // the torn line: a paper strip following a polyline; text laid along it; req.query.name under a red paw print
+  const STRIP = '  ' + QS;
+  function strip(c, pts, w, seed) {
+    const n = pts.length, L = [0]; for (let i = 1; i < n; i++) L.push(L[i - 1] + dist(pts[i - 1], pts[i]));
+    const at = u => { const d = u * L[n - 1]; let i = 1; while (i < n - 1 && L[i] < d) i++; const k = (d - L[i - 1]) / ((L[i] - L[i - 1]) || 1), a = pts[i - 1], b = pts[i]; return [lerp(a[0], b[0], k), lerp(a[1], b[1], k), Math.atan2(b[1] - a[1], b[0] - a[0])]; };
+    const top = [], bot = [];
+    for (let i = 0; i <= 40; i++) { const [x, y, a] = at(i / 40), jt = (hash(seed + i * 7) - .5) * w * .35, jb = (hash(seed + i * 13) - .5) * w * .35;
+      top.push([x + Math.sin(a) * (w / 2 + jt), y - Math.cos(a) * (w / 2 + jt)]); bot.push([x - Math.sin(a) * (w / 2 + jb), y + Math.cos(a) * (w / 2 + jb)]); }
+    fillPts(c, [...top, ...bot.reverse()], P, false);
+    const size = w * .56, N = STRIP.length, red0 = 2 + Q[0][0].length, red1 = red0 + Q[1][0].length;
+    for (let j = 0; j < N; j++) { if (STRIP[j] === ' ') continue; const [x, y, a] = at((j + .5) / N);
+      txt(c, STRIP[j], x, y, { font: 'mono', weight: 800, size, color: j >= red0 && j < red1 ? R : K, rot: a, align: 'center', base: 'middle' }); }
+    const [px, py, pa] = at((red0 + red1) / 2 / N); pawPrint(c, px, py + w * .1, w * .42, pa - .1, R, 11);
+  }
+  // the dock (foreground) and the rabbit watching
+  function dock(c, x0, x1, y, t) {
+    ink(c, rect(x0, y, x1 - x0, 60), { fill: G1, line: 5, smooth: false, boil: .8 });
+    for (let i = 0; i < (x1 - x0) / 90; i++) inkLine(c, [[x0 + i * 90, y + 4], [x0 + i * 90 + 6, y + 56]], 3, K, { taper: [0, 0], smooth: false });
+    for (const px of [x1 - 40, x1 - 260]) ink(c, rect(px, y + 50, 34, 300), { fill: K, line: 4, smooth: false, boil: .6 });
+    ink(c, rrect(x1 - 150, y - 44, 56, 48, 10), { fill: K, line: 4, smooth: false, boil: .6 });
+    fillPts(c, rect(x0, y + 60, x1 - x0, 400), K, false);
+  }
+
+  // ---------- SHOT 4b (99.88-101.10): the red line tears out of the page and ships ----------
+  function shipShot(ctx, t, lt, dur) {
+    const tc = twos(t), hz = 600, rip = W12.shipped;
+    const sail = easeIn(seg(t, 100.42, 101.1)), shx = lerp(1330, 1600, sail), shy = lerp(668, 632, sail), shs = lerp(1, .6, sail);
+    const dr = drift(t, 4), j = shake(t, 8 * hit(t, [rip], 8));
+    cam(ctx, 960 + dr[0] + j[0], 540 + dr[1] + j[1], lerp(1.02, 1, easeOut(seg(t, rip, 101.1))), 0);
+    // dusk: paper sky with a halftone darkening at the top, a low hard white sun
+    fillPts(ctx, rect(-200, -200, W + 400, hz + 200), P, false);
+    dotsIn(ctx, [-100, -100, W + 100, hz], { spacing: 30, color: G3, dir: [0, 1], from: -100, to: hz, min: .9, max: .1 });
+    ink(ctx, ell(1400, hz - 40, 250, 250, 48), { fill: WH, line: 6, boil: .8 });
+    seaOfCode(ctx, t, hz, { rx: 1400 });
+    // the code wall at the left: dark rows, with line 9012 lit (paper) until it tears out, leaving a black gap
+    ink(ctx, rect(-200, -200, 760, 1100), { fill: K, line: 6, smooth: false, boil: .8 });
+    ctx.save(); clipPts(ctx, rect(-200, -200, 760, 1100), false);
+    for (let r = -6; r <= 6; r++) if (r) txt(ctx, code(9012 + r), -300, 430 + r * 64, { font: 'mono', weight: 700, size: 34, color: G1 });
+    ctx.restore();
+    const rowY0 = 430 - 8, gap = t >= rip - 1 / 24;
+    if (gap) { const g = []; for (let i = 0; i <= 16; i++) g.push([-200 + i * 48, rowY0 - 32 + (hash(i * 3) - .5) * 18]); for (let i = 16; i >= 0; i--) g.push([-200 + i * 48, rowY0 + 32 + (hash(i * 5) - .5) * 18]); fillPts(ctx, g, K, false); outline(ctx, g, 3, G2, { smooth: false }); }
+    // the ship
+    const S = steamship(ctx, shx, shy, shs, t, {});
+    if (sail > 0) for (let i = 0; i < 4; i++) inkLine(ctx, [[shx - 250 * shs, shy + 30 * shs + i * 16], [shx - (500 + i * 220) * shs * (1 + sail), shy + 60 + i * 34]], 5, P, { taper: [.1, .9] });
+    // the strip: lies in the wall, tears out on "shipped" (right end first), flies and flaps from the mast as a pennant
+    const N = 16, pts = [];
+    for (let i = 0; i <= N; i++) {
+      const u = i / N, k = easeInOut(clamp((t - rip - (1 - u) * .16) / .42)), flap = Math.sin(u * 7 - tc * 9) * 26 * u;
+      const a = [-420 + u * 1260, rowY0 - (gap ? easeOut(clamp((t - rip) / .1)) * (1 - u) * 0 : 0)];
+      const b = [S.mast[0] - (1 - u) * 520 * shs, S.mast[1] + 26 * shs + (1 - u) * 60 * shs + Math.sin((1 - u) * 6 - tc * 10) * 22 * (1 - u) * shs];
+      pts.push([lerp(a[0], b[0], k), lerp(a[1], b[1], k) - Math.sin(k * Math.PI) * 240 + flap * Math.sin(k * Math.PI)]);
+    }
+    strip(ctx, pts, lerp(60, 34 * shs, easeInOut(clamp((t - rip) / .5))), 3);
+    // the dock and the rabbit, deadpan, watching it go
+    dock(ctx, -80, 820, 900, t);
+    const look = clamp((shx - 1100) / 700);
+    noirRabbit(ctx, 560, 906, 25, { turn: .7, lx: .6 + look * .3, ly: -.1, lids: .5, mouth: 'flat', browTilt: -.4, armL: { a: 8, e: 10 }, armR: { a: 8, e: 10 },
+      earL: { a: -14, b: -easeInOut(seg(tc, 100.5, 101)) * 40 }, earR: { a: 12, b: 0 } });
+    ctx.restore();
+  }
+
+  // ---------- SHOT 5 (101.10-104.63): held "flaaaw". Ink corruption, 5 PM -> 3 AM, the spill forms 03:00 ----------
+  const SPILL = [...Array(64)].map((_, i) => { const u = hash(i * 1.9), v = hash(i * 7.3);
+    return { x: lerp(1500, 120, Math.pow(u, .8)) + (v - .5) * 700 * u, y: lerp(360, 1060, Math.pow(u, 1.2)) + (hash(i * 3.7) - .5) * 160, r: 40 + hash(i * 5.1) * 90 * (.5 + u), t0: 101.1 + u * 1.7 + hash(i * 2.2) * .5 }; });
+  const DIG = { s: '03:00', x: 960, y: 800, size: 520 };
+  function flawShot(ctx, t, lt, dur) {
+    const tc = twos(t), hz = 330, night = seg(t, 101.8, 103.8), resolve = easeInOut(seg(t, 103.35, 104.4));
+    const slamF = fr(W12.end), f = fr(t), pre = easeIn(seg(t, 104.42, 104.6)), slam = f >= slamF ? 1 : 0;
+    const dr = drift(t, 5), j = shake(t, 22 * slam + 3 * resolve);
+    const zoom = lerp(1, 1.1, easeInOut(seg(t, 101.1, 104.4))) * (1 - pre * .03) * (1 + slam * .16);
+    cam(ctx, 960 + dr[0] + j[0], 540 + dr[1] + j[1], zoom, lerp(0, -.03, night));
+    // sky: dusk paper, flooded by dry-brush sweeps of night ink from the top
+    const sky = mix(P, INK.night, 0);
+    fillPts(ctx, rect(-300, -300, W + 600, hz + 300), sky, false);
+    dryBrush(ctx, [-300, -300, W + 300, hz + 2], night, INK.night, 1);
+    // the watch hangs as the moon; hands spin forward, 5 PM -> 3 AM, faster and faster
+    const secs = lerp(clockSecs(17, 0, 0), clockSecs(27, 0, 0), easeIn(seg(t, 101.1, 104.35)));
+    noirWatch(ctx, 1540, 170, 118, secs, { hot: true, chain: false, smoothSec: true, rot: .06 });
+    // the sea of code; night sweeps over it too, from the horizon toward us
+    const nightSea = easeInOut(seg(t, 102.2, 104.0));
+    seaOfCode(ctx, t, hz, { sea: K, text: nightSea > .5 ? INK.nightLt : G1, rx: 1540, glint: night > .6 ? INK.nightLt : P, under: c => dryBrush(c, [-300, hz, W + 300, H + 300], nightSea, INK.night) });
+    // the ship, far out, trailing its wake of red ink
+    const shx = lerp(1250, 1420, seg(t, 101.1, 104.6)), shy = hz + 34, shs = lerp(.26, .16, seg(t, 101.1, 104.6));
+    const S = steamship(ctx, shx, shy, shs, t, {});
+    strip(ctx, [[S.mast[0] - 140 * shs, S.mast[1] + 40 * shs + Math.sin(tc * 9) * 8 * shs], [S.mast[0] - 70 * shs, S.mast[1] + 20 * shs], S.mast].map(p => p), 34 * shs, 3);
+    // the red spill: blots born along the wake, growing with dry-brush edges; then they gather into 03:00
+    spill(ctx, t, resolve);
+    // the dock, tiny, with the rabbit's silhouette
+    dock(ctx, -80, 460, 850, t);
+    noirRabbit(ctx, 300, 856, 12, { turn: .7, lx: .8, lids: .55, mouth: 'flat', earL: { a: -30, b: -60 }, earR: { a: 12, b: 10 } });
+    ctx.restore();
+    if (slam) { speedLines(ctx, DIG.x, DIG.y - 200, { n: 70, r0: 560, r1: 1600, w: 12, color: K }); FRAME.post.push(c => ghostFrame(c, 18, 8, .5)); }
+  }
+  // dry-brush flood: ragged horizontal strokes sweep in from the top as k goes 0 -> 1 (on twos)
+  function dryBrush(ctx, [x0, y0, x1, y1], k, color, dir = 1) {
+    if (k <= 0) return; if (k >= 1) { fillPts(ctx, rect(x0, y0, x1 - x0, y1 - y0), color, false); return; }
+    const n = 26, hh = (y1 - y0) / n;
+    ctx.beginPath();
+    const kOf = i => clamp(k * 2.2 - i / n * 1.2 + (hash(i * 3) - .5) * .2);
+    for (let i = 0; i < n; i++) {
+      const kk = kOf(i); if (kk <= 0) continue;
+      const y = y0 + i * hh, L = (x1 - x0) * easeOut(kk), xs = hash(i * 7) < .5 ? x0 : x1 - L;
+      ctx.moveTo(xs, y - 4);
+      for (let q = 0; q <= 12; q++) ctx.lineTo(xs + L * q / 12, y - 4 + (hash(i * 31 + q) - .5) * 14);
+      for (let q = 12; q >= 0; q--) ctx.lineTo(xs + L * q / 12 + (q === 12 ? -hash(i) * 60 : 0), y + hh + 6 + (hash(i * 17 + q) - .5) * 18);
+      ctx.closePath();
+    }
+    ctx.fillStyle = color; ctx.fill();
+    // bristle streaks at the stroke ends
+    ctx.strokeStyle = color; ctx.lineWidth = 3; ctx.beginPath();
+    for (let i = 0; i < n; i++) { const kk = kOf(i); if (kk <= 0 || kk >= 1) continue;
+      const y = y0 + i * hh, L = (x1 - x0) * easeOut(kk), left = hash(i * 7) < .5, xe = left ? x0 + L : x1 - L;
+      for (let b = 0; b < 6; b++) { const yy = y + hh * (b + .5) / 6, l = 40 + hash(i * 9 + b) * 140; ctx.moveTo(xe, yy); ctx.lineTo(xe + (left ? l : -l), yy + (hash(b + i) - .5) * 6); } }
+    ctx.stroke();
+  }
+  function spill(ctx, t, resolve) {
+    const tc = twos(t);
+    // the free blots shrink back as the ink gathers into the digits
+    ctx.beginPath();
+    for (const b of SPILL) { const g = easeOut(clamp((t - b.t0) / 1.2)) * (1 - resolve * .95); if (g <= .01) continue;
+      const p = boil(blob(b.x, b.y, b.r * g, b.x, .35, 14, b.r * g * .55), 3, b.x); tracePath(ctx, p, true, true); }
+    ctx.fillStyle = R; ctx.fill();
+    // dry-brush drag marks off each blot, and splatter
+    ctx.strokeStyle = R; ctx.lineCap = 'round'; ctx.beginPath();
+    for (const b of SPILL) { const g = easeOut(clamp((t - b.t0) / 1.2)) * (1 - resolve); if (g < .25) continue;
+      for (let q = 0; q < 9; q++) { const a = Math.PI * (.85 + hash(b.x * 3 + q) * .3), y = b.y + (q / 8 - .5) * b.r * g * .9, x = b.x - Math.sqrt(Math.max(0, 1 - ((y - b.y) / (b.r * g * .55)) ** 2)) * b.r * g * .9, l = b.r * g * (.4 + hash(q + b.y) * 1.1);
+        ctx.moveTo(x, y); ctx.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l * .15); } }
+    ctx.lineWidth = 4; ctx.stroke();
+    for (const b of SPILL) { const g = easeOut(clamp((t - b.t0) / 1.2)) * (1 - resolve); if (g < .3) continue;
+      for (let q = 0; q < 3; q++) { const a = hash(b.x + q) * TAU, d = b.r * g * (1.1 + hash(b.y + q) * .6); fillPts(ctx, ell(b.x + Math.cos(a) * d, b.y + Math.sin(a) * d * .55, 5 + hash(q + b.r) * 9, 4 + hash(q * 3 + b.r) * 6, 8), R); } }
+    // 03:00: the digits fill in with ink from the inside (blots grow within a text mask), then read solid
+    if (resolve > 0) {
+      const c = pushLayer(); c.setTransform(ctx.getTransform());
+      txt(c, DIG.s, DIG.x, DIG.y, { size: DIG.size, weight: 900, stretch: -2, align: 'center', color: '#000' });
+      c.globalCompositeOperation = 'source-in';
+      c.beginPath(); for (let i = 0; i < 80; i++) { const x = DIG.x - 700 + hash(i * 4.4) * 1400, y = DIG.y - DIG.size * .75 + hash(i * 6.6) * DIG.size * .8, r = (60 + hash(i * 8.8) * 90) * easeOut(clamp(resolve * 1.6 - hash(i * 2.2) * .6)); if (r > 1) { const p = boil(blob(x, y, r, i, .3, 12), 3, i); tracePath(c, p, true, true); } }
+      c.fillStyle = R; c.fill(); popLayer();
+      ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(c.canvas, 0, 0); ctx.restore();
+      if (resolve > .9) { const e = (resolve - .9) / .1; txt(ctx, DIG.s, DIG.x, DIG.y, { size: DIG.size, weight: 900, stretch: -2, align: 'center', color: R, alpha: e, extrude: { dx: 14, dy: 16, color: INK.night } }); }
+    }
   }
 
   // ---------- placeholders for the rest (built below) ----------
   function todo(label) { return (ctx, t) => { fillPts(ctx, rect(0, 0, W, H), K, false); txt(ctx, label + ' ' + t.toFixed(2), W / 2, H / 2, { size: 80, align: 'center', base: 'middle', color: P }); }; }
 
-  chapter('bridge', 87.74, 104.63, [[87.74, canyon], [91.10, todo('beam')], [cutAt(W12.there), todo('eye')], [94.40, todo('paw')], [cutAt(W12.caps), todo('flip')],
-    [97.60, todo('merge')], [cutAt(W12.shipped), todo('ship')], [101.10, todo('flaw')]]);
+  chapter('bridge', 87.74, 104.63, [[87.74, canyon], [91.10, beamLine], [cutAt(W12.there), eyeShot], [94.40, pawShot], [cutAt(W12.caps), flipShot],
+    [97.60, mergeShot], [cutAt(W12.shipped), shipShot], [101.10, flawShot]]);
 })();

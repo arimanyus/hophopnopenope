@@ -5,6 +5,7 @@
   const at = x => x - F1;                                          // hits land one frame before their sound
   const frameOf = x => Math.ceil(x * 24 - 1e-6) / 24;              // first frame at or after x
   const tw = (t, a) => a + Math.floor((t - a) * 12 + 1e-6) / 12;   // twos, phased so a pose lands on frame a
+  const twh = (t, hits) => { let a = frameOf(at(hits[0])); for (const x of hits) if (t >= frameOf(at(x)) - 1e-6) a = frameOf(at(x)); return tw(t, a); }; // re-phased at every hit
   const HOP1 = [72.40, 72.771], NOPE = [75.535, 75.883], CLICK = [76.161, 76.696], HOP2 = [79.621, 80.132];
   const GREY = '#DCD6CA', GREYLN = '#6E6A78';
 
@@ -32,10 +33,25 @@
   }
   // the stage marquee, redrawn so it can fly in and out (x, y = top centre)
   function marquee(c, t, x, y, n) {
-    ink(c, rrect(x - 620, y, 1240, 176, 22), { fill: INK.ink, line: 6, boil: .8, smooth: false });
-    for (let i = 0; i < 35; i++) { const on = (Math.floor(t * 12) + i) % 3 !== 0, px = x - 596 + i * 35; for (const py of [y + 17, y + 159]) fillPts(c, ell(px, py, 8, 8, 8), on ? INK.yellow : '#5A4A20'); }
-    txt(c, `${PR.title} #${PR.num}`, x, y + 82, { font: 'ui', weight: 900, size: 48, color: INK.white, align: 'center' });
-    txt(c, `Actionable comments posted: ${n}`, x, y + 138, { font: 'ui', weight: 800, size: 42, color: INK.cyan, align: 'center' });
+    ink(c, rrect(x - 440, y, 880, 190, 22), { fill: INK.ink, line: 6, boil: .8, smooth: false });
+    for (let i = 0; i < 25; i++) { const on = (Math.floor(t * 12) + i) % 3 !== 0, px = x - 418 + i * 34.8; for (const py of [y + 17, y + 173]) fillPts(c, ell(px, py, 8, 8, 8), on ? INK.yellow : '#5A4A20'); }
+    txt(c, `${PR.title} #${PR.num}`, x, y + 80, { font: 'ui', weight: 900, size: 46, color: INK.white, align: 'center' });
+    txt(c, 'Actionable comments posted:', x - 50, y + 146, { font: 'ui', weight: 800, size: 38, color: INK.cyan, align: 'center' });
+    txt(c, String(n), x + 318, y + 152, { font: 'ui', weight: 900, size: 70, color: INK.yellow, align: 'center' });
+  }
+  // stamp() with its worn-ink specks knocked out of the ink only (so it works on colour fields).
+  // Lands fully on age 0 (the hit frame); the frame before it is a faint oversized approach.
+  function slamStamp(ctx, s, x, y, size, age, o = {}) {
+    if (age < -F1 - 1e-6) return;
+    const k = age < 0 ? 1.45 : 1 + .05 * Math.exp(-age * 16) * Math.sin(age * 70), col = o.color || INK.red, f = { font: 'display', weight: 900, stretch: o.stretch ?? 0, size: size * k };
+    const c = pushLayer(); c.setTransform(ctx.getTransform()); c.translate(x, y); c.rotate(o.rot ?? -.12);
+    const m = measure(c, s, f), bw = m.w + size * .5, bh = size * 1.05 * k;
+    c.lineWidth = size * .1; c.strokeStyle = col; c.strokeRect(-bw / 2, -bh / 2, bw, bh);
+    txt(c, s, 0, size * .36 * k, { ...f, color: col, align: 'center' });
+    c.globalCompositeOperation = 'destination-out';
+    dotsIn(c, [-bw / 2 - 20, -bh / 2 - 20, bw / 2 + 20, bh / 2 + 20], { spacing: size * .13, color: '#000', k: (a, b) => clamp(.12 + noise2(a * .025 + 7, b * .025) * .55) });
+    popLayer();
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = age < 0 ? .45 : 1; ctx.drawImage(c.canvas, 0, 0); ctx.restore();
   }
   // the release ticker (private so its arrows can be coloured and it can smear solid). off = scroll px, blur 0..1
   const RELEASES = [['MODEL 5.6 SOL', '\u25B2'], ['6 ASTRA', '\u25B2\u25B2'], ['FLASH 3.8', '\u25B2'], ['NEW SOTA', '\u25B2'], ['NEW SOTA', '\u25B2']];
@@ -61,8 +77,9 @@
   // ---------- 69.27 SLAM: forty bunnies erupt; the chart plots 3 -> 40 ----------
   const POP = [0, 1, 2, 3, 4].map(r => beatTime(163 + r * .5));      // eighth notes from the downbeat
   const GRID = [];
-  { const ys = [992, 908, 840, 784, 738], ss = [86, 70, 57, 47, 39], sp = [1800, 1560, 1350, 1170, 1030];
-    for (let r = 4; r >= 0; r--) for (let i = 0; i < 8; i++) GRID.push({ x: 960 + (i / 7 - .5) * sp[r], y: ys[r], s: ss[r], r, i }); }
+  { const ys = [1010, 918, 842, 780, 732], ss = [132, 106, 86, 70, 58], sp = [1900, 1660, 1480, 1320, 1180];
+    for (let r = 4; r >= 0; r--) for (let i = 0; i < 8; i++) { const u = i / 7 - .5, aisle = r < 2 ? Math.sign(u) * (r ? 50 : 90) : 0;
+      GRID.push({ x: 960 + u * sp[r] + aisle + (r % 2 ? 22 : 0), y: ys[r], s: ss[r], r, i }); } }
   function pop(t, tc, t0) {                                           // a bunny jumping out of the floor at t0
     if (t < at(t0)) return null;
     const a = Math.max(0, tc - at(t0)), air = .25, k = a / air;
@@ -79,37 +96,38 @@
     stage(ctx, t, { a: INK.blue, b: INK.cyan, spin: .3, rays: 28, marquee: false, altarBtn: false, horizon: 640 });
     for (const g of GRID) {
       const p = pop(t, tc, POP[g.r]); if (!p) continue;
-      if (p.fresh > .55) krackle(ctx, g.x, g.y - g.s * .2, g.s * .95, { n: 8, size: g.s * .13, color: INK.ink, seed: g.i + g.r * 8 });
+      if (p.fresh > .35) { const k = (p.fresh - .35) / .65; burst(ctx, g.x, g.y - g.s * .25, g.s * (.95 - .35 * k), { fill: INK.white, shade: null, line: 4, seed: g.i * 3 + g.r, spike: .5, n: 9 });
+        fillPts(ctx, ell(g.x, g.y, g.s * .62, g.s * .14, 16), INK.ink); }
       (g.r >= 3 ? bun : commentBunny)(ctx, g.x, g.y, g.s * p.sc, { hop: p.hop, sq: p.sq, eyes: p.fresh > 0 ? 'wide' : 'happy' });
     }
     const land = Math.exp(-a0 * 8) * Math.cos(a0 * 24), jz = Math.sin(tc * TAU * 5) * 8, so = singOpen(t);
-    rabbit(ctx, 960, 1006, 30, { sq: .4 * land, armL: { a: 148 + jz, e: 22 }, armR: { a: 148 - jz, e: 22 }, pawL: 'open', pawR: 'open',
+    rabbit(ctx, 960, 1012, 33, { sq: .4 * land, armL: { a: 148 + jz, e: 22 }, armR: { a: 148 - jz, e: 22 }, pawL: 'open', pawR: 'open',
       mouth: so > .05 ? 'open' : 'grin', open: so, ly: -.15, bags: BAGS, blush: .35, earL: { a: -14 - land * 10, b: land * 30 }, earR: { a: 12 + land * 10, b: -land * 30 } });
     ctx.restore();
     const mk = backOut(clamp(a0 / .12), 1.5), mo = easeIn(seg(t, 69.49, 69.6));
-    if (mo < 1) marquee(ctx, t, 960, lerp(-200, 26, mk) - mo * 260, 40);
+    if (mo < 1) marquee(ctx, t, 1400, lerp(-220, 30, mk) - mo * 280, 40);
     const ck = seg(threes(t), 69.72, 69.97);
-    if (ck > 0) cutout(ctx, lerp(1990, 1392, backOut(ck, 1.2)), 72, 470, 370, .05, t, c => metrChart(c, 0, 0, 470, 370, t,
+    if (ck > 0) cutout(ctx, lerp(1990, 1340, backOut(ck, 1.2)), 66, 540, 420, .05, t, c => metrChart(c, 0, 0, 540, 420, t,
       { title: 'Comments per PR (0% read)', ylabels: ['1', '10', '100', '1K'], pts: CPTS, progress: t >= at(POP[4]) ? 1 : .5 }), { seed: 3 });
     misregFrame(ctx, 12 * Math.exp(-a0 * 9), 0);
   }
 
   // ---------- 70.32 three panels: V formation / release ticker / the watch at T-30 ----------
   const VF = [];
-  for (let i = 0; i < 40; i++) { const sd = i % 2 ? 1 : -1, d = Math.pow((Math.floor(i / 2) + 1) / 20, .8);
-    VF.push({ x: 960 + sd * lerp(130, 980, d), y: lerp(958, 560, d), s: lerp(80, 30, d), i }); }
+  for (let i = 0; i < 40; i++) { const sd = i % 2 ? 1 : -1, d = Math.pow(Math.floor(i / 2) / 19, .9);
+    VF.push({ x: 960 + sd * lerp(175, 780, d), y: lerp(990, 580, d), s: lerp(116, 44, d), i }); }
   VF.sort((a, b) => a.y - b.y);
   function vForm(c, t) {
     const tc = twos(t), lt = t - 70.32, bt = beatAt(tc + F1), bob = Math.sin(frac(bt) * Math.PI), sd = Math.floor(bt) % 2 ? 1 : -1, up = hit(tc, [71.62], 4);
     cam(c, 960, 600 - lt * 22, 1.03 + lt * .04, (lt - 1) * .012);
     stage(c, t, { a: INK.blue, b: INK.yellow, spin: -.25, rays: 28, marquee: false, altarBtn: false, horizon: 520 });
-    for (const b of VF) { const o = { hop: bob * 1.4 + up * 3.5, sq: -bob * .12, rot: sd * .09 * bob, eyes: 'happy' }; (b.s < 46 ? bun : commentBunny)(c, b.x, b.y, b.s, o); }
+    for (const b of VF) { const o = { hop: bob * 1.4 + up * 3.5, sq: -bob * .12, rot: sd * .09 * bob, eyes: 'happy' }; (b.s < 60 ? bun : commentBunny)(c, b.x, b.y, b.s, o); }
     const aL = up > .2 ? 168 : sd > 0 ? 150 : 40, aR = up > .2 ? 168 : sd > 0 ? 40 : 150;
     rabbit(c, 960, 1012, 27, { hop: bob * .6 + up * 1.5, armL: { a: aL, e: 15 }, armR: { a: aR, e: 15 }, pawL: up > .2 ? 'point' : 'open', pawR: up > .2 ? 'point' : 'open',
       lean: sd * 5 * bob, eyes: 'happy', mouth: 'grin', bags: BAGS, ...earsFor(bob * .5 * sd) });
     c.restore();
   }
-  function tickerPanel(c, t) { fillPts(c, rect(0, 0, W, H), INK.ink, false); crawl(c, 445, 190, 900 + (t - 70.9) * 700, { size: 108, labelW: 380 }); }
+  function tickerPanel(c, t) { fillPts(c, rect(0, 0, W, H), INK.ink, false); crawl(c, 445, 190, (t - at(70.937)) * 620 - 60, { size: 108, labelW: 380 }); }
   function watchPanel(c, t) {
     const tc = twos(t), n = clamp(Math.floor(beatAt(t + F1) - 168 + 1e-6), 0, 30);
     field(c, INK.night, INK.nightLt, { spacing: 30, y0: 0, y1: 1100 });
@@ -135,13 +153,13 @@
     for (const b of RISERS) if (b.r >= 2) commentBunny(ctx, b.x, b.y, b.s, fn(b, false));
   }
   function hopChoreo(ctx, t) {
-    const tc = tw(t, frameOf(at(HOP1[0]))), a = hops(tc, HOP1, .3, 2.6), air = a.h > .25;
+    const tc = twh(t, HOP1), a = hops(tc, HOP1, .3, 3.1), air = a.h > .25;
     field(ctx, INK.blue, INK.blueDk, { y0: 250, y1: 1150 });
     crowd(ctx, () => ({ hop: a.h * 5.4, sq: a.sq, eyes: air ? 'happy' : 'dot', closed: air }));
     rabbit(ctx, 960, 985, 40, { hop: a.h, sq: a.sq, legs: 'hop', ...earsFor(a.vy), armL: { a: air ? 152 : 35, e: 20 }, armR: { a: air ? 152 : 35, e: 20 }, pawL: 'open', pawR: 'open',
       eyes: air ? 'happy' : 'open', mouth: air ? 'grin' : 'smile', bags: BAGS });
-    sfx(ctx, 'HOP!', 470, 330, 240, t - at(HOP1[0]), { rot: -.14, life: 1.4 });
-    sfx(ctx, 'HOP!', 1450, 330, 240, t - at(HOP1[1]), { rot: .12, life: 1.4 });
+    sfx(ctx, 'HOP!', 520, 300, 205, t - at(HOP1[0]) + .05, { rot: -.14, life: 1.4 });
+    sfx(ctx, 'HOP!', 1410, 300, 205, t - at(HOP1[1]) + .05, { rot: .12, life: 1.4 });
   }
 
   // ---------- 73.00 the chair in the void (developer), 74.50 the inversion (rabbit) ----------
@@ -167,13 +185,15 @@
     if (part !== 'back') for (const sd of [-1, 1]) { P([[sd * 152, -216], [sd * 152, -4]], 18); P([[sd * 152, -120], [sd * 122, -60]], 10); }
     c.restore();
   }
-  function slumped(c, t) {                                             // the developer hunched forward, head in hands (chair coords)
-    const S = '#0B0D1E', br = Math.sin(twos(t) * 2.2) * 5, L = (pts, w) => inkLine(c, pts, w, S, { taper: [0, 0] });
-    for (const sd of [-1, 1]) { L([[sd * 70, -228], [sd * 86, -28]], 60); ink(c, ell(sd * 96, -16, 58, 22, 16), { fill: S, line: 4, boil: .8 }); ink(c, ell(sd * 64, -238, 70, 46, 18), { fill: S, line: 4, boil: .8 }); }
-    c.save(); c.translate(0, -248 + br * .2); c.scale(1, .72 + br * .003); devShadow(c, 0, 0, 290, { glare: .5, glareColor: INK.cyan }); c.restore();
-    for (const sd of [-1, 1]) L([[sd * 118, -330], [sd * 104, -232], [sd * 40, -330]], 46);
-    inkLine(c, [[-72, -548], [0, -566], [72, -548]], 6, rgba(INK.paper, .75), { taper: [.2, .2] });
-    for (const sd of [-1, 1]) inkLine(c, [[sd * 70, -520], [sd * 128, -400]], 5, rgba(INK.paper, .5), { taper: [.2, .6] });
+  function slumped(c, t) {                                             // the developer hunched forward, elbows on knees, face in hands (chair coords)
+    const S = '#0B0D1E', br = Math.sin(twos(t) * 2.2), L = (pts, w) => inkLine(c, pts, w, S, { taper: [0, 0] }), rim = rgba(INK.paper, .7);
+    for (const sd of [-1, 1]) { L([[sd * 74, -226], [sd * 90, -28]], 62); ink(c, ell(sd * 100, -16, 60, 22, 16), { fill: S, line: 4, boil: .8 }); ink(c, ell(sd * 70, -240, 74, 48, 18), { fill: S, line: 4, boil: .8 }); }
+    c.save(); c.translate(0, -236 + br); c.scale(1.06, .6 + br * .004); devShadow(c, 0, 0, 300, { glare: 0 }); c.restore();
+    for (const sd of [-1, 1]) { L([[sd * 150, -330], [sd * 118, -252]], 54); L([[sd * 112, -250], [sd * 30, -398]], 46); }
+    ink(c, ell(0, -408, 58, 34, 16), { fill: S, line: 4, boil: .8 });
+    for (const sd of [-1, 1]) ink(c, ell(sd * 30, -438, 22, 10, 10), { fill: INK.cyan, line: 3, lineColor: INK.white, boil: .4 });
+    inkLine(c, [[-64, -484 + br], [0, -500 + br], [64, -484 + br]], 7, rim, { taper: [.2, .2] });
+    for (const sd of [-1, 1]) inkLine(c, [[sd * 80, -440 + br], [sd * 150, -350]], 6, rgba(INK.paper, .5), { taper: [.2, .6] });
   }
   const PROMPTS = [
     { s: 'What do you want to build?', x: 80, y: 110, w: 920, size: 58, t0: 73.0 },
@@ -209,11 +229,11 @@
     ctx.restore();
   }
   const FLOAT = PROMPTS.map((p, i) => ({ x: p.x + p.w / 2 + (i % 2 ? 40 : -40), y: p.y + p.size * 1.2 + 70, s: [150, 138, 120, 118, 130, 120][i], d: 0 }));
-  for (let i = 0; FLOAT.length < 40 && i < 800; i++) {
-    const x = hrange(i * 3.9 + 4, 50, 1870), y = hrange(i * 6.1 + 8, 90, 880), s = hrange(i * 1.7, 38, 84);
-    if (x > 680 && x < 1240 && y > 220) continue;
-    if (FLOAT.some(q => Math.hypot(q.x - x, q.y - y) < (q.s + s) * .7)) continue;
-    FLOAT.push({ x, y, s, d: s < 60 ? 2 : 1 });
+  for (let i = 0; FLOAT.length < 40 && i < 2000; i++) {
+    const x = hrange(i * 3.9 + 4, 60, 1860), y = hrange(i * 6.1 + 8, 110, 860), s = hrange(i * 1.7, 46, 92);
+    if (x > 700 && x < 1220 && y > 240) continue;
+    if (FLOAT.some(q => Math.hypot(q.x - x, (q.y - y) * 1.4) < (q.s + s) * .62)) continue;
+    FLOAT.push({ x, y, s, d: s < 62 ? 2 : 1 });
   }
   function inversion(ctx, t, lt) {
     const tc = twos(t), z = 1.06 + lt * .045, d = drift(t, 7, .35), view = c => cam(c, 960 + d[0], 540 + d[1], z);
@@ -233,7 +253,7 @@
 
   // ---------- 75.50 POINT CHOREO 2 (nope! nope!): cursor wag, NOPE stamps, head-whip, forty heads shaking ----------
   function nopeChoreo(ctx, t) {
-    const tc = tw(t, frameOf(at(NOPE[0])));
+    const tc = twh(t, NOPE);
     field(ctx, INK.blue, INK.blueDk, { y0: 250, y1: 1150 });
     const shk = (i, tt) => { let v = 0; for (const x of NOPE) { const a = tt - at(x); if (a >= 0) v = Math.sin(a * TAU * 4.5 + i * .35) * .3 * Math.exp(-a * 4); } return v; };
     crowd(ctx, b => ({ rot: shk(b.i + b.r, tc), eyes: 'dot', look: -Math.sign(shk(b.i + b.r, tc)) }));
@@ -246,17 +266,17 @@
       streaks(ctx, [760, 460, 1160, 700], { dir: [dir, 0], n: 12, len: 260, w: 6, color: rgba(INK.white, .8), seed: 7 }); }
     rabbit(ctx, 960, 985, 40, { ...pose, ...head(dir * set) });
     // the cursor wags like a no-no finger, pivoting at its base
-    const w = t >= at(NOPE[1]) ? lerp(.42, -.42, elasticOut(clamp((t - at(NOPE[1])) / .3))) : lerp(0, .42, elasticOut(clamp((t - at(NOPE[0])) / .3)));
+    const up = .43, w = t >= at(NOPE[1]) ? lerp(up + .5, up - .5, elasticOut(clamp((t - at(NOPE[1])) / .32))) : lerp(up - .2, up + .5, elasticOut(clamp((t - at(NOPE[0])) / .32)));
     const S = 250, bx = 1440, by = 470, px = .42 * S, py = .92 * S, ca = Math.cos(w), sa = Math.sin(w);
     cursor(ctx, bx - (px * ca - py * sa), by - (px * sa + py * ca), S, { rot: w, label: 'you' });
-    stamp(ctx, 'NOPE', 500, 350, 270, t - at(NOPE[0]), { color: INK.red, rot: -.16 });
-    stamp(ctx, 'NOPE', 1330, 760, 330, t - at(NOPE[1]), { color: INK.red, rot: .1 });
+    slamStamp(ctx, 'NOPE', 520, 330, 280, t - at(NOPE[0]), { color: INK.red, rot: -.16 });
+    slamStamp(ctx, 'NOPE', 1470, 700, 310, t - at(NOPE[1]), { color: INK.red, rot: .1 });
     misregFrame(ctx, 12 * hit(t, NOPE, 14), 0);
   }
 
   // ---------- 76.10 click, click: the cursor army and the Accept All button ----------
   const ARMY = [];
-  { const rows = [[510, 50, 12, 1480], [590, 68, 11, 1560], [690, 92, 10, 1620], [800, 120, 7, 1440]];
+  { const rows = [[500, 54, 12, 1360], [580, 72, 11, 1440], [676, 96, 10, 1500], [786, 126, 7, 1380]];
     rows.forEach(([y, s, n, span], r) => { for (let i = 0; i < n; i++) ARMY.push({ x: 960 + (n === 1 ? 0 : (i / (n - 1) - .5) * span) + (r % 2 ? 30 : -30), y, s, r, i }); }); }
   const CLK = [76.161, 76.696, 77.067];
   function odometer(c, x, y, v, o = {}) {                            // rolling drum digits; (x, y) = centre
@@ -274,29 +294,32 @@
   function clickArmy(ctx, t) {
     const tc = twos(t), last = lastOf(t, CLK.map(x => x)), a = last === null ? 9 : t - at(last), cl = clamp(a / .28);
     const lunge = last === null ? 0 : Math.exp(-a * 9), pre = CLK.reduce((m, x) => { const d = at(x) - t; return d > 0 && d < .18 ? Math.max(m, 1 - d / .18) : m; }, 0);
-    const z = 1 + .05 * lunge, sh = shake(t, 10 * lunge);
-    cam(ctx, 960 + sh[0], 540 + sh[1], z);
+    const z = 1 + .05 * lunge + seg(t, 76.1, 77.3) * .07, sh = shake(t, 10 * lunge), bt = beatAt(tc + F1) * 2;
+    cam(ctx, 960 + sh[0], 520 + sh[1], z, Math.sin(t * 1.3) * .008);
     field(ctx, INK.blue, INK.blueDk, { y0: 300, y1: 1300 });
     speedLines(ctx, 960, 250, { n: 70, r0: 520, r1: 2200, w: 14, color: rgba(INK.cyan, .45 + .4 * lunge) });
     const v = t < at(CLK[0]) ? 0 : t < at(CLK[1]) ? 40 + (t - at(CLK[0])) * 180 : 1600 + Math.pow(Math.max(0, t - at(CLK[1])), 2.2) * 2.4e6;
     odometer(ctx, 960, 420, v);
     txt(ctx, 'CLICKS', 960, 348, { font: 'ui', weight: 900, size: 30, color: INK.white, align: 'center', track: 6 });
-    button(ctx, 440, 100, 1040, 200, 'Accept All', { fill: INK.green, size: 118, press: lunge });
-    for (const [bx, sd] of [[140, -1], [1780, 1]]) for (let k = 0; k < 3; k++) agentBot(ctx, bx - sd * k * 20, 600 + k * 130, 70 - k * 4, { clap: lunge > .3 ? 1 : .2, bob: Math.sin(tc * 9 + k) * .4 });
+    if (lunge > .05) burst(ctx, 960, 200, 620 + 120 * (1 - lunge), { fill: rgba(INK.yellow, .9 * lunge), shade: null, line: 0, seed: CLK.indexOf(last) + 3, n: 16, spike: .45 });
+    button(ctx, 440, 100, 1040, 200, 'Accept All', { fill: lunge > .5 ? mix(INK.green, INK.white, .35) : INK.green, size: 118, press: lunge * 2 });
+    for (const [bx, sd] of [[170, -1], [1750, 1]]) for (let k = 0; k < 3; k++) agentBot(ctx, bx - sd * k * 26, 560 + k * 150, 92 - k * 6, { clap: lunge > .3 ? 1 : .15, bob: Math.sin(tc * 9 + k) * .5 });
     for (const q of ARMY) {
-      const ripple = t > 76.85 ? Math.max(0, Math.sin((t - 76.85) * 30 - q.i * .7 - q.r)) : 0;
-      cursor(ctx, q.x, q.y - lunge * 34 + pre * 16 * (q.r + 1), q.s, { rot: .43, label: q.r === 3 && q.i === 3 ? 'you' : false, click: Math.max(last === null ? 0 : cl < 1 ? cl : 0, ripple * .7), color: INK.yellow });
+      const ripple = t > 76.85 ? Math.max(0, Math.sin((t - 76.85) * 30 - q.i * .7 - q.r)) : 0, ck = Math.max(last === null ? 0 : cl < 1 ? cl : 0, ripple * .7);
+      const x = q.x, y = q.y - lunge * 34 + pre * 16 * (q.r + 1) - Math.abs(Math.sin((bt + (q.r % 2) * .5) * Math.PI)) * q.s * .08;
+      if (ck > 0 && ck < 1) { ctx.save(); ctx.globalAlpha = 1 - ck; ctx.beginPath(); ctx.arc(x, y, 14 + ck * q.s * .75, 0, TAU); ctx.lineWidth = q.s * .11 * (1 - ck) + 2; ctx.strokeStyle = INK.white; ctx.stroke(); ctx.restore(); }
+      cursor(ctx, x, y, q.s, { rot: .43, label: q.r === 3 && q.i === 3 ? 'you' : false, click: ck, color: INK.yellow });
     }
     ctx.restore();
     misregFrame(ctx, 10 * lunge, 0);
   }
 
   // ---------- 77.30 resolve all: a domino cascade into a grey barcode ----------
-  const DOM = []; for (let i = 0; i < 40; i++) DOM.push({ x: 180 + i * 80, w: 16 + Math.floor(hash(i * 5.3 + 1) * 4) * 12 });
+  const DOM = []; for (let i = 0; i < 40; i++) DOM.push({ x: 180 + i * 80 + (hash(i * 2.9) - .5) * 26, w: [14, 22, 34, 50][Math.floor(hash(i * 5.3 + 1) * 4)], guard: i < 2 || i === 19 || i === 20 || i > 37 });
   const DOM0 = 77.38, domT = i => at(DOM0) + .04 + i * .0115;
   function domino(ctx, t) {
     const tc = twos(t), G = 640;
-    const [cx, cy, z] = kf(t, [[77.30, [560, 560, 1.28]], [77.62, [1720, 560, 1.0]], [77.9, [1740, 520, .56]]], easeInOut);
+    const [cx, cy, z] = kf(t, [[77.30, [470, 560, 1.7]], [77.64, [1720, 560, 1.0]], [77.9, [1740, 540, .56]]], easeInOut);
     cam(ctx, cx, cy, z);
     fillPts(ctx, rect(-600, -600, 4400, 2200), INK.white, false);
     for (let i = 0; i < 40; i++) fillPts(ctx, rect(-600, 100 + i * 52, 4400, 22), i % 5 === 2 ? '#EFE6D6' : '#F4EEE4', false);
@@ -305,8 +328,8 @@
       const f = (tc - domT(i)) / .1;
       if (f < 0) { const near = clamp(1 + f / 3); commentBunny(ctx, d.x, G, 64, { eyes: near > .3 ? 'wide' : 'dot', look: -near, rot: -near * .05 }); return; }
       if (f < .5) { commentBunny(ctx, d.x + 30 * f, G, 64, { rot: f / .5 * .7, eyes: 'x', sq: -.1 }); return; }
-      const e = easeOut(clamp((f - .5) / .5)), bw = lerp(70, d.w, e), bh = lerp(70, 520, e);
-      ink(ctx, rect(d.x - bw / 2 + 18 * (1 - e), G - bh, bw, bh), { fill: mix(GREY, GREYLN, .55), line: 4, lineColor: GREYLN, boil: .6, smooth: false });
+      const e = easeOut(clamp((f - .5) / .5)), bw = lerp(70, d.w, e), bh = lerp(70, 520, e), low = d.guard ? 60 * e : 0;
+      ink(ctx, rect(d.x - bw / 2 + 18 * (1 - e), G - bh, bw, bh + low), { fill: mix(GREY, GREYLN, .55), line: 4, lineColor: GREYLN, boil: .6, smooth: false });
       if (e > .9) txt(ctx, '\u2713', d.x, G - bh - 14, { font: 'ui', weight: 900, size: 40, color: GREYLN, align: 'center' });
     });
     if (t > 77.8) txt(ctx, '4 812 040 000 0  \u00B7  40 RESOLVED  \u00B7  0 READ', 1740, G + 110, { font: 'mono', weight: 800, size: 74, color: INK.ink, align: 'center', track: 6, alpha: clamp((t - 77.8) * 12) });
@@ -317,7 +340,7 @@
   // ---------- 78.03 thumbs up: a rain of reactions, 40 of them ----------
   const TH = [];
   for (let i = 0; i < 40; i++) { const x = hrange(i * 3.3 + 2, 150, 1770), onHead = Math.abs(x - 960) < 170;
-    TH.push({ t0: 78.03 + Math.pow(i / 40, .85) * .58, x, s: hrange(i * 5.1, 70, 130), r: hrange(i * 9.7, -.7, .7), y1: onHead ? 575 - (i % 5) * 34 : hrange(i * 2.2, 830, 890), onHead }); }
+    TH.push({ t0: 78.03 + Math.pow(i / 40, .85) * .58, x, s: hrange(i * 5.1, 70, 130), r: hrange(i * 9.7, -.7, .7), y1: onHead ? 575 - (i % 5) * 34 : hrange(i * 2.2, 800, 850), onHead }); }
   function thumbsRain(ctx, t) {
     const tc = twos(t), lt = t - 78.03;
     cam(ctx, 960, 540 + lt * 14, 1 + lt * .05);
@@ -332,7 +355,7 @@
       earL: { a: -14 - hb * 7, b: -Math.min(80, hb * 16) }, earR: { a: 12 + hb * 7, b: Math.min(80, hb * 16) }, armL: { a: 10, e: 10 }, armR: { a: 10, e: 10 } });
     for (const [th, y, k] of drawn) thumbsUp(ctx, th.x, y, th.s, { rot: th.r + (1 - k) * 2 });
     ctx.restore();
-    const pk = backOut(clamp((t - at(78.06)) / .14), 2), n = Math.min(40, landed + (t > 78.6 ? 40 : 0));
+    const pk = backOut(clamp((t - at(78.06)) / .14), 2), n = Math.max(1, Math.min(40, drawn.length));
     ctx.save(); ctx.translate(330, 190); ctx.scale(pk, pk); ctx.rotate(-.04);
     ink(ctx, rrect(-230, -95, 460, 190, 95), { fill: INK.white, line: 6, boil: .6, smooth: false }); fillPts(ctx, rrect(-222, -87, 444, 174, 87), rgba(INK.blue, .12), false);
     thumbsUp(ctx, -110, 30, 105, { rot: -.1 }); txt(ctx, String(n), 60, 52, { font: 'ui', weight: 900, size: 132, color: INK.blue, align: 'center' });
@@ -341,7 +364,7 @@
 
   // ---------- 78.85 amen: a stadium choir of forty bots, LGTM, and the RSI speedometer ----------
   const CHOIR = [];
-  [[12, 250, 700, 40], [11, 340, 620, 48], [9, 440, 540, 58], [8, 548, 470, 68]].forEach(([n, y, rx, s], r) => {
+  [[12, 240, 700, 50], [11, 336, 620, 60], [9, 440, 540, 72], [8, 552, 470, 84]].forEach(([n, y, rx, s], r) => {
     for (let i = 0; i < n; i++) { const a = (i / (n - 1) - .5) * 2.4; CHOIR.push({ x: 960 + Math.sin(a) * (rx + 380), y: y + (1 - Math.cos(a)) * 90, s, r, i }); } });
   function gauge(c, t, w, h) {
     fillPts(c, rect(0, 0, w, h), INK.white, false);
@@ -361,20 +384,22 @@
     ink(c, ell(cx, cy, 34, 34, 20), { fill: INK.ink, line: 0, boil: 0 });
   }
   function amen(ctx, t) {
-    const tc = twos(t), lt = t - 78.85, am = t - at(78.88), clap = hit(t, [78.88], 5);
-    cam(ctx, 960, 560 - lt * 30, 1.04 + lt * .05);
-    stage(ctx, t, { a: INK.blue, b: INK.cyan, spin: .12, rays: 28, marquee: false, altarBtn: false, horizon: 720, altar: 1 });
-    depth(ctx, 6, c => { cam(c, 960, 560 - lt * 30, 1.04 + lt * .05); for (const q of CHOIR) if (q.r < 2) agentBot(c, q.x, q.y, q.s, { bob: Math.sin(tc * 8 + q.i) * .5, clap: clamp(clap * 1.5) }); c.restore(); });
-    for (const q of CHOIR) if (q.r >= 2) agentBot(ctx, q.x, q.y, q.s, { bob: Math.sin(tc * 8 + q.i) * .5, clap: clamp(clap * 1.5), say: q.r === 3 && (q.i === 1 || q.i === 6) ? 'LGTM!' : null, saySize: 34 });
+    const tc = twos(t), lt = t - 78.85, am = t - at(78.88), ph = frac(beatAt(tc + F1) * 2), clap = Math.max(hit(t, [78.88], 5), Math.sin(ph * Math.PI));
+    const view = c => cam(c, 960, 560 - lt * 40, 1.03 + lt * .07, -.01 + lt * .02);
+    view(ctx);
+    stage(ctx, t, { a: INK.blue, b: INK.cyan, spin: .12, rays: 28, marquee: false, altarBtn: false, horizon: 720, altar: .7 + .3 * Math.sin(ph * Math.PI) });
+    const bot = (c, q) => agentBot(c, q.x, q.y, q.s, { bob: Math.sin(ph * Math.PI) * .9, clap: clamp(clap), say: q.r === 3 && (q.i === 1 || q.i === 6) ? 'LGTM!' : null, saySize: 34 });
+    depth(ctx, 6, c => { view(c); for (const q of CHOIR) if (q.r < 2) bot(c, q); c.restore(); });
+    for (const q of CHOIR) if (q.r >= 2) bot(ctx, q);
     button(ctx, 610, 600, 700, 130, 'Merge pull request', { fill: INK.green, size: 56 });
     ctx.restore();
-    stamp(ctx, 'LGTM', 960, 380, 250, am, { color: INK.yellow, rot: -.1 });
+    slamStamp(ctx, 'LGTM', 960, 350, 300, am, { color: INK.yellow, rot: -.1 });
     if (t >= 79.36 && t < 79.56) cutout(ctx, 250, 110, 1420, 860, -.035, t, c => gauge(c, t, 1420, 860), { seed: 9 });
   }
 
   // ---------- 79.56 hop, hop: alone, smaller, on an emptier, bigger stage ----------
   function hopAlone(ctx, t) {
-    const tc = tw(t, frameOf(at(HOP2[0]))), a = hops(tc, HOP2, .3, 2.4), z = lerp(1.1, .84, easeOut(seg(t, 79.56, 80.3)));
+    const tc = twh(t, HOP2), a = hops(tc, HOP2, .3, 2.4), z = lerp(1.1, .84, easeOut(seg(t, 79.56, 80.3)));
     cam(ctx, 960, 560, z);
     stage(ctx, t, { a: INK.night, b: INK.nightLt, spin: .04, rays: 28, marquee: false, altarBtn: false, horizon: 560 });
     ctx.save(); ctx.globalAlpha = .16; fillPts(ctx, [[900, -300], [1020, -300], [1110, 860], [810, 860]], INK.white, false); ctx.restore();
@@ -382,8 +407,8 @@
     for (let i = 0; i < 9; i++) { const x = hrange(i * 4.4, 120, 1800), y = hrange(i * 2.9, 660, 1000), s = lerp(60, 140, (y - 660) / 340); if (Math.abs(x - 960) < 220) continue; commentBunny(ctx, x, y, s, { state: 'resolved' }); }
     rabbit(ctx, 960, 858, 15, { hop: a.h, sq: a.sq, legs: 'hop', ...earsFor(a.vy), armL: { a: 30, e: 20 }, armR: { a: 30, e: 20 }, eyes: 'open', lids: .45, mouth: 'flat', bags: BAGS });
     ctx.restore();
-    sfx(ctx, 'hop', 700, 700, 120, t - at(HOP2[0]), { rot: -.1, life: .7 });
-    sfx(ctx, 'hop', 1230, 690, 120, t - at(HOP2[1]), { rot: .1, life: .7 });
+    sfx(ctx, 'hop', 720, 700, 110, t - at(HOP2[0]) + .05, { rot: -.1, life: .7 });
+    sfx(ctx, 'hop', 1210, 690, 110, t - at(HOP2[1]) + .05, { rot: .1, life: .7 });
   }
 
   // ---------- 80.30 guess I'll write 'em all again: four panels, faster each; the chart goes vertical ----------
@@ -394,16 +419,16 @@
     const pose = { turn: .2, lx: .4, ly: .85, bags: BAGS + p * .1, pen: false, lids: .15 + p * .08, sweat: p >= 2 ? .5 + p * .2 : 0,
       eyes: p === 3 ? 'spiral' : 'open', mouth: p >= 2 ? 'wavy' : 'flat', armL: { a: 28, e: 70 }, pawL: 'open', pawR: 'fist',
       earL: { a: -14 - p * 6, b: p * 12 + sc * p * 4 }, earR: { a: 12 + p * 6, b: -p * 12 - sc * p * 4 } };
-    if (p >= 2) for (let g = 1; g <= p - 1; g++) { c.save(); c.globalAlpha = .3; rabbit(c, 960, 1210, 64, { ...pose, armR: { a: 35 - g * 10 * Math.sign(sc), e: 55 + g * 14 }, noShadow: true }); c.restore(); }
-    const A = rabbit(c, 960, 1210, 64, { ...pose, armR: { a: 35 + sc * 10, e: 55 + sc * 14 } });
-    c.save(); c.translate(A.pawR[0], A.pawR[1]); c.rotate(.5); ink(c, rrect(-12, -110, 24, 150, 8), { fill: INK.red, line: 4, boil: .8, smooth: false }); ink(c, [[-12, 40], [12, 40], [0, 70]], { fill: INK.fur, line: 3, boil: 0, smooth: false }); c.restore();
-    ink(c, [[300, 1010], [1640, 1010], [1760, 1100], [180, 1100]], { fill: '#8A5A34', line: 6, boil: .8, smooth: false });
-    ink(c, [[880, 990], [1460, 990], [1500, 1090], [860, 1090]], { fill: INK.white, line: 4, boil: .6, smooth: false });
-    const nLines = Math.floor(frac(tc * f / 6) * 6) + 1;
-    for (let i = 0; i < nLines; i++) inkLine(c, [[920 + i * 4, 1010 + i * 13], [980 + i * 5, 1004 + i * 13], [1060 + i * 6, 1012 + i * 13], [1140 + i * 6, 1006 + i * 13], [1200 + i * 7, 1011 + i * 13]], 5, INK.red, { taper: [.1, .3] });
-    const stack = [2, 6, 14, 30][p];
-    for (let i = 0; i < Math.min(stack, 14); i++) ink(c, rect(1500 + (i % 2) * 6, 990 - i * 16, 200, 14), { fill: i % 2 ? INK.white : '#F4EEE4', line: 3, boil: .6, smooth: false, seed: i });
-    if (p === 3) krackle(c, A.pawR[0], A.pawR[1], 120, { n: 20, size: 14, color: INK.ink });
+    const arm = g => ({ a: 32 + g * 12, e: 50 + g * 16 }), RX = 930, RY = 1150, RS = 60;
+    if (p >= 2) for (let g = 1; g <= p - 1; g++) { c.save(); c.globalAlpha = .32; rabbit(c, RX, RY, RS, { ...pose, armR: arm(-sc * g * .9), noShadow: true }); c.restore(); }
+    const A = rabbit(c, RX, RY, RS, { ...pose, armR: arm(sc) });
+    ink(c, [[300, 1004], [1640, 1004], [1760, 1100], [180, 1100]], { fill: '#8A5A34', line: 6, boil: .8, smooth: false });
+    ink(c, [[980, 990], [1380, 990], [1420, 1090], [960, 1090]], { fill: INK.white, line: 4, boil: .6, smooth: false });
+    const nLines = Math.floor(frac(tc * f / 5) * 5) + 1;
+    for (let i = 0; i < nLines; i++) inkLine(c, [[1010 + i * 4, 1012 + i * 16], [1080 + i * 5, 1004 + i * 16], [1160 + i * 6, 1014 + i * 16], [1240 + i * 6, 1006 + i * 16], [1320 + i * 7, 1012 + i * 16]], 6, INK.red, { taper: [.1, .3] });
+    c.save(); c.translate(A.pawR[0], A.pawR[1]); c.rotate(.55); ink(c, rrect(-13, -120, 26, 160, 9), { fill: INK.red, line: 4, boil: .8, smooth: false }); ink(c, [[-13, 40], [13, 40], [0, 74]], { fill: INK.fur, line: 3, boil: 0, smooth: false }); c.restore();
+    for (let i = 0; i < [1, 3, 6, 9][p]; i++) ink(c, rect(700 + (i % 2) * 8, 988 - i * 15, 150, 13), { fill: i % 2 ? INK.white : '#F4EEE4', line: 3, boil: .6, smooth: false, seed: i });
+    if (p === 3) krackle(c, A.pawR[0], A.pawR[1] + 40, 120, { n: 20, size: 14, color: INK.ink });
   }
   const WP = [[80.30, 60], [80.62, 515], [80.94, 970], [81.16, 1425]];
   function writeChart(c, t, w, h) {
@@ -414,7 +439,7 @@
   }
   function writePanels(ctx, t) {
     const L = [];
-    WP.forEach(([t0, x], p) => { if (t < at(t0)) return; const k = backOut(clamp((t - at(t0)) / .12), 1.6); L.push({ r: [x, lerp(-620, 420, k), 435, 610], fn: c => writing(c, t, p), at: [1020, 700], zoom: 1.12 }); });
+    WP.forEach(([t0, x], p) => { if (t < at(t0)) return; const k = backOut(clamp((t - at(t0)) / .12), 1.6); L.push({ r: [x, lerp(-620, 420, k), 435, 610], fn: c => writing(c, t, p), at: [1040, 690], zoom: 1.12 }); });
     panels(ctx, t, L, { gutter: INK.paper, border: 8 });
     const ck = seg(threes(t), at(81.42), at(81.42) + .12);
     if (ck > 0) cutout(ctx, lerp(-900, 120, backOut(ck, 1.2)), 450, 820, 560, -.03, t, c => writeChart(c, t, 820, 560), { seed: 12 });
@@ -442,8 +467,8 @@
   }
   function flyingPages(c, t, w, h) {
     const tf = Math.min(t, CR1), p = Math.floor(tau(tf) * CAL_R);
-    for (let j = p; j > p - 4 && j > 0; j--) { const a = tf - tauInv(j / CAL_R); if (a > .5) continue;
-      c.save(); c.translate(20 + (w - 40) / 2 + a * 1400 + hash(j) * 60, 50 + (h - 70) / 2 - a * 700 + a * a * 1800); c.rotate(a * (4 + hash(j) * 5)); c.scale(1 - a * .6, 1 - a * .6); c.translate(-(w - 40) / 2, -(h - 70) / 2);
+    for (let j = p; j > p - 4 && j > 0; j--) { const a = tf - tauInv(j / CAL_R); if (a > .4) continue;
+      c.save(); c.translate(20 + (w - 40) / 2 - a * 900 + hash(j) * 80, 50 + (h - 70) / 2 - a * 1500 + a * a * 1200); c.rotate(-a * (5 + hash(j) * 6)); c.scale(1 - a * .8, 1 - a * .8); c.translate(-(w - 40) / 2, -(h - 70) / 2);
       calPage(c, j - 1, w - 40, h - 70); c.restore(); }
   }
   function toggle(c, t, w, h) {
@@ -483,11 +508,12 @@
     if (!blinkOff) txt(c, `${p2(hh)}:${p2(mm)}:${p2(ss)}`, cx, cy + 26, { font: 'mono', weight: 800, size: 64, color: INK.ink, align: 'center' });
     txt(c, 'agent runtime', cx, cy + 80, { font: 'ui', weight: 800, size: 24, color: GREYLN, align: 'center' });
   }
+  const SEAT = mix(INK.ink, INK.nightLt, .35);
   function spinRabbit(ctx, t, x, y, th, alpha = 1) {                  // rabbit + office chair rotating by th (rad); the base stays put
-    const cs = Math.cos(th), sn = Math.sin(th), s = .78, rs = 26, seat = y - 290 * s;
-    const back = () => { ctx.save(); ctx.translate(x - sn * 70, y); ctx.scale(s, s); ink(ctx, rrect(-190 * Math.max(.12, Math.abs(cs)), -760, 380 * Math.max(.12, Math.abs(cs)), 470, 60), { fill: INK.nightLt, shade: { color: INK.night, spacing: 14, dir: [.6, .8], from: -80, to: 260 }, line: 6, boil: .8, smooth: false }); ctx.restore(); };
+    const cs = Math.cos(th), sn = Math.sin(th), s = .95, rs = 32, seat = y - 290 * s;
+    const back = () => { ctx.save(); ctx.translate(x - sn * 80, y); ctx.scale(s, s); ink(ctx, rrect(-190 * Math.max(.12, Math.abs(cs)), -760, 380 * Math.max(.12, Math.abs(cs)), 470, 60), { fill: SEAT, shade: { color: INK.ink, spacing: 14, dir: [.6, .8], from: -80, to: 260 }, line: 6, boil: .8, smooth: false }); ctx.restore(); };
     ctx.save(); ctx.globalAlpha = alpha;
-    if (alpha === 1) officeChair(ctx, x, y, s, { back: false });
+    if (alpha === 1) officeChair(ctx, x, y, s, { back: false, seat: SEAT });
     if (cs >= 0) back();
     const fl = (cs < 0 ? -1 : 1) * Math.sign(sn || 1);
     rabbit(ctx, x + sn * 14, seat + 16, rs, { sit: 1, turn: sn, eyes: 'spiral', mouth: 'wavy', bags: BAGS, noShadow: true, sweat: .6,
@@ -503,15 +529,15 @@
     field(ctx, INK.blue, INK.blueDk, { y0: -200, y1: 1300, spacing: 40, max: .6 });
     const alt = tau(tf) * 420;
     ['1 hr', '8 hrs', '1 day', '1 wk', '1 mo', '1 yr', '1 decade', '\u221E'].forEach((l, i) => { const y = 540 + alt - i * 700 - 200; if (y < -100 || y > H + 100) return;
-      inkLine(ctx, [[-200, y], [W + 200, y]], 4, rgba(INK.cyan, .55), { taper: [0, 0], smooth: false }); txt(ctx, l, 1010, y - 14, { font: 'ui', weight: 900, size: 40, color: INK.cyan }); });
+      inkLine(ctx, [[-200, y], [W + 200, y]], 5, rgba(INK.cyan, .6), { taper: [0, 0], smooth: false }); txt(ctx, l, 990, y - 16, { font: 'ui', weight: 900, size: 52, color: INK.cyan, stroke: { w: 8, color: INK.ink } }); });
     if (!frozen) streaks(ctx, [-100, -200, W + 100, H + 200], { dir: [0, 1], n: 20 + Math.round(I * 50), len: 200 + I * 900, w: 5 + I * 5, color: rgba(INK.white, .25 + I * .35), seed: 5 });
     ctx.save(); ctx.setLineDash([46, 30]); ctx.lineDashOffset = -alt * 1.3; inkLine(ctx, [[960, -300], [960, H + 300]], 16, INK.orange, { taper: [0, 0], smooth: false }); ctx.restore();
     // the rabbit spins in its chair, faster and faster; multiples at speed
     const th = (1.5 / KR * (R - 1)) * TAU + (frozen ? 0 : 0);
     const tth = frozen ? Math.round(th / TAU) * TAU + Math.sin((t - CR1) * 30) * .3 * Math.exp(-(t - CR1) * 6) : (1.5 / KR * (rate(tc) - 1)) * TAU;
-    if (!frozen && I > .25) for (let g = 2; g >= 1; g--) spinRabbit(ctx, t, 960, 1000, tth - g * .9, .28);
-    spinRabbit(ctx, t, 960, 1000, tth);
-    if (!frozen && I > .15) { ctx.save(); ctx.globalAlpha = .6; for (let i = 0; i < 4; i++) inkLine(ctx, bezPts([700, 560 + i * 60], [760, 520 + i * 60], [1160, 520 + i * 60], [1220, 560 + i * 60], 10), 6, INK.white, { taper: [.3, .3] }); ctx.restore(); }
+    if (!frozen && I > .25) for (let g = 2; g >= 1; g--) spinRabbit(ctx, t, 960, 1010, tth - g * .9, .28);
+    spinRabbit(ctx, t, 960, 1010, tth);
+    if (!frozen && I > .1) { ctx.save(); ctx.globalAlpha = .7; for (let i = 0; i < 4; i++) inkLine(ctx, bezPts([650, 480 + i * 70], [720, 430 + i * 70], [1200, 430 + i * 70], [1270, 480 + i * 70], 10), 7, INK.white, { taper: [.3, .3], seed: i }); ctx.restore(); }
     ctx.restore();
     // inserts arrive on the beats, then everything accelerates
     const ins = (t0, fn) => { if (t < at(t0)) return; const k = backOut(clamp((threes(t) - at(t0)) / .15), 1.5); fn(k); };
@@ -520,8 +546,8 @@
     ins(83.174, k => cutout(ctx, lerp(-700, 60, k), 570, 580, 380, .03, tf, c => tracker(c, t, 580, 380), { seed: 23 }));
     ins(83.592, k => cutout(ctx, lerp(2000, 1400, k), 470, 440, 420, -.04, tf, c => stopwatch(c, t, 440, 420), { seed: 24 }));
     crawl(ctx, 968, 104, 400 + tau(tf) * 700, { size: 64, blur: clamp((R - 3) / 12), labelW: 290 });
-    if (frozen) {
-      const k = clamp((t - at(CR1)) / .09), y = lerp(-260, 390, easeIn(k)) + (k >= 1 ? Math.sin((t - at(CR1) - .09) * 50) * 14 * Math.exp(-(t - at(CR1)) * 10) : 0);
+    if (t >= at(CR1) - .085) {
+      const k = clamp((t - (at(CR1) - .085)) / .085), a = t - at(CR1), y = lerp(-300, 390, easeIn(k)) + (a > 0 ? Math.sin(a * 50) * 16 * Math.exp(-a * 10) : 0);
       ctx.save(); ctx.translate(960, y + 100); ctx.rotate(-.025);
       fillPts(ctx, rect(-900 + 14, -100 + 16, 1800, 200), INK.ink, false); ink(ctx, rect(-900, -100, 1800, 200), { fill: GREY, line: 7, boil: 0, smooth: false });
       txt(ctx, 'THIS TRACKER IS NO LONGER UPDATED', 0, 32, { font: 'ui', weight: 900, size: 92, color: '#4A4658', align: 'center', stretch: -1 });
@@ -532,9 +558,9 @@
   // ---------- 85.25 the drum fill: an Evangelion title card, re-arranged on two hard cuts ----------
   function vcol(ctx, s, x, y, size, o = {}) { [...s].forEach((ch, i) => txt(ctx, ch, x, y + i * size * 1.02, { font: 'jp', weight: 800, size, color: o.color || '#F4F1EA', align: 'center' })); }
   const EVA = [
-    { b: [{ s: 'LINE', x: 110, y: 330, size: 270 }, { s: '9,012', x: 100, y: 770, size: 470 }, { s: 'THE RABBIT, READING', x: 1600, y: 970, size: 116, align: 'right' }], v: [['第九千十二行', 1750, 140, 128]] },
-    { b: [{ s: '9,012', x: 70, y: 700, size: 660, sx: .66 }, { s: 'LINE', x: 1830, y: 250, size: 200, align: 'right' }, { s: 'THE RABBIT,', x: 1830, y: 880, size: 150, align: 'right' }, { s: 'READING', x: 1830, y: 1020, size: 150, align: 'right' }], v: [['第九千十二行', 1110, 100, 88]], h: [] },
-    { b: [{ s: 'THE RABBIT,', x: 100, y: 400, size: 300 }, { s: 'READING', x: 100, y: 730, size: 300 }, { s: 'LINE 9,012', x: 1820, y: 990, size: 130, align: 'right', color: INK.red }], v: [['第九千十二行', 1760, 90, 104]] },
+    { b: [{ s: 'LINE', x: 100, y: 350, size: 300 }, { s: '9,012', x: 90, y: 840, size: 530 }, { s: 'THE RABBIT, READING', x: 1620, y: 1000, size: 124, align: 'right' }], v: [['第九千十二行', 1740, 120, 138]] },
+    { b: [{ s: '9,012', x: 70, y: 700, size: 660, sx: .66 }, { s: 'LINE', x: 1830, y: 250, size: 200, align: 'right' }, { s: 'THE RABBIT,', x: 1830, y: 880, size: 150, align: 'right' }, { s: 'READING', x: 1830, y: 1020, size: 150, align: 'right' }], v: [['第九千十二行', 1110, 100, 88]] },
+    { b: [{ s: 'THE RABBIT,', x: 90, y: 700, size: 310 }, { s: 'READING', x: 90, y: 1010, size: 310 }, { s: 'LINE 9,012', x: 1830, y: 200, size: 150, align: 'right', color: INK.red }], v: [['第九千十二行', 1760, 300, 112]] },
   ];
   function eva(ctx, t) {
     BOIL = 0;

@@ -16,8 +16,6 @@
   function strobe(ctx, v, a = .6) {
     if (v < .02) return; ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = 'multiply'; ctx.globalAlpha = v * a; ctx.fillStyle = INK.red; ctx.fillRect(0, 0, W, H); ctx.restore();
   }
-  // tint what is already drawn in a box (paper lit by a monitor at night)
-  function tint(c, pts, col, a = 1) { c.save(); clipPts(c, pts, false); c.globalCompositeOperation = 'multiply'; c.globalAlpha = a; c.fillStyle = col; c.fillRect(-2000, -2000, 6000, 6000); c.restore(); }
 
   // Cheap comment-bunny (same silhouette as commentBunny, unit u = s/10): flat fills, no shading, no boil.
   const P2 = pts => { const p = new Path2D(); pts.forEach(([x, y], i) => i ? p.lineTo(x, y) : p.moveTo(x, y)); p.closePath(); return p; };
@@ -82,7 +80,7 @@
     outline(c, body.map(([a, b]) => [a + (a - x) * -.03, b + (b - y + 7 * u) * -.03]), Math.max(4, .5 * u), INK.blue);
     c.save(); clipPts(c, body);
     dotsIn(c, [x - 6 * u, y - 15 * u, x + 6 * u, y + u], { spacing: 16, color: INK.blue, dir: [0, 1], c: [x, y - 12.5 * u], from: 0, to: 7 * u, min: .55, max: 0 });
-    if (o.scroll) { c.globalAlpha = .3; for (let i = 0; i < 6; i++) { const yy = y - 15 * u + mod(i * 3.1 * u - t * o.scroll, 16 * u); fillPts(c, rect(x - 6 * u, yy, 12 * u, .9 * u), INK.blue, false); } c.globalAlpha = 1; }
+    if (o.scroll) { c.globalAlpha = .5; for (let i = 0; i < 5; i++) { const yy = y - 15 * u + mod(i * 3.3 * u - t * o.scroll, 16.5 * u); fillPts(c, rect(x - 6 * u, yy, 12 * u, (.5 + hash(i) * .9) * u), INK.blue, false); } c.globalAlpha = 1; }
     c.restore();
     for (const sd of [-1, 1]) {
       const lens = ell(x + sd * 1.1 * u, y - 10.8 * u, .95 * u, .62 * u, 16);
@@ -90,8 +88,8 @@
       if (o.scroll) { c.save(); clipPts(c, lens); for (let i = 0; i < 4; i++) { const yy = y - 11.6 * u + mod(i * .42 * u - t * o.scroll * .08, 1.7 * u); fillPts(c, rect(x + sd * 1.1 * u - .7 * u, yy, (.5 + hash(i + sd) * .8) * u, .16 * u), INK.nightLt, false); } c.restore(); }
     }
   }
-  // desk silhouette with a keyboard rim-lit by the monitor (the calm lower lyric zone)
-  function desk(c, y, t) {
+  // desk edge rim-lit by the monitor; the flat area below is the calm lower lyric zone
+  function desk(c, y) {
     fillPts(c, [[-300, y], [W + 300, y], [W + 300, H + 300], [-300, H + 300]], shadowInk, false);
     inkLine(c, [[-300, y], [W + 300, y]], 6, INK.nightLt, { taper: [0, 0], smooth: false });
   }
@@ -99,18 +97,17 @@
   // ---------- 104.63 SLAM + 105.90 stop-time: the pile ----------
   // 400 slots in a flat-topped mound; row 0 is the nearest (big, full rig), later rows recede up the pile
   const PEAK = 745, BASE = 1135, PR_ = 1150;
-  const surf = x => PEAK + (BASE - PEAK) * Math.min(1, Math.pow(Math.abs(x - 960) / PR_, 3));
   const PILE = (() => {
     const r = rng(400), out = [];
     let y = BASE, row = 0;
     while (y > PEAK) {
-      const f = (BASE - y) / (BASE - PEAK), s = lerp(96, 34, f), hw = PR_ * Math.cbrt((y - PEAK) / (BASE - PEAK)), step = s * 1.12, n = Math.max(1, Math.round(2 * hw / step));
+      const f = (BASE - y) / (BASE - PEAK), s = lerp(96, 34, f), hw = PR_ * Math.cbrt((y - PEAK) / (BASE - PEAK)), step = s * 1.02, n = Math.max(1, Math.round(2 * hw / step));
       for (let i = 0; i < n; i++) {
         const x = 960 + (i - (n - 1) / 2) * step + (r() - .5) * s * .45;
         out.push({ x, y: y + (r() - .5) * s * .2, s: s * (.9 + r() * .2), row, seed: r(), rot: (r() - .5) * .4, chip: CHIPS[Math.floor(r() * 6)], fill: mix(INK.white, INK.nightLt, f * .3),
           land: Math.min(105.84, 105.06 + f * .74 + (r() - .5) * .12), from: x < 960 ? -1 : 1, eyes: r() < .3 ? 'wide' : 'dot' });
       }
-      y -= s * .46; row++;
+      y -= s * .42; row++;
     }
     while (out.length > 400) out.splice(40 + Math.floor(hash(out.length) * (out.length - 80)), 1);
     return out.sort((a, b) => a.y - b.y);
@@ -138,12 +135,16 @@
   }
   function pileScene(ctx, t, tw, rab) {
     const k0 = age(tw, 104.63), boom = k0 < 0 ? 0 : Math.exp(-k0 * 7);
-    const sh = shake(tw, 18 * boom + 6 * hit(tw, [105.047, 105.465], 10));
+    const sh = shake(tw, 18 * boom + 6 * hit(tw, [105.047, 105.465], 10) + (tw > 104.8 && tw < 105.85 ? 4 : 0));
     cam(ctx, 960 + sh[0], 540 + sh[1], 1 + .04 * boom);
     night(ctx, { max: .6 });
-    speedLines(ctx, 960, 600, { n: 70, r0: 520, r1: 1500, w: 16, color: rgba(INK.nightLt, .9), seed: 3 });
+    depth(ctx, 8, c => {       // the PR page underneath, dim at 3 a.m.
+      prPage(c, tw, { x: 150, y: 30, w: 1620, h: 1160, seed: 7, shadow: 0 });
+      c.save(); c.globalCompositeOperation = 'source-atop'; c.fillStyle = rgba(INK.night, .8); c.fillRect(0, 0, W, H); c.restore();
+    });
+    speedLines(ctx, 960, 600, { n: 70, r0: 520, r1: 1500, w: 16, color: rgba(INK.night, .85), seed: 3 });
     counterStrip(ctx, tw, lerp(1.5, 1, easeOut(clamp(k0 / .14))));
-    const sy = seatY(tw); let drawn = false;
+    const sy = seatY(twos(tw)); let drawn = false;
     for (const b of PILE) { if (!drawn && b.y > sy) { rab(sy); drawn = true; } pileBunny(ctx, b, tw); }
     if (!drawn) rab(sy);
     // foreground stampede: a few huge bunnies thunder past the lens
@@ -177,26 +178,31 @@
       for (let i = 0; i < n; i++) out.push({ x: -110 + (i + .5 + (r % 2) * .5) * 2150 / n + (hash(r * 50 + i) - .5) * s * .4, y: y + (hash(r * 31 + i) - .5) * s * .15, s, r, chip: CHIPS[(i + r) % 6] }); });
     return out;
   })();
-  const hopPose = tc => { const a = hopArc(tc, HOPS[0] - VLEAD, .3, 1), b = hopArc(tc, HOPS[1] - VLEAD, .3, 1); return tc < HOPS[1] - VLEAD - .06 ? a : b; };
+  const hopPose = tc => {
+    if (tc < HOPS[0] - VLEAD) return { h: 0, sq: .35 * smooth(seg(tc, 107.2, HOPS[0] - VLEAD)), vy: 0 };
+    return tc < HOPS[1] - VLEAD - .06 ? hopArc(tc, HOPS[0] - VLEAD, .3, 1) : hopArc(tc, HOPS[1] - VLEAD, .3, 1);
+  };
   function hopShot(ctx, t) {
     const tc = twos(t), h = hopPose(tc), sh = shake(t, 26 * hit(t, HOPS, 9));
     cam(ctx, 960 + sh[0], 540 + sh[1], 1);
     fillPts(ctx, rect(-200, -200, W + 400, H + 400), INK.red, false);
     dotsIn(ctx, [-60, -60, W + 60, H + 60], { spacing: 44, color: INK.redDk, dir: [0, 1], from: -200, to: 700, min: 0, max: .85 });
+    ctx.beginPath(); for (const b of CROWD) ctx.ellipse(b.x, b.y + b.s * .05, b.s * .55 / (1 + h.h * .4), b.s * .12, 0, 0, TAU); ctx.fillStyle = rgba(INK.redDk, .8); ctx.fill();
     for (const b of CROWD) {
-      const o = { hop: h.h * 3.2, sq: h.sq, eyes: 'happy', chip: b.chip };
+      const o = { hop: h.h * 6.5, sq: h.sq, eyes: 'happy', chip: b.chip };
       if (b.r === 7) commentBunny(ctx, b.x, b.y, b.s, { ...o, chip: b.chip === INK.red ? 'critical' : b.chip === INK.orange ? 'issue' : null }); else bun(ctx, b.x, b.y, b.s, o);
     }
-    const r = hopPose(tc), e = earsFor(r.vy);
-    fillPts(ctx, ell(960, 985, 250 / (1 + r.h * .3), 34, 24), rgba(INK.ink, .3));
-    const a = rabbit(ctx, 960, 985, 34, { hop: r.h * 2, sq: r.sq, legs: 'hop', bags: 1, lids: .55, mouth: 'flat', earL: { a: -34, b: -50 + e.earL.b * .6 }, earR: { a: 12, b: e.earR.b },
+    // chorus 1's framing exactly: the same two bunnies, the rabbit at (960, 985) s 40, the words at (430 | W-430, 330)
+    for (const bx of [520, 1400]) commentBunny(ctx, bx, 985, 205, { hop: h.h * 6.5, sq: h.sq, ears: -h.vy * .6, eyes: 'happy', look: (960 - bx) / 900 });
+    const e = earsFor(h.vy);
+    fillPts(ctx, ell(960, 985, 290 / (1 + h.h * .3), 40, 24), rgba(INK.ink, .3));
+    const a = rabbit(ctx, 960, 985, 40, { hop: h.h * 3.4, sq: h.sq, legs: 'hop', bags: 1, lids: .55, mouth: 'flat', earL: { a: -34, b: -50 + e.earL.b * .6 }, earR: { a: 12, b: e.earR.b },
       armL: { a: 20, e: -110 }, armR: { a: 20, e: -110 }, noShadow: true });
-    const mx = (a.pawL[0] + a.pawR[0]) / 2, my = (a.pawL[1] + a.pawR[1]) / 2 - 12;
-    mug(ctx, mx, my, 34, t, 0);
-    for (const x of HOPS) { const g = tc - (x - VLEAD); if (g > .04 && g < .4) for (let i = 0; i < 3; i++) { const dx = (i - 1) * 90 * g, dy = -520 * g + 1500 * g * g; ink(ctx, blob(mx + dx, my - 30 + dy, 8 - i, i + 3, .2, 8), { fill: coffee, line: 3, boil: .6 }); } }
+    const mx = (a.pawL[0] + a.pawR[0]) / 2, my = (a.pawL[1] + a.pawR[1]) / 2 - 14;
+    mug(ctx, mx, my, 40, t, 0);
+    for (const x of HOPS) { const g = tc - (x - VLEAD); if (g > .04 && g < .4) for (let i = 0; i < 3; i++) { const dx = (i - 1) * 100 * g, dy = -600 * g + 1700 * g * g; ink(ctx, blob(mx + dx, my - 35 + dy, 17 - i * 2, i + 3, .2, 8), { fill: coffee, line: 4, boil: .6 }); } }
     ctx.restore();
-    sfx(ctx, 'HOP!', 540, 320, 240, age(t, HOPS[0]), { rot: -.14, life: .75 });
-    sfx(ctx, 'HOP!', 1390, 300, 240, age(t, HOPS[1]), { rot: .1, life: .6 });
+    HOPS.forEach((x, i) => sfx(ctx, 'HOP!', i ? W - 430 : 430, 330, 200, age(t, x), { rot: i ? .12 : -.13, life: .8 }));
   }
 
   // ---------- 108.35 the developer at 3 a.m. ----------
@@ -206,19 +212,14 @@
     cam(ctx, 960 + dr[0], 540 + dr[1], z);
     night(ctx, { max: .45 });
     // the NOC wall behind: the status page, huge and out of focus; only its red banner stays hot
+    const rows = OUTAGE.map(([n, s]) => [n, n === 'Auth' && age(t, 109.3) >= 0 ? 'down' : s]);
     depth(ctx, 7, c => {
-      c.save(); c.translate(150, 36); c.rotate(-.015); c.scale(2.15, 2.15); statusPage(c, 0, 0, 600, t, { rows: OUTAGE }); c.restore();
+      cutout(c, 150, 36, 1290, 1140, -.015, t, cc => { cc.scale(2.15, 2.15); statusPage(cc, 0, 0, 600, t, { rows }); }, { seed: 9 });
       c.save(); c.globalCompositeOperation = 'source-atop'; c.fillStyle = rgba(INK.blue, .22); c.fillRect(0, 250, W, H); c.restore();
     });
     const tw = noise1(tc * 5) * 6, lean = Math.abs(wob(tc, 3.5)) * 8;
     devLit(ctx, 1230 + tw, 820 + lean, 460, t, { scroll: 1500 });
-    desk(ctx, 680, t);
-    // keyboard + the frantic hand on the mouse
-    ink(ctx, rrect(900, 660, 560, 50, 10), { fill: INK.ink, line: 4, lineColor: INK.nightLt, boil: .6, smooth: false });
-    for (let i = 0; i < 10; i++) fillPts(ctx, rect(920 + i * 53, 671, 40, 8), INK.nightLt, false);
-    const fl = Math.abs(wob(tc, 6));
-    ink(ctx, ell(1580, 690, 72, 34, 18), { fill: INK.ink, line: 4, lineColor: INK.nightLt, boil: .6 });
-    ink(ctx, [[1420, 800], [1520, 720 - fl * 6], [1590, 672 - fl * 10], [1615, 690], [1540, 780], [1460, 840]], { fill: '#0B0D1E', line: 4, lineColor: INK.blue, boil: 1 });
+    desk(ctx, 680);
     cursor(ctx, 560, 380, 250, { tremble: 5, sweat: 1 });
     ctx.restore();
   }
@@ -227,15 +228,19 @@
   function yepShot(ctx, t) {
     const tc = twos(t);
     night(ctx, { max: .55, sp: 50 });
-    fillPts(ctx, ell(880, 1000, 300, 44, 30), rgba(INK.ink, .35));
+    // the NOPE shot's giant cursor on the same pivot, but it bobs (a nod) instead of wagging
+    const b = hit(t, YEPS, 7), cs = 1000;
+    ctx.save(); ctx.translate(960, 1190 + b * 110); ctx.rotate((24 - b * 7) * Math.PI / 180);
+    cursor(ctx, -.44 * cs, -.965 * cs, cs, { label: false }); ctx.translate(-.44 * cs, -.965 * cs);
+    ink(ctx, rrect(.1 * cs, .1 * cs, 170, 84, 22), { fill: INK.pink, line: 5, boil: .4, smooth: false });
+    txt(ctx, 'you', .1 * cs + 85, .1 * cs + 60, { font: 'ui', weight: 800, size: 56, color: INK.white, align: 'center' });
+    ctx.restore();
+    fillPts(ctx, ell(960, 988, 300, 44, 30), rgba(INK.ink, .35));
     const nod = YEPS.reduce((v, x) => Math.max(v, Math.sin(Math.PI * clamp((tc - (x - VLEAD)) / .34))), 0);
-    const a = rabbit(ctx, 880, 1000, 40, { bags: 1, lids: lerp(.55, .72, nod), mouth: 'flat', nod: nod * .9, tilt: -nod * 3, earL: { a: -34, b: -55 }, earR: { a: 12, b: 10 + nod * 25 },
+    const a = rabbit(ctx, 960, 985, 40, { bags: 1, lids: lerp(.55, .75, nod), mouth: 'flat', nod: nod * 1.5, tilt: -nod * 5, lean: nod * 3, earL: { a: -34, b: -55 }, earR: { a: 12, b: 10 + nod * 25 },
       armL: { a: 20, e: -110 }, armR: { a: 20, e: -110 }, noShadow: true });
     mug(ctx, (a.pawL[0] + a.pawR[0]) / 2, (a.pawL[1] + a.pawR[1]) / 2 - 14, 40, t);
-    const b = hit(t, YEPS, 7);
-    cursor(ctx, 1440, 280 + b * 120, 320, { rot: b * .35, sweat: 1 });
-    stamp(ctx, 'YEP', 430, 300, 220, age(t, YEPS[0]), { color: INK.yellow, rot: -.14, paper: INK.night });
-    stamp(ctx, 'YEP', 1560, 880, 200, age(t, YEPS[1]), { color: INK.yellow, rot: .1, paper: INK.night });
+    YEPS.forEach((x, i) => stamp(ctx, 'YEP', i ? W - 430 : 430, 330, 200, age(t, x), { color: INK.yellow, rot: i ? .12 : -.14, paper: INK.night }));
   }
 
   // ---------- 111.40 it's three a.m. ----------
@@ -250,7 +255,14 @@
     depth(ctx, 9, c => moon(c, 1600, 260, 230));
     const spin = seg(t, 111.3, T3 - VLEAD), secs = crack ? clockSecs(3, 0, 0) + Math.floor(ka * 2) : clockSecs(3, 0, 0) - 3600 * (1 - easeOut(spin)) * .9;
     pocketWatch(ctx, 1040, 700, 250, { secs, left: 0, crack: crack ? 1 : 0, digital: 'T+10h', label: 'SAT 3:00 AM', rot: .06 });
-    if (crack && ka < .3) krackle(ctx, 1040, 700, 300, { n: 40, size: 18, color: INK.paper, seed: 5 });
+    if (crack) {       // the glass cracks on "three": heavy jagged lines from the impact point + shards
+      ctx.save(); clipPts(ctx, ell(1040, 700, 232, 232, 40));
+      for (let i = 0; i < 8; i++) { const a = i / 8 * TAU + hash(i) * .5, pts = [[1110, 610]]; for (let j = 1; j < 6; j++) { const aa = a + (hash(i * 9 + j) - .5) * .7; pts.push([1110 + Math.cos(aa) * 70 * j, 610 + Math.sin(aa) * 70 * j]); }
+        inkLine(ctx, pts, 7, INK.ink, { taper: [0, .9], smooth: false }); inkLine(ctx, pts.map(([x, y]) => [x + 4, y + 3]), 3, INK.white, { taper: [0, .9], smooth: false }); }
+      ctx.restore();
+      if (ka < .35) for (let i = 0; i < 12; i++) { const a = hash(i * 5) * TAU, d = 60 + ka * (900 + hash(i) * 700), g = ka * ka * 900;
+        ink(ctx, xform([[0, -14], [10, 10], [-9, 6]], 1110 + Math.cos(a) * d, 610 + Math.sin(a) * d + g, 1 + hash(i + 2), a + ka * 12), { fill: INK.paper, line: 3, boil: .5, smooth: false }); }
+    }
     pager(ctx, 390, 820, 300, t, { rot: -.18, buzz: pulse(t, 6) });
     ctx.restore();
   }
@@ -278,14 +290,14 @@
     txt(c, 'Our rabbit is looking into it.', 44, 420, { font: 'ui', weight: 500, size: 30, color: '#6E6A78' });
     rabbit(c, w - 150, h - 36, 20, { bags: 1, lids: .55, mouth: 'flat', armR: { a: 165, e: 5 }, pawR: 'point', earL: { a: -36, b: -64 }, earR: { a: 10, b: 10 } });
   }
-  function montageShot(ctx, t, lt) {
+  function montageShot(ctx, t) {
     const last = lastOf(t, HITS), bump = last ? Math.exp(-age(t, last) * 12) : 0, sh = shake(t, 10 * bump);
     cam(ctx, 960 + sh[0], 560 + sh[1], 1 + .03 * seg(t, 112.35, 113.25));
     night(ctx, { max: .5 });
     const rows = [['API', 'ok'], ['Web', 'ok'], ['Database', 'ok'], ['DNS', 'ok']].map(([n], i) => [n, age(t, 112.35 + .07 + i * .105) >= 0 ? 'down' : i === 0 ? 'degraded' : 'ok']);
     scrap(ctx, 470, 770, 640, 426, -.05, slam(t, HITS[0]), t, c => statusPage(c, 0, 0, 640, t, { rows }), { seed: 1 });
-    scrap(ctx, 1330, 690, 900, 330, .03, slam(t, HITS[1]), t, c => terminal(c, 0, 0, 900, 330, t, { title: 'prod-worker-7', lines: PANIC, size: 38, cps: 160, t0: HITS[1] - VLEAD }), { seed: 2 });
-    scrap(ctx, 640, 790, 820, 330, -.035, slam(t, HITS[2]), t, c => { terminal(c, 0, 0, 820, 330, t, { title: 'dig', lines: [['$ dig api.smallfix.dev', '#E8E6F0'], [';; ANSWER SECTION:', INK.yellow]], size: 46 });
+    scrap(ctx, 1370, 690, 900, 330, .03, slam(t, HITS[1]), t, c => terminal(c, 0, 0, 900, 330, t, { title: 'prod-worker-7', lines: PANIC, size: 38, cps: 420, t0: HITS[1] - VLEAD }), { seed: 2 });
+    scrap(ctx, 540, 790, 820, 330, -.035, slam(t, HITS[2]), t, c => { terminal(c, 0, 0, 820, 330, t, { title: 'dig', lines: [['$ dig api.smallfix.dev', '#E8E6F0'], [';; ANSWER SECTION:', INK.yellow]], size: 46 });
       if (Math.floor(t * 6) % 2) fillPts(c, rect(26, 200, 26, 46), '#E8E6F0', false); }, { seed: 3 });
     scrap(ctx, 1290, 800, 900, 470, -.02, slam(t, HITS[3]), t, c => err500Fn(c, 900, 470, t), { seed: 4 });
     scrap(ctx, 420, 830, 420, 460, .05, slam(t, HITS[4]), t, c => rackFn(c, 420, 460, t), { seed: 5 });
@@ -306,14 +318,17 @@
     const cast = [], N = 10, beat = beatAt(tc + VLEAD);
     for (let i = 0; i < N; i++) {
       const th = Math.PI / 2 + .8 + i / (N - 1) * (TAU - 1.6) + wob(t, .15, i * .1) * .03, x = 960 + Math.cos(th) * 760, y = 890 + Math.sin(th) * 190, d = (Math.sin(th) + 1) / 2;
-      cast.push({ y, fn: () => { const s = lerp(100, 160, d), clap = Math.pow(1 - frac(beat * 2 + hash(i) * .3), 3), say = (Math.floor(beat * 2) + i) % 3 === 0;
-        agentBot(ctx, x, y, s, { clap, bob: clap * .6, say: say ? 'LGTM!' : null, saySize: 40 }); } });
+      cast.push({ y, fn: c => { const s = lerp(100, 160, d), clap = Math.pow(1 - frac(beat * 2 + hash(i) * .3), 3), say = (Math.floor(beat * 2) + i) % 3 === 0;
+        agentBot(c, x, y, s, { clap, bob: clap * .6, say: say ? 'LGTM!' : null, saySize: 40 }); } });
     }
-    cast.push({ y: 905, fn: () => devLit(ctx, 960, 905, 235, t, {}) });
+    cast.push({ y: 905, fn: c => devLit(c, 960, 905, 235, t, {}) });
     const lift = smooth(seg(tc, 113.85, 114.1));
-    cast.push({ y: 1060, fn: () => rabbit(ctx, 1480, 1060, 30, { turn: -.4, bags: 1, lids: .55, mouth: 'flat', lx: .2, earL: { a: -36, b: -66 }, earR: { a: 12, b: 8 },
+    cast.push({ y: 1060, fn: c => rabbit(c, 1480, 1060, 30, { turn: -.4, bags: 1, lids: .55, mouth: 'flat', lx: .2, earL: { a: -36, b: -66 }, earR: { a: 12, b: 8 },
       armR: { a: lerp(8, 60, lift), e: lerp(10, 50, lift) }, pawR: 'open', armL: { a: 8, e: 10 } }) });
-    cast.sort((a, b) => a.y - b.y).forEach(o => o.fn());
+    cast.sort((a, b) => a.y - b.y);
+    const M = ctx.getTransform();
+    depth(ctx, 6, c => { c.setTransform(M); cast.filter(o => o.y < 860).forEach(o => o.fn(c)); });
+    cast.filter(o => o.y >= 860).forEach(o => o.fn(ctx));
     ctx.restore();
   }
 
@@ -334,8 +349,11 @@
     ink(c, rrect(wx - 12, wy - 12, ww + 24, wh + 24, 30), { fill: INK.ink, line: 4, boil: .6, smooth: false });
     c.save(); clipPts(c, rrect(wx, wy, ww, wh, 26), false); fillPts(c, rect(wx, wy, ww, wh), mix(INK.ink, INK.nightLt, .6), false);
     for (let i = -1; i < 12; i++) { const y = wy + i * 24 - mod(notch * 12, 24); fillPts(c, rect(wx, y, ww, 9), INK.ink, false); } c.restore();
-    const fy = wy + 150 - fl * 26;
-    ink(c, [[w * .66, h + 60], [w / 2 + 70, fy + 120], [w / 2 + 30, fy], [w / 2 - 40, fy - 10], [w / 2 - 70, fy + 60], [w / 2 - 50, h + 60]], { fill: '#0B0D1E', line: 5, lineColor: INK.nightLt, boil: 1 });
+    // the dev's index finger (silhouette, rim-lit) rolling the wheel up a notch on every eighth
+    const fy = wy + 120 - fl * 30, fx = w / 2;
+    ink(c, [[fx + 150, h + 80], [fx + 62, fy + 150], [fx + 48, fy + 20], [fx, fy - 18], [fx - 48, fy + 20], [fx - 58, fy + 160], [fx - 90, h + 80]], { fill: '#0B0D1E', line: 5, lineColor: INK.blue, boil: 1 });
+    ink(c, rrect(fx - 30, fy - 4, 60, 70, 26), { fill: mix(INK.nightLt, INK.blue, .3), line: 3, lineColor: INK.blue, boil: .6, smooth: false });
+    inkLine(c, [[fx - 40, fy + 190], [fx + 44, fy + 186]], 4, INK.blue, { taper: [.2, .2] });
   }
   function pagePanel(c, w, h, t) {
     fillPts(c, rect(0, 0, w, h), lit, false);
@@ -343,13 +361,13 @@
     THREAD(c, 20, 0, w - 90, h, off, 6);
     fillPts(c, rect(w - 56, 0, 40, h), '#D8D2C4', false);
     ink(c, rrect(w - 52, h - 44 - off * .01, 32, 30, 12), { fill: INK.ink, line: 3, boil: .4, smooth: false });
-    if (lt > .3) streaks(c, [0, 0, w - 60, h], { dir: [0, 1], n: 14, len: 60 + lt * 200, w: 5, color: rgba(INK.nightLt, .8) });
+    txt(c, '\u2191', w - 36, h - 70 - Math.abs(wob(t, 4)) * 14, { font: 'ui', weight: 900, size: 44, color: INK.ink, align: 'center' });
   }
   function wheelShot(ctx, t) {
     night(ctx, { max: .4 });
     scrap(ctx, 490, 330, 820, 540, -.025, slam(t, 114.86), t, c => wheelPanel(c, 820, 540, t), { seed: 11 });
     scrap(ctx, 1430, 330, 820, 540, .02, slam(t, 115.2), t, c => pagePanel(c, 820, 540, t), { seed: 12 });
-    const fl = Math.exp(-frac(beatAt(t + VLEAD) * 2) * 5); if (t > 114.95) sfx(ctx, 'TIK', 250, 130, 90, (frac(beatAt(t + VLEAD) * 2)) * BEAT / 2, { life: .18, rot: -.2 });
+    if (t > 114.95) sfx(ctx, 'TIK', 250, 130, 90, frac(beatAt(t + VLEAD) * 2) * BEAT / 2, { life: .18, rot: -.2 });
     for (const [x0, t0, s] of [[1250, 115.35, 170], [1650, 115.6, 140], [1080, 115.8, 200]]) {
       const u = (t - t0) / .35; if (u < 0 || u > 1) continue;
       depth(ctx, 10, c => { const y = lerp(-250, 1350, u); streaks(c, [x0 - s * .6, y - s * 3, x0 + s * .6, y - s * .8], { dir: [0, 1], n: 10, len: s * 2.4, w: 8, color: rgba(INK.paper, .7) }); bun(c, x0, y, s, { sy: 1.5, chip: INK.red, rot: .1 }); });
@@ -366,28 +384,35 @@
     ink(ctx, rrect(1360, 360, 270, 196, 60), { fill: INK.ink, line: 7, lineColor: INK.ink, boil: 0, smooth: false });
     fillPts(ctx, rrect(1385, 380, 30, 150, 14), INK.nightLt, false);
     ink(ctx, rect(-20, 632, 1720, 16), { fill: INK.ink, line: 0, boil: 0 });
-    desk(ctx, 648, t);
-    depth(ctx, 11, c => { streaks(c, [110, -300, 560, 180], { dir: [0, 1], n: 10, len: 500, w: 10, color: rgba(INK.paper, .6), seed: 4 }); bun(c, 340, 360, 260, { sy: 1.4, chip: INK.red, rot: .12 }); });
+    desk(ctx, 648);
+    depth(ctx, 11, c => { streaks(c, [330, -300, 800, 250], { dir: [0, 1], n: 10, len: 500, w: 10, color: rgba(INK.paper, .6), seed: 4 }); bun(c, 560, 470, 240, { sy: 1.35, chip: INK.red, rot: .12 }); });
     cursor(ctx, 1500, 450, 250, { tremble: 3, sweat: 1 });
   }
 
   // ---------- 116.80 the scroll back ----------
+  // the thread scrolls back up from comment #400 to #1, accelerating until the rows smear, while the camera rolls
   function scrollAShot(ctx, t) {
-    const u = seg(t, 116.8, 117.62), S = 26000 * Math.pow(u, 2.4), v = 26000 * 2.4 * Math.pow(u, 1.4) / .82 / 24, sy = clamp(1 + v / 260, 1, 6);
-    cam(ctx, 960, 540, 1 - .14 * easeIn(u), -.2 * easeIn(u));
+    const u = seg(t, 116.8, 117.62), RH = 170, S = 399 * RH * Math.pow(u, 2.6), d = 399 * RH * 2.6 * Math.pow(u, 1.6) / .82 / 24, sy = clamp(1 + d / 200, 1, 8);
+    cam(ctx, 960, 540, 1 - .2 * easeIn(u), -.26 * easeIn(u));
     night(ctx, { max: .4 });
-    fillPts(ctx, rect(280, -900, 1360, H + 1800), lit, false);
-    ctx.save(); clipPts(ctx, rect(280, -900, 1360, H + 1800), false);
-    for (let i = -8; i < 14; i++) { const yy = mod(i * 150 + S, 22 * 150) - 8 * 150, cy = yy + 60;
+    const page = rect(180, -1400, 1540, H + 2800);
+    fillPts(ctx, page, lit, false);
+    ctx.save(); clipPts(ctx, page, false);
+    const i0 = Math.max(0, Math.floor((S - 1100) / RH)), i1 = Math.min(399, Math.ceil((S + 1500) / RH));
+    for (let i = i0; i <= i1; i++) { const yy = 760 - i * RH + S, cy = yy + 70;
       ctx.save(); ctx.translate(0, cy); ctx.scale(1, sy); ctx.translate(0, -cy);
-      bun(ctx, 390, yy + 110, 80, { chip: CHIPS[mod(i, 6)] });
-      ink(ctx, rrect(500, yy + 20, 1080, 110, 12), { fill: INK.white, line: 4, boil: .5, smooth: false });
-      fillPts(ctx, rect(530, yy + 52, 700 + hash(mod(i, 13)) * 250, 16), '#8A8496', false); fillPts(ctx, rect(530, yy + 88, 420, 16), mod(i, 3) === 0 ? INK.red : '#B8B2C4', false);
+      txt(ctx, '#' + (400 - i), 380, yy + 100, { font: 'mono', weight: 800, size: 58, color: INK.ink, align: 'right' });
+      bun(ctx, 480, yy + 125, 84, { chip: CHIPS[i % 6] });
+      ink(ctx, rrect(580, yy + 22, 1080, 124, 12), { fill: INK.white, line: 4, boil: .5, smooth: false });
+      avatar(ctx, 626, yy + 62, 22, 'rabbit');
+      fillPts(ctx, rect(664, yy + 50, 230, 20), INK.ink, false); fillPts(ctx, rect(910, yy + 52, 150, 16), '#B8B2C4', false);
+      fillPts(ctx, rect(620, yy + 100, 620 + hash(i % 13) * 300, 16), '#8A8496', false);
+      if (CHIPS[i % 6]) fillPts(ctx, rrect(1450, yy + 44, 170, 32, 16), CHIPS[i % 6], false);
       ctx.restore(); }
     ctx.restore();
-    fillPts(ctx, rect(1660, -900, 50, H + 1800), '#D8D2C4', false);
-    ink(ctx, rrect(1664, lerp(980, 40, easeIn(u)), 42, 60, 16), { fill: INK.ink, line: 3, boil: .4, smooth: false });
-    if (u > .25) streaks(ctx, [-200, -300, W + 200, H + 300], { dir: [0, 1], n: 40, len: 200 + v * 2, w: 6, color: rgba(INK.paper, .55) });
+    fillPts(ctx, rect(1720, -1400, 56, H + 2800), '#D8D2C4', false);
+    ink(ctx, rrect(1726, lerp(1000, 20, S / (399 * RH)), 44, 50, 16), { fill: INK.ink, line: 3, boil: .4, smooth: false });
+    if (u > .3) streaks(ctx, [-300, -400, W + 300, H + 400], { dir: [0, 1], n: 44, len: 200 + d * 1.5, w: 6, color: rgba(INK.paper, .5) });
     ctx.restore();
   }
   // callback cut-outs for the reverse rabbit hole (reverse chronology)
@@ -452,7 +477,7 @@
   function cardGroup(ctx, t) {
     const K = 1.86;
     ctx.save(); ctx.translate(120, 70); ctx.scale(K, K); commentCard(ctx, 0, 0, 1680 / K, t, CARD); ctx.restore();
-    pawPrint(ctx, 1600, 215, 210, .35);
+    pawPrint(ctx, 1590, 250, 200, .35);
     // the reply composer
     uiBox(ctx, 120, 560, 1680, 400, { r: 14, shadow: 12 });
     txt(ctx, 'Write', 170, 616, { font: 'ui', weight: 800, size: 30, color: INK.ink }); txt(ctx, 'Preview', 270, 616, { font: 'ui', weight: 600, size: 30, color: '#6E6A78' });
@@ -464,7 +489,7 @@
     else txt(ctx, s, x, 800, { ...f, color: INK.ink });
     const done = n === 3 && s.endsWith('above.');
     if (done) { const w0 = measure(ctx, 'As mentioned ', f).w, w1 = measure(ctx, 'above.', f).w; inkLine(ctx, [[x + w0 - 6, 826], [x + w0 + w1 * .5, 832], [x + w0 + w1 + 8, 822]], 11, INK.orange, { taper: [.1, .3] }); }
-    else if (t < SILENT || s) fillPts(ctx, rect(x + (s ? measure(ctx, s, f).w : 0) + 10, 715, 10, 104), INK.ink, false);
+    else fillPts(ctx, rect(x + (s ? measure(ctx, s, f).w : 0) + 10, 715, 10, 104), INK.ink, false);
     button(ctx, 1500, 860, 260, 70, 'Comment', { fill: INK.ink, size: 30, noShade: true });
   }
   function tunnelShot(ctx, t) {
@@ -478,7 +503,7 @@
     ctx.restore();
     dotsIn(ctx, [0, 0, W, H], { spacing: 40, color: INK.night, k: (x, y) => clamp(1.2 - Math.hypot(x - 960, y - 540) / 420) });
     if (u < .6) speedLines(ctx, 960, 540, { n: 50, r0: 300 + u * 500, r1: 1400, w: 7, color: rgba(INK.paper, .4 * (1 - u / .6)) });
-    dotWipe(ctx, seg(t, 119.3, 119.75), INK.night, { dir: [0, 1], spacing: 44 });
+    const wipe = seg(t, 119.3, 119.75); if (wipe >= 1) night(ctx, { max: .35, sp: 50 }); else dotWipe(ctx, wipe, INK.night, { dir: [0, 1], spacing: 44 });
     // flying cut-outs, far to near
     const list = MEM.map(([fn, w, h], i) => ({ d: 1.1 + i * 1.0, fn, w, h, i })).concat([0, 1, 2, 3, 4].map(i => ({ d: .25 + i * .22, bun: true, i })));
     const card = L + 1;
@@ -490,7 +515,7 @@
       ctx.restore(); });
   }
   function commentShot(ctx, t) {
-    const still = t >= SILENT; if (still) BOIL = 0;
+    if (t >= SILENT) BOIL = 0;
     const z = 1 + .025 * easeOut(seg(Math.min(t, SILENT), 119.9, SILENT));
     night(ctx, { max: .35, sp: 50 });
     cam(ctx, 960, 540, z); cardGroup(ctx, t); ctx.restore();
