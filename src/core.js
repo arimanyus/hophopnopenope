@@ -64,13 +64,15 @@ function beatTime(b) {
   if (b >= n - 1) return BEATS[n - 1] + (b - n + 1) * BEAT;
   const i = Math.floor(b); return lerp(BEATS[i], BEATS[i + 1], b - i);
 }
-const beatN = t => Math.floor(beatAt(t) + 1e-6);
-const barAt = t => beatAt(t) / 4;                      // bars start on beat indices divisible by 4
-// 1 exactly on each beat, decaying after. every = 2 for half-time (every other beat), .5 for eighths.
-const pulse = (t, k = 6, every = 1) => Math.exp(-frac(beatAt(t) / every) * k);
+// Sync law: a visual hit lands on the frame of the sound or one frame early, never late. VLEAD shifts every
+// beat/hit helper below one frame earlier.
+const VLEAD = 1 / 24;
+const beatN = t => Math.floor(beatAt(t + VLEAD) + 1e-6);
+// 1 on each beat, decaying after. every = 2 for every other beat, .5 for eighths.
+const pulse = (t, k = 6, every = 1) => Math.exp(-frac(beatAt(t + VLEAD) / every) * k);
 // decaying hit after the most recent of the given times (0 before the first one)
-function hit(t, times, k = 8) { let last = -1e9; for (const x of times) if (x <= t && x > last) last = x; return last < -1e8 ? 0 : Math.exp(-(t - last) * k); }
-function lastOf(t, times) { let last = null; for (const x of times) if (x <= t && (last === null || x > last)) last = x; return last; }
+function hit(t, times, k = 8) { let last = -1e9; for (const x of times) if (x - VLEAD <= t + 1e-6 && x > last) last = x; return last < -1e8 ? 0 : Math.exp(-Math.max(0, t - last + VLEAD) * k); }
+function lastOf(t, times) { let last = null; for (const x of times) if (x - VLEAD <= t + 1e-6 && (last === null || x > last)) last = x; return last; }
 const since = (t, t0) => Math.max(0, t - t0);
 
 // ---------- lyrics ----------

@@ -21,7 +21,7 @@ DISPLAY = ['Ninety seconds on the clock', 'Down the rabbit hole, tick, tick, toc
 # Hand-checked fixes (see work/ notes): intro ticks from the vocal-energy bursts; chorus-1 hit pairs from the matching
 # chorus-2 onsets (same melody, 37.175 s later); Ping on the 10.449 downbeat onset.
 FIX = {(1, 4): 6.13, (1, 5): 6.73, (1, 6): 7.38, (2, 0): 10.449, (8, 6): 35.225, (8, 7): 35.596,
-       (9, 6): 38.29, (9, 7): 38.731, (10, 0): 38.986, (10, 1): 39.497}
+       (9, 6): 38.429, (9, 7): 38.731, (10, 0): 38.986, (10, 1): 39.497, (18, 7): 72.771, (21, 0): 79.621}
 HOLD = {'again': [(11, 47.80), (21, 85.30)], 'same': [(17, 69.50)], 'flaw': [(25, 104.80)], 'groan': [(29, 119.90)]}
 END = {1: 7.85, 30: 122.25, 31: 126.70}
 MEDIUM = {1: 'tick/tick/tock placed from vocal-energy bursts; the aligner and transcriber disagreed'}

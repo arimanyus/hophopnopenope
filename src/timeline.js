@@ -27,6 +27,7 @@ function drawLyrics(ctx, t) {
   for (const s of specs) {
     if (s.until && t >= s.until) continue; if (s.after && t < s.after) continue;
     if (s.mode === 'hero') hero(ctx, t, li, s); else if (s.mode === 'caption') caption(ctx, t, li, s); else if (s.mode === 'sub') sub(ctx, t, li, s);
+    else if (s.mode === 'noir') caption(ctx, t, li, { fill: INK.ink, color: INK.paper, hotColor: INK.red, ...s }); else if (s.mode === 'ransom') ransom(ctx, t, li, s);
   }
 }
 

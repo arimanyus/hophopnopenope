@@ -96,7 +96,7 @@ function hero(ctx, t, li, o = {}) {
 // caption(ctx, t, li, {x, y, w, size, rot, fill, color, align}) - box sized to the full line, words appear as sung.
 function caption(ctx, t, li, o = {}) {
   const L = LINES[li], end = o.end ?? lineEnd(li), a = L.words[0].a - LEAD - .06; if (t < a || t >= end) return;
-  const size = o.size || 46, pad = size * .5, maxW = o.w || 760, f = { font: 'hand', weight: 800, size, track: .5 };
+  const size = o.size || 62, pad = size * .5, maxW = o.w || 900, f = { font: 'hand', weight: 800, size, track: .5 };
   const words = L.words.map(w => w.w.toUpperCase());
   setFont(ctx, f); const sp = ctx.measureText(' ').width, lines = [[]]; let lw = 0;
   words.forEach((w, i) => { const ww = ctx.measureText(w).width; if (lw && lw + sp + ww > maxW - pad * 2) { lines.push([]); lw = 0; } lines[lines.length - 1].push(i); lw += (lw ? sp : 0) + ww; });
@@ -108,17 +108,41 @@ function caption(ctx, t, li, o = {}) {
   ink(ctx, rect(0, 0, bw, bh), { fill: o.fill || INK.yellow, line: 4, smooth: false, boil: .8 });
   lines.forEach((r, ri) => {
     let xx = pad; r.forEach(i => { const st = wordState(t, li, i); setFont(ctx, f); const ww = ctx.measureText(words[i]).width;
-      if (st.shown) txt(ctx, words[i], xx, pad * .7 + (ri + .8) * size * 1.12 - size * .12, { ...f, color: o.color || INK.ink, alpha: clamp(st.age / .06) });
+      if (st.shown) txt(ctx, words[i], xx, pad * .7 + (ri + .8) * size * 1.12 - size * .12, { ...f, color: (o.hot || []).includes(i) ? (o.hotColor || INK.red) : (o.color || INK.ink), alpha: clamp(st.age / .06) });
       xx += ww + sp; });
   });
   ctx.restore();
+}
+
+// ---------- RANSOM: Spider-Punk cut-out letters (final chorus) ----------
+// ransom(ctx, t, li, {box, rows, words, upper}) - every glyph on its own taped scrap, mixed faces, jitter on threes.
+const RANSOM_FACES = [['display', 900, -2], ['serif', 900, -2], ['ui', 900, 0], ['mono', 800, 0], ['comic', 400, 0], ['display', 900, 2], ['marker', 400, 0]];
+const RANSOM_PAPERS = [[INK.white, INK.ink], [INK.yellow, INK.ink], [INK.ink, INK.white], [INK.red, INK.white], [INK.pinkLt, INK.ink], [INK.cyan, INK.ink], [INK.paper, INK.red], [INK.orange, INK.ink]];
+function ransom(ctx, t, li, o = {}) {
+  const L = LINES[li], end = o.end ?? lineEnd(li); if (t < L.words[0].a - LEAD - .02 || t >= end) return;
+  const [bx, by, bw, bh] = o.box || [100, 120, 1720, 800], words = L.words.map(w => clean(w.w).toUpperCase());
+  const idx = o.words || words.map((_, i) => i), rows = rowsOf(idx.map(i => ({ w: words[i] })), o.rows, o.budget || 12).map(r => r.map(j => idx[j]));
+  const tk = Math.floor(t * 8), glyph = (wi, ci) => { const h = hash(li * 131 + wi * 17 + ci * 3.3); return { face: RANSOM_FACES[Math.floor(h * RANSOM_FACES.length)], paper: RANSOM_PAPERS[Math.floor(hash(h * 91) * RANSOM_PAPERS.length)], rot: (hash(h * 7) - .5) * .22 }; };
+  const rowW = r => r.reduce((s, i) => s + [...words[i]].reduce((a, ch, ci) => { const g = glyph(i, ci); return a + measure(ctx, ch, { font: g.face[0], weight: g.face[1], stretch: g.face[2], size: 100 }).w * 1.18 + 6; }, 0) + 40, 0);
+  const sizes = rows.map(r => Math.min(o.maxSize || 260, 100 * bw / rowW(r))), fit = Math.min(1, bh / sizes.reduce((a, s) => a + s * 1.12, 0));
+  let y = by;
+  rows.forEach((r, ri) => { const size = sizes[ri] * fit; y += size;
+    let x = bx + (bw - rowW(r) * size / 100) / 2;
+    r.forEach(i => { const st = wordState(t, li, i); [...words[i]].forEach((ch, ci) => {
+      const g = glyph(i, ci), f = { font: g.face[0], weight: g.face[1], stretch: g.face[2], size }, cw = measure(ctx, ch, f).w;
+      if (st.shown) { const k = backOut(clamp((st.age - ci * .015) / .1), 2.4); if (k > .01) { const j = [(hash(tk + ci * 3 + i) - .5) * 4, (hash(tk * 2 + ci + i * 5) - .5) * 4];
+        ctx.save(); ctx.translate(x + cw * .59 + j[0], y - size * .36 + j[1]); ctx.rotate(g.rot); ctx.scale(k, k);
+        fillPts(ctx, rect(-cw * .59 + 7, -size * .55 + 8, cw * 1.18, size * 1.02), INK.ink, false); fillPts(ctx, rect(-cw * .59, -size * .55, cw * 1.18, size * 1.02), g.paper[0], false);
+        txt(ctx, ch, 0, size * .34, { ...f, color: g.paper[1], align: 'center' }); ctx.restore(); } }
+      x += (cw * 1.18 + 6); }); x += size * .4; });
+    y += size * .12; });
 }
 
 // ---------- SUB: subtitle-scale lyric ----------
 // sub(ctx, t, li, {y, size, color, box: true}) - centred lower third, current word highlighted.
 function sub(ctx, t, li, o = {}) {
   const L = LINES[li], end = o.end ?? lineEnd(li), a = L.words[0].a - LEAD - .05; if (t < a || t >= end) return;
-  const size = o.size || 54, f = { font: 'display', weight: 800, stretch: -1, size, track: 0 }, y = o.y ?? 1000;
+  const size = o.size || 62, f = { font: 'display', weight: 800, stretch: -1, size, track: 0 }, y = o.y ?? 1000;
   setFont(ctx, f); const sp = ctx.measureText(' ').width, ws = L.words.map(w => ctx.measureText(w.w).width), tot = ws.reduce((a, b) => a + b, 0) + sp * (ws.length - 1);
   let x = (o.x ?? W / 2) - tot / 2; const k = easeOut(seg(t, a, a + .12)) * (1 - seg(t, end - .1, end));
   if (o.box !== false) { ctx.save(); ctx.globalAlpha = .88 * k; fillPts(ctx, rect(x - 26, y - size * .95, tot + 52, size * 1.35), o.bg || INK.ink, false); ctx.restore(); }

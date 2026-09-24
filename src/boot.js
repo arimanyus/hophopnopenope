@@ -19,6 +19,7 @@
   if (location.search.includes('render')) return;
   // dev: scrub, or play in sync with the song (drops frames if painting is slower than real time)
   const s = document.getElementById('scrub'), lab = document.getElementById('tt'), au = document.getElementById('song'), btn = document.getElementById('play');
+  au.src = 'assets/CodeRabbit, Pause.mp3'; au.preload = 'auto';
   const show = t => { const t0 = performance.now(); drawFrame(ctx, t); lab.textContent = `${t.toFixed(2)}s  beat ${beatAt(t).toFixed(2)}  ${Math.round(performance.now() - t0)} ms`; };
   s.oninput = () => { au.currentTime = +s.value; if (au.paused) show(+s.value); };
   btn.onclick = () => { if (au.paused) { au.currentTime = +s.value; au.play(); btn.textContent = 'pause'; } else { au.pause(); btn.textContent = 'play'; } };

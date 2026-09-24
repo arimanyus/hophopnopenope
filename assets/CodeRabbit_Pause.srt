@@ -83,7 +83,7 @@
 [chorus2] Click, click, resolve all, thumbs up, amen
 
 22
-00:01:19,360 --> 00:01:25,300
+00:01:19,621 --> 00:01:25,300
 [chorus2] Hop, hop, guess I'll write 'em all again (held: again)
 
 23

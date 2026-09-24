@@ -32,12 +32,14 @@ async function openPage(tag = '') {
   const page = await browser.newPage();
   page.on('console', m => { if (['error', 'warn'].includes(m.type())) console.log(`[page${tag}]`, m.text()); });
   page.on('pageerror', e => console.log(`[page error${tag}]`, e.message));
-  await page.goto(pathToFileURL(resolve('studio.html')).href + '?render', { waitUntil: 'load' });
-  await page.waitForFunction('window.ready === true', { timeout: 60000 });
+  await page.goto(pathToFileURL(resolve('studio.html')).href + '?render', { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction('window.ready === true', { timeout: 60000, polling: 100 });
   if (args.look) await page.evaluate(n => { window.LOOK = LOOKS[n]; }, args.look);
   return page;
 }
-const frameOf = async (page, t, type, q) => { const url = await page.evaluate((t, type, q) => window.renderAt(t, type, q), t, type, q); return Buffer.from(url.slice(url.indexOf(',') + 1), 'base64'); };
+const withTimeout = (p, ms, what) => Promise.race([p, new Promise((_, bad) => setTimeout(() => bad(new Error(`timeout: ${what}`)), ms))]);
+const frameOf = async (page, t, type, q) => { const url = await withTimeout(page.evaluate((t, type, q) => window.renderAt(t, type, q), t, type, q), 60000, `frame at t=${t}`); return Buffer.from(url.slice(url.indexOf(',') + 1), 'base64'); };
+process.on('unhandledRejection', e => { console.error(e.message); process.exit(1); });
 const times = s => String(s).split(',').map(Number);
 
 if (args.sheet) {

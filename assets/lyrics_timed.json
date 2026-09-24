@@ -476,8 +476,8 @@
     },
     {
      "w": "(nope!",
-     "start": 38.29,
-     "end": 38.429
+     "start": 38.429,
+     "end": 38.509
     },
     {
      "w": "nope!)",
@@ -925,7 +925,7 @@
     },
     {
      "w": "hop!)",
-     "start": 72.58,
+     "start": 72.771,
      "end": 72.88
     }
    ]
@@ -1026,13 +1026,13 @@
   {
    "section": "chorus2",
    "text": "Hop, hop, guess I'll write 'em all again",
-   "start": 79.36,
+   "start": 79.621,
    "end": 85.3,
    "confidence": "high",
    "words": [
     {
      "w": "Hop,",
-     "start": 79.36,
+     "start": 79.621,
      "end": 79.98
     },
     {

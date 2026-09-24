@@ -22,6 +22,8 @@ function bbox(pts) { let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; for (const [x
 // Hand-drawn jitter that re-seeds 12x/s. Neighbouring points move together so outlines wobble, not fizz.
 // BOIL is the global boil amount multiplier (a shot can set it to 0 for a frozen/"paused" look).
 let BOIL = 1, BOIL_T = 0;
+// Size of one screen pixel in the current drawing units (the rabbit rig draws in units of s pixels and sets this).
+let UPX = 1;
 function boil(pts, amt = 1.6, seed = 0) {
   const s = boilN(BOIL_T) * 13.37 + seed * 3.1, a = amt * BOIL; if (!a) return pts;
   return pts.map(([x, y], i) => [x + noise1(i * .7 + s) * a, y + noise1(i * .7 + s + 50) * a]);
@@ -122,12 +124,12 @@ function strokeVar(ctx, d, wFn, closed, color) {
 let LIGHT = [-.55, -.83];
 // Closed comic outline. w = base weight; heavier on the shadow side, with a little pressure noise.
 function outline(ctx, pts, w = 3, color = INK.ink, o = {}) {
-  const d = sampleSpline(pts, true, o.smooth ?? true, o.step || 5), seed = o.seed || 0, heavy = o.heavy ?? .6;
+  const d = sampleSpline(pts, true, o.smooth ?? true, o.step || 5 * UPX), seed = o.seed || 0, heavy = o.heavy ?? .6;
   strokeVar(ctx, d, (s, nx, ny) => w * (1 + heavy * clamp(-(nx * LIGHT[0] + ny * LIGHT[1]) * .9, -.5, 1)) * (1 + .18 * noise1(s * 9 + seed + boilN(BOIL_T) * .5 * BOIL)), true, color);
 }
 // Open tapered ink line. taper = [start, end] fractions of the length that thin to zero.
 function inkLine(ctx, pts, w = 3, color = INK.ink, o = {}) {
-  const d = sampleSpline(pts, false, o.smooth ?? true, o.step || 4), [ta, tb] = o.taper || [.25, .25], seed = o.seed || 0;
+  const d = sampleSpline(pts, false, o.smooth ?? true, o.step || 4 * UPX), [ta, tb] = o.taper || [.25, .25], seed = o.seed || 0;
   strokeVar(ctx, d, s => { let k = 1; if (ta > 0 && s < ta) k = Math.sqrt(s / ta); if (tb > 0 && s > 1 - tb) k = Math.min(k, Math.sqrt((1 - s) / tb)); return Math.max(.01, w * k * (1 + .15 * noise1(s * 7 + seed + boilN(BOIL_T) * BOIL))); }, false, color);
 }
 
