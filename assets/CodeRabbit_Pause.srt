@@ -1,140 +1,127 @@
 1
-00:00:01,360 --> 00:00:02,600
+00:00:01,360 --> 00:00:02,420
 [intro] Ninety seconds on the clock
 
 2
-00:00:04,360 --> 00:00:07,550
+00:00:04,340 --> 00:00:07,850
 [intro] Down the rabbit hole, tick, tick, tock
 
 3
-00:00:10,450 --> 00:00:13,420
+00:00:10,449 --> 00:00:13,320
 [verse1] Ping in the burrow, my ears stand tall
 
 4
-00:00:13,860 --> 00:00:16,830
+00:00:13,440 --> 00:00:16,700
 [verse1] "Small fix," fourteen thousand lines in all
 
 5
-00:00:17,250 --> 00:00:20,220
+00:00:16,960 --> 00:00:19,380
 [verse1] Nested ternaries, a function called "fix"
 
 6
-00:00:20,640 --> 00:00:23,610
+00:00:19,720 --> 00:00:22,720
 [verse1] Forty-six console logs left in the mix
 
 7
-00:00:24,030 --> 00:00:27,030
+00:00:23,420 --> 00:00:26,840
 [verse1] A secret key committed, plain as day
 
 8
-00:00:27,450 --> 00:00:30,420
+00:00:27,320 --> 00:00:30,060
 [verse1] The tests all pass 'cause they're skipped anyway
 
 9
-00:00:32,090 --> 00:00:35,500
+00:00:32,220 --> 00:00:35,720
 [chorus1] Three little comments on your PR (hop! hop!)
 
 10
-00:00:35,500 --> 00:00:38,870
+00:00:35,880 --> 00:00:38,920
 [chorus1] Did anybody read a single one? (nope! nope!)
 
 11
-00:00:38,870 --> 00:00:42,240
+00:00:38,986 --> 00:00:41,960
 [chorus1] Click, click, resolve all, thumbs up, amen
 
 12
-00:00:42,240 --> 00:00:45,630
-[chorus1] Hop, hop, guess I'll write 'em all again
+00:00:42,539 --> 00:00:47,800
+[chorus1] Hop, hop, guess I'll write 'em all again (held: again)
 
 13
-00:00:45,630 --> 00:00:48,990
+00:00:47,880 --> 00:00:50,620
 [verse2] Sixty seconds, force-push on the branch
 
 14
-00:00:48,990 --> 00:00:52,360
+00:00:50,980 --> 00:00:54,000
 [verse2] Whole review gone, never had a chance
 
 15
-00:00:52,360 --> 00:00:55,750
+00:00:54,220 --> 00:00:57,260
 [verse2] You said "it's never null" like you're the king
 
 16
-00:00:55,750 --> 00:00:59,140
+00:00:57,560 --> 00:01:00,760
 [verse2] I drew a diagram, you didn't read a thing
 
 17
-00:00:59,140 --> 00:01:02,510
+00:01:01,000 --> 00:01:04,020
 [verse2] You typed "CodeRabbit, pause," like I'm to blame
 
 18
-00:01:02,510 --> 00:01:05,880
-[verse2] I wrote a poem for you all the same
+00:01:04,620 --> 00:01:09,500
+[verse2] I wrote a poem for you all the same (held: same)
 
 19
-00:01:05,880 --> 00:01:09,270
-[verse2_extra] (unlisted: one extra 8-beat vocal slot somewhere in verse 2, placed here as a guess)
-
-20
-00:01:09,270 --> 00:01:12,660
+00:01:09,600 --> 00:01:12,880
 [chorus2] Forty little comments on your PR (hop! hop!)
 
-21
-00:01:12,660 --> 00:01:16,000
+20
+00:01:13,000 --> 00:01:16,060
 [chorus2] Did anybody read a single one? (nope! nope!)
 
-22
-00:01:16,000 --> 00:01:19,370
+21
+00:01:16,161 --> 00:01:19,100
 [chorus2] Click, click, resolve all, thumbs up, amen
 
+22
+00:01:19,360 --> 00:01:25,300
+[chorus2] Hop, hop, guess I'll write 'em all again (held: again)
+
 23
-00:01:19,370 --> 00:01:22,760
-[chorus2] Hop, hop, guess I'll write 'em all again
-
-24
-00:01:22,760 --> 00:01:25,250
-[chorus2_tag] (unlisted: extra vocals, likely a repeated hook or ad-lib)
-
-25
-00:01:27,790 --> 00:01:31,160
+00:01:27,740 --> 00:01:30,520
 [bridge] Line nine thousand twelve, now what is this?
 
-26
-00:01:31,160 --> 00:01:34,550
+24
+00:01:31,120 --> 00:01:33,600
 [bridge] Unsanitized input, there it is
 
-27
-00:01:34,550 --> 00:01:37,900
+25
+00:01:34,460 --> 00:01:37,300
 [bridge] I flagged it red, in all caps, with my paw
 
-28
-00:01:37,900 --> 00:01:41,290
-[bridge] You clicked on merge and then you shipped the flaw
+26
+00:01:37,700 --> 00:01:44,800
+[bridge] You clicked on merge and then you shipped the flaw (held: flaw)
 
-29
-00:01:41,290 --> 00:01:44,630
-[bridge_tag] (unlisted: extra vocals, likely a repeated last line)
-
-30
-00:01:44,630 --> 00:01:48,000
+27
+00:01:44,940 --> 00:01:48,240
 [final_chorus] Four hundred comments on your PR (hop! hop!)
 
-31
-00:01:48,000 --> 00:01:51,340
+28
+00:01:48,380 --> 00:01:51,380
 [final_chorus] So now you wanna read a single one? (yep! yep!)
 
-32
-00:01:51,340 --> 00:01:54,730
+29
+00:01:51,440 --> 00:01:54,780
 [final_chorus] It's three a.m., prod's down, who could've known?
 
-33
-00:01:54,730 --> 00:01:58,100
-[final_chorus] You scroll back to my comment and you groan
+30
+00:01:54,860 --> 00:01:59,900
+[final_chorus] You scroll back to my comment and you groan (held: groan)
 
-34
-00:01:58,100 --> 00:02:01,800
-[final_tag] (unlisted: extra vocals, likely a repeated last line)
+31
+00:02:00,000 --> 00:02:02,250
+[final_tag] As mentioned above.
 
-35
-00:02:05,600 --> 00:02:06,700
+32
+00:02:05,560 --> 00:02:06,700
 [outro_spoken] As mentioned above.
-

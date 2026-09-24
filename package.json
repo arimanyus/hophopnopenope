@@ -1,0 +1,1 @@
+{"name":"coderabbit-pause-video","private":true,"type":"module","scripts":{"render":"node render.mjs"},"dependencies":{"puppeteer-core":"^23.11.1"}}

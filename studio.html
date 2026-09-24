@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CodeRabbit, Pause · studio</title>
+<style>
+  @font-face { font-family: 'Archivo'; src: url('assets/fonts/Archivo.ttf'); font-weight: 100 900; font-stretch: 62.5% 125%; font-display: block; }
+  @font-face { font-family: 'Archivo'; src: url('assets/fonts/Archivo-Italic.ttf'); font-weight: 100 900; font-stretch: 62.5% 125%; font-style: italic; font-display: block; }
+  @font-face { font-family: 'JetBrains Mono'; src: url('assets/fonts/JetBrainsMono.ttf'); font-weight: 100 800; font-display: block; }
+  @font-face { font-family: 'Mona Sans'; src: url('assets/fonts/MonaSans.ttf'); font-weight: 200 900; font-stretch: 75% 125%; font-display: block; }
+  @font-face { font-family: 'Shantell Sans'; src: url('assets/fonts/ShantellSans.ttf'); font-weight: 300 800; font-display: block; }
+  @font-face { font-family: 'Noto Serif Display'; src: url('assets/fonts/NotoSerifDisplay.ttf'); font-weight: 100 900; font-stretch: 62.5% 100%; font-display: block; }
+  @font-face { font-family: 'Shippori Mincho B1'; src: url('assets/fonts/ShipporiMinchoB1-ExtraBold.ttf'); font-weight: 800; font-display: block; }
+  @font-face { font-family: 'Bangers'; src: url('assets/fonts/Bangers.ttf'); font-display: block; }
+  @font-face { font-family: 'Dela Gothic One'; src: url('assets/fonts/DelaGothicOne.ttf'); font-display: block; }
+  @font-face { font-family: 'Permanent Marker'; src: url('assets/fonts/PermanentMarker.ttf'); font-display: block; }
+  html, body { margin: 0; background: #0d0b12; color: #ddd; font: 13px system-ui, sans-serif; }
+  main { padding: 12px; display: grid; gap: 8px; }
+  #out { width: min(100%, 1280px); aspect-ratio: 16 / 9; height: auto; background: #000; }
+  .bar { display: flex; gap: 10px; align-items: center; max-width: 1280px; }
+  #scrub { flex: 1; }
+  #tt { font-variant-numeric: tabular-nums; min-width: 260px; }
+</style>
+</head>
+<body>
+<main>
+  <canvas id="out" width="1920" height="1080"></canvas>
+  <div class="bar"><button id="play">play</button><input id="scrub" type="range" min="0" max="128.64" step="0.0417" value="0"><span id="tt">loading...</span></div>
+  <audio id="song" src="assets/CodeRabbit, Pause.mp3" preload="auto"></audio>
+</main>
+<script src="src/data.js"></script>
+<script src="src/core.js"></script>
+<script src="src/ink.js"></script>
+<script src="src/fx.js"></script>
+<script src="src/type.js"></script>
+<script src="src/rabbit.js"></script>
+<script src="src/props.js"></script>
+<script src="src/world.js"></script>
+<script src="src/timeline.js"></script>
+<script src="src/lyricplan.js"></script>
+<script src="src/lookdev.js"></script>
+<script src="src/ch/c01_intro.js"></script>
+<script src="src/ch/c02_verse1.js"></script>
+<script src="src/ch/c03_chorus1.js"></script>
+<script src="src/ch/c04_verse2.js"></script>
+<script src="src/ch/c05_chorus2.js"></script>
+<script src="src/ch/c06_bridge.js"></script>
+<script src="src/ch/c07_final.js"></script>
+<script src="src/ch/c08_outro.js"></script>
+<script src="src/boot.js"></script>
+</body>
+</html>

@@ -1,252 +1,1548 @@
 {
  "duration": 128.64,
  "bpm": 142.2,
- "note": "Beat grid drifts up to ~0.13 s from a constant tempo; use beats[] for sync, not a fixed BPM.",
+ "note": "Word times from stable-ts forced alignment (faster-whisper large-v3) on a Demucs vocal stem, cross-checked against a free transcription and per-window passes; hit words snapped to vocal onsets. Beat grid drifts up to ~0.13 s from a constant tempo; use beats[] for sync, not a fixed BPM.",
+ "tags": [
+  {
+   "slot": [
+    44.42,
+    47.88
+   ],
+   "what": "held melisma on \"again\" (end of chorus 1): the \"extra verse-2 slot\". Verse 2 starts at 47.88, half a line late."
+  },
+  {
+   "slot": [
+    67.18,
+    69.5
+   ],
+   "what": "held \"same\" (end of verse 2) leading into chorus 2"
+  },
+  {
+   "slot": [
+    81.54,
+    85.3
+   ],
+   "what": "chorus-2 tag: long rising melisma on \"again\"; silence 85.3-87.7"
+  },
+  {
+   "slot": [
+    101.06,
+    104.8
+   ],
+   "what": "bridge tag: rising held \"flaw\" (G4 up to E5)"
+  },
+  {
+   "slot": [
+    117.06,
+    122.25
+   ],
+   "what": "final tag: held \"groan\" (117.1-119.9), then a SUNG \"As mentioned above\" (120.0-122.25); silence 122.3-125.6 before the spoken one"
+  }
+ ],
  "lines": [
   {
    "section": "intro",
    "text": "Ninety seconds on the clock",
    "start": 1.36,
-   "end": 2.6,
-   "confidence": "high"
+   "end": 2.42,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "Ninety",
+     "start": 1.36,
+     "end": 1.54
+    },
+    {
+     "w": "seconds",
+     "start": 1.54,
+     "end": 1.82
+    },
+    {
+     "w": "on",
+     "start": 1.82,
+     "end": 2.08
+    },
+    {
+     "w": "the",
+     "start": 2.08,
+     "end": 2.16
+    },
+    {
+     "w": "clock",
+     "start": 2.16,
+     "end": 2.42
+    }
+   ]
   },
   {
    "section": "intro",
    "text": "Down the rabbit hole, tick, tick, tock",
-   "start": 4.36,
-   "end": 7.55,
-   "confidence": "high"
+   "start": 4.34,
+   "end": 7.85,
+   "confidence": "medium",
+   "words": [
+    {
+     "w": "Down",
+     "start": 4.34,
+     "end": 4.44
+    },
+    {
+     "w": "the",
+     "start": 4.44,
+     "end": 4.66
+    },
+    {
+     "w": "rabbit",
+     "start": 4.66,
+     "end": 4.84
+    },
+    {
+     "w": "hole,",
+     "start": 4.84,
+     "end": 5.248
+    },
+    {
+     "w": "tick,",
+     "start": 6.13,
+     "end": 6.223
+    },
+    {
+     "w": "tick,",
+     "start": 6.73,
+     "end": 7.04
+    },
+    {
+     "w": "tock",
+     "start": 7.38,
+     "end": 7.85
+    }
+   ],
+   "note": "tick/tick/tock placed from vocal-energy bursts; the aligner and transcriber disagreed"
   },
   {
    "section": "verse1",
    "text": "Ping in the burrow, my ears stand tall",
-   "start": 10.45,
-   "end": 13.42,
-   "confidence": "high"
+   "start": 10.449,
+   "end": 13.32,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "Ping",
+     "start": 10.449,
+     "end": 10.98
+    },
+    {
+     "w": "in",
+     "start": 10.98,
+     "end": 11.32
+    },
+    {
+     "w": "the",
+     "start": 11.32,
+     "end": 11.48
+    },
+    {
+     "w": "burrow,",
+     "start": 11.48,
+     "end": 12.02
+    },
+    {
+     "w": "my",
+     "start": 12.02,
+     "end": 12.14
+    },
+    {
+     "w": "ears",
+     "start": 12.14,
+     "end": 12.5
+    },
+    {
+     "w": "stand",
+     "start": 12.5,
+     "end": 12.86
+    },
+    {
+     "w": "tall",
+     "start": 12.86,
+     "end": 13.32
+    }
+   ]
   },
   {
    "section": "verse1",
    "text": "\"Small fix,\" fourteen thousand lines in all",
-   "start": 13.86,
-   "end": 16.83,
-   "confidence": "high"
+   "start": 13.44,
+   "end": 16.7,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "\"Small",
+     "start": 13.44,
+     "end": 13.62
+    },
+    {
+     "w": "fix,\"",
+     "start": 13.62,
+     "end": 14.22
+    },
+    {
+     "w": "fourteen",
+     "start": 14.48,
+     "end": 14.6
+    },
+    {
+     "w": "thousand",
+     "start": 14.6,
+     "end": 15.26
+    },
+    {
+     "w": "lines",
+     "start": 15.26,
+     "end": 16.14
+    },
+    {
+     "w": "in",
+     "start": 16.14,
+     "end": 16.48
+    },
+    {
+     "w": "all",
+     "start": 16.48,
+     "end": 16.7
+    }
+   ]
   },
   {
    "section": "verse1",
    "text": "Nested ternaries, a function called \"fix\"",
-   "start": 17.25,
-   "end": 20.22,
-   "confidence": "high"
+   "start": 16.96,
+   "end": 19.38,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "Nested",
+     "start": 16.96,
+     "end": 17.44
+    },
+    {
+     "w": "ternaries,",
+     "start": 17.44,
+     "end": 18.12
+    },
+    {
+     "w": "a",
+     "start": 18.12,
+     "end": 18.32
+    },
+    {
+     "w": "function",
+     "start": 18.32,
+     "end": 18.62
+    },
+    {
+     "w": "called",
+     "start": 18.62,
+     "end": 19.0
+    },
+    {
+     "w": "\"fix\"",
+     "start": 19.0,
+     "end": 19.38
+    }
+   ]
   },
   {
    "section": "verse1",
    "text": "Forty-six console logs left in the mix",
-   "start": 20.64,
-   "end": 23.61,
-   "confidence": "high"
+   "start": 19.72,
+   "end": 22.72,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "Forty-six",
+     "start": 19.72,
+     "end": 20.74
+    },
+    {
+     "w": "console",
+     "start": 20.74,
+     "end": 21.18
+    },
+    {
+     "w": "logs",
+     "start": 21.18,
+     "end": 21.72
+    },
+    {
+     "w": "left",
+     "start": 21.72,
+     "end": 21.98
+    },
+    {
+     "w": "in",
+     "start": 21.98,
+     "end": 22.26
+    },
+    {
+     "w": "the",
+     "start": 22.26,
+     "end": 22.34
+    },
+    {
+     "w": "mix",
+     "start": 22.34,
+     "end": 22.72
+    }
+   ]
   },
   {
    "section": "verse1",
    "text": "A secret key committed, plain as day",
-   "start": 24.03,
-   "end": 27.03,
-   "confidence": "high"
+   "start": 23.42,
+   "end": 26.84,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "A",
+     "start": 23.42,
+     "end": 23.76
+    },
+    {
+     "w": "secret",
+     "start": 23.76,
+     "end": 24.14
+    },
+    {
+     "w": "key",
+     "start": 24.14,
+     "end": 24.5
+    },
+    {
+     "w": "committed,",
+     "start": 24.5,
+     "end": 25.58
+    },
+    {
+     "w": "plain",
+     "start": 25.58,
+     "end": 26.0
+    },
+    {
+     "w": "as",
+     "start": 26.0,
+     "end": 26.48
+    },
+    {
+     "w": "day",
+     "start": 26.48,
+     "end": 26.84
+    }
+   ]
   },
   {
    "section": "verse1",
    "text": "The tests all pass 'cause they're skipped anyway",
-   "start": 27.45,
-   "end": 30.42,
-   "confidence": "high"
+   "start": 27.32,
+   "end": 30.06,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "The",
+     "start": 27.32,
+     "end": 27.66
+    },
+    {
+     "w": "tests",
+     "start": 27.66,
+     "end": 27.98
+    },
+    {
+     "w": "all",
+     "start": 27.98,
+     "end": 28.36
+    },
+    {
+     "w": "pass",
+     "start": 28.36,
+     "end": 28.74
+    },
+    {
+     "w": "'cause",
+     "start": 28.74,
+     "end": 29.2
+    },
+    {
+     "w": "they're",
+     "start": 29.2,
+     "end": 29.36
+    },
+    {
+     "w": "skipped",
+     "start": 29.36,
+     "end": 29.54
+    },
+    {
+     "w": "anyway",
+     "start": 29.54,
+     "end": 30.06
+    }
+   ]
   },
   {
    "section": "chorus1",
    "text": "Three little comments on your PR (hop! hop!)",
-   "start": 32.09,
-   "end": 35.5,
-   "confidence": "high"
+   "start": 32.22,
+   "end": 35.72,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "Three",
+     "start": 32.22,
+     "end": 32.82
+    },
+    {
+     "w": "little",
+     "start": 32.92,
+     "end": 33.44
+    },
+    {
+     "w": "comments",
+     "start": 33.44,
+     "end": 34.02
+    },
+    {
+     "w": "on",
+     "start": 34.02,
+     "end": 34.28
+    },
+    {
+     "w": "your",
+     "start": 34.28,
+     "end": 34.46
+    },
+    {
+     "w": "PR",
+     "start": 34.46,
+     "end": 35.1
+    },
+    {
+     "w": "(hop!",
+     "start": 35.225,
+     "end": 35.305
+    },
+    {
+     "w": "hop!)",
+     "start": 35.596,
+     "end": 35.72
+    }
+   ]
   },
   {
    "section": "chorus1",
    "text": "Did anybody read a single one? (nope! nope!)",
-   "start": 35.5,
-   "end": 38.87,
-   "confidence": "high"
+   "start": 35.88,
+   "end": 38.92,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "Did",
+     "start": 35.88,
+     "end": 36.12
+    },
+    {
+     "w": "anybody",
+     "start": 36.12,
+     "end": 36.62
+    },
+    {
+     "w": "read",
+     "start": 36.62,
+     "end": 37.22
+    },
+    {
+     "w": "a",
+     "start": 37.22,
+     "end": 37.4
+    },
+    {
+     "w": "single",
+     "start": 37.4,
+     "end": 37.74
+    },
+    {
+     "w": "one?",
+     "start": 37.74,
+     "end": 38.28
+    },
+    {
+     "w": "(nope!",
+     "start": 38.29,
+     "end": 38.429
+    },
+    {
+     "w": "nope!)",
+     "start": 38.731,
+     "end": 38.92
+    }
+   ]
   },
   {
    "section": "chorus1",
    "text": "Click, click, resolve all, thumbs up, amen",
-   "start": 38.87,
-   "end": 42.24,
-   "confidence": "high"
+   "start": 38.986,
+   "end": 41.96,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "Click,",
+     "start": 38.986,
+     "end": 39.44
+    },
+    {
+     "w": "click,",
+     "start": 39.497,
+     "end": 39.8
+    },
+    {
+     "w": "resolve",
+     "start": 39.8,
+     "end": 40.24
+    },
+    {
+     "w": "all,",
+     "start": 40.24,
+     "end": 40.92
+    },
+    {
+     "w": "thumbs",
+     "start": 40.92,
+     "end": 41.38
+    },
+    {
+     "w": "up,",
+     "start": 41.38,
+     "end": 41.72
+    },
+    {
+     "w": "amen",
+     "start": 41.72,
+     "end": 41.96
+    }
+   ]
   },
   {
    "section": "chorus1",
    "text": "Hop, hop, guess I'll write 'em all again",
-   "start": 42.24,
-   "end": 45.63,
-   "confidence": "high"
+   "start": 42.539,
+   "end": 47.8,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "Hop,",
+     "start": 42.539,
+     "end": 42.82
+    },
+    {
+     "w": "hop,",
+     "start": 42.887,
+     "end": 43.22
+    },
+    {
+     "w": "guess",
+     "start": 43.22,
+     "end": 43.52
+    },
+    {
+     "w": "I'll",
+     "start": 43.52,
+     "end": 43.78
+    },
+    {
+     "w": "write",
+     "start": 43.78,
+     "end": 44.06
+    },
+    {
+     "w": "'em",
+     "start": 44.06,
+     "end": 44.24
+    },
+    {
+     "w": "all",
+     "start": 44.24,
+     "end": 44.42
+    },
+    {
+     "w": "again",
+     "start": 44.42,
+     "end": 44.8
+    }
+   ],
+   "hold": {
+    "word": "again",
+    "until": 47.8
+   }
   },
   {
    "section": "verse2",
    "text": "Sixty seconds, force-push on the branch",
-   "start": 45.63,
-   "end": 48.99,
-   "confidence": "medium"
+   "start": 47.88,
+   "end": 50.62,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "Sixty",
+     "start": 47.88,
+     "end": 48.4
+    },
+    {
+     "w": "seconds,",
+     "start": 48.4,
+     "end": 48.78
+    },
+    {
+     "w": "force-push",
+     "start": 48.78,
+     "end": 49.48
+    },
+    {
+     "w": "on",
+     "start": 49.48,
+     "end": 49.68
+    },
+    {
+     "w": "the",
+     "start": 49.68,
+     "end": 50.22
+    },
+    {
+     "w": "branch",
+     "start": 50.22,
+     "end": 50.62
+    }
+   ]
   },
   {
    "section": "verse2",
    "text": "Whole review gone, never had a chance",
-   "start": 48.99,
-   "end": 52.36,
-   "confidence": "medium"
+   "start": 50.98,
+   "end": 54.0,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "Whole",
+     "start": 50.98,
+     "end": 51.3
+    },
+    {
+     "w": "review",
+     "start": 51.3,
+     "end": 51.9
+    },
+    {
+     "w": "gone,",
+     "start": 51.9,
+     "end": 52.58
+    },
+    {
+     "w": "never",
+     "start": 52.58,
+     "end": 52.92
+    },
+    {
+     "w": "had",
+     "start": 52.92,
+     "end": 53.44
+    },
+    {
+     "w": "a",
+     "start": 53.44,
+     "end": 53.64
+    },
+    {
+     "w": "chance",
+     "start": 53.64,
+     "end": 54.0
+    }
+   ]
   },
   {
    "section": "verse2",
    "text": "You said \"it's never null\" like you're the king",
-   "start": 52.36,
-   "end": 55.75,
-   "confidence": "medium"
+   "start": 54.22,
+   "end": 57.26,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "You",
+     "start": 54.22,
+     "end": 54.3
+    },
+    {
+     "w": "said",
+     "start": 54.3,
+     "end": 54.54
+    },
+    {
+     "w": "\"it's",
+     "start": 54.54,
+     "end": 54.78
+    },
+    {
+     "w": "never",
+     "start": 54.78,
+     "end": 55.2
+    },
+    {
+     "w": "null\"",
+     "start": 55.2,
+     "end": 55.64
+    },
+    {
+     "w": "like",
+     "start": 55.64,
+     "end": 56.06
+    },
+    {
+     "w": "you're",
+     "start": 56.06,
+     "end": 56.48
+    },
+    {
+     "w": "the",
+     "start": 56.48,
+     "end": 56.8
+    },
+    {
+     "w": "king",
+     "start": 56.8,
+     "end": 57.26
+    }
+   ]
   },
   {
    "section": "verse2",
    "text": "I drew a diagram, you didn't read a thing",
-   "start": 55.75,
-   "end": 59.14,
-   "confidence": "low"
+   "start": 57.56,
+   "end": 60.76,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "I",
+     "start": 57.56,
+     "end": 57.68
+    },
+    {
+     "w": "drew",
+     "start": 57.68,
+     "end": 57.88
+    },
+    {
+     "w": "a",
+     "start": 57.88,
+     "end": 58.06
+    },
+    {
+     "w": "diagram,",
+     "start": 58.06,
+     "end": 59.04
+    },
+    {
+     "w": "you",
+     "start": 59.04,
+     "end": 59.3
+    },
+    {
+     "w": "didn't",
+     "start": 59.3,
+     "end": 59.88
+    },
+    {
+     "w": "read",
+     "start": 59.88,
+     "end": 60.24
+    },
+    {
+     "w": "a",
+     "start": 60.24,
+     "end": 60.42
+    },
+    {
+     "w": "thing",
+     "start": 60.42,
+     "end": 60.76
+    }
+   ]
   },
   {
    "section": "verse2",
    "text": "You typed \"CodeRabbit, pause,\" like I'm to blame",
-   "start": 59.14,
-   "end": 62.51,
-   "confidence": "low"
+   "start": 61.0,
+   "end": 64.02,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "You",
+     "start": 61.0,
+     "end": 61.12
+    },
+    {
+     "w": "typed",
+     "start": 61.12,
+     "end": 61.22
+    },
+    {
+     "w": "\"CodeRabbit,",
+     "start": 61.22,
+     "end": 62.24
+    },
+    {
+     "w": "pause,\"",
+     "start": 62.24,
+     "end": 62.84
+    },
+    {
+     "w": "like",
+     "start": 62.98,
+     "end": 63.2
+    },
+    {
+     "w": "I'm",
+     "start": 63.2,
+     "end": 63.54
+    },
+    {
+     "w": "to",
+     "start": 63.54,
+     "end": 63.66
+    },
+    {
+     "w": "blame",
+     "start": 63.66,
+     "end": 64.02
+    }
+   ]
   },
   {
    "section": "verse2",
    "text": "I wrote a poem for you all the same",
-   "start": 62.51,
-   "end": 65.88,
-   "confidence": "low"
-  },
-  {
-   "section": "verse2_extra",
-   "text": "(unlisted: one extra 8-beat vocal slot somewhere in verse 2, placed here as a guess)",
-   "start": 65.88,
-   "end": 69.27,
-   "confidence": "unknown"
+   "start": 64.62,
+   "end": 69.5,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "I",
+     "start": 64.62,
+     "end": 65.2
+    },
+    {
+     "w": "wrote",
+     "start": 65.2,
+     "end": 65.5
+    },
+    {
+     "w": "a",
+     "start": 65.5,
+     "end": 65.7
+    },
+    {
+     "w": "poem",
+     "start": 65.7,
+     "end": 66.04
+    },
+    {
+     "w": "for",
+     "start": 66.04,
+     "end": 66.38
+    },
+    {
+     "w": "you",
+     "start": 66.38,
+     "end": 66.56
+    },
+    {
+     "w": "all",
+     "start": 66.56,
+     "end": 67.02
+    },
+    {
+     "w": "the",
+     "start": 67.02,
+     "end": 67.18
+    },
+    {
+     "w": "same",
+     "start": 67.18,
+     "end": 67.5
+    }
+   ],
+   "hold": {
+    "word": "same",
+    "until": 69.5
+   }
   },
   {
    "section": "chorus2",
    "text": "Forty little comments on your PR (hop! hop!)",
-   "start": 69.27,
-   "end": 72.66,
-   "confidence": "high"
+   "start": 69.6,
+   "end": 72.88,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "Forty",
+     "start": 69.6,
+     "end": 70.2
+    },
+    {
+     "w": "little",
+     "start": 70.36,
+     "end": 70.58
+    },
+    {
+     "w": "comments",
+     "start": 70.58,
+     "end": 71.18
+    },
+    {
+     "w": "on",
+     "start": 71.18,
+     "end": 71.44
+    },
+    {
+     "w": "your",
+     "start": 71.44,
+     "end": 71.62
+    },
+    {
+     "w": "PR",
+     "start": 71.62,
+     "end": 72.24
+    },
+    {
+     "w": "(hop!",
+     "start": 72.4,
+     "end": 72.58
+    },
+    {
+     "w": "hop!)",
+     "start": 72.58,
+     "end": 72.88
+    }
+   ]
   },
   {
    "section": "chorus2",
    "text": "Did anybody read a single one? (nope! nope!)",
-   "start": 72.66,
-   "end": 76.0,
-   "confidence": "high"
+   "start": 73.0,
+   "end": 76.06,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "Did",
+     "start": 73.0,
+     "end": 73.26
+    },
+    {
+     "w": "anybody",
+     "start": 73.26,
+     "end": 73.76
+    },
+    {
+     "w": "read",
+     "start": 73.76,
+     "end": 74.38
+    },
+    {
+     "w": "a",
+     "start": 74.38,
+     "end": 74.56
+    },
+    {
+     "w": "single",
+     "start": 74.56,
+     "end": 74.88
+    },
+    {
+     "w": "one?",
+     "start": 74.88,
+     "end": 75.44
+    },
+    {
+     "w": "(nope!",
+     "start": 75.535,
+     "end": 75.72
+    },
+    {
+     "w": "nope!)",
+     "start": 75.883,
+     "end": 76.06
+    }
+   ]
   },
   {
    "section": "chorus2",
    "text": "Click, click, resolve all, thumbs up, amen",
-   "start": 76.0,
-   "end": 79.37,
-   "confidence": "high"
+   "start": 76.161,
+   "end": 79.1,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "Click,",
+     "start": 76.161,
+     "end": 76.58
+    },
+    {
+     "w": "click,",
+     "start": 76.696,
+     "end": 76.94
+    },
+    {
+     "w": "resolve",
+     "start": 76.94,
+     "end": 77.38
+    },
+    {
+     "w": "all,",
+     "start": 77.38,
+     "end": 78.06
+    },
+    {
+     "w": "thumbs",
+     "start": 78.06,
+     "end": 78.6
+    },
+    {
+     "w": "up,",
+     "start": 78.6,
+     "end": 78.88
+    },
+    {
+     "w": "amen",
+     "start": 78.88,
+     "end": 79.1
+    }
+   ]
   },
   {
    "section": "chorus2",
    "text": "Hop, hop, guess I'll write 'em all again",
-   "start": 79.37,
-   "end": 82.76,
-   "confidence": "high"
-  },
-  {
-   "section": "chorus2_tag",
-   "text": "(unlisted: extra vocals, likely a repeated hook or ad-lib)",
-   "start": 82.76,
-   "end": 85.25,
-   "confidence": "unknown"
+   "start": 79.36,
+   "end": 85.3,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "Hop,",
+     "start": 79.36,
+     "end": 79.98
+    },
+    {
+     "w": "hop,",
+     "start": 80.132,
+     "end": 80.36
+    },
+    {
+     "w": "guess",
+     "start": 80.36,
+     "end": 80.68
+    },
+    {
+     "w": "I'll",
+     "start": 80.68,
+     "end": 80.96
+    },
+    {
+     "w": "write",
+     "start": 80.96,
+     "end": 81.18
+    },
+    {
+     "w": "'em",
+     "start": 81.18,
+     "end": 81.42
+    },
+    {
+     "w": "all",
+     "start": 81.42,
+     "end": 81.54
+    },
+    {
+     "w": "again",
+     "start": 81.54,
+     "end": 81.92
+    }
+   ],
+   "hold": {
+    "word": "again",
+    "until": 85.3
+   }
   },
   {
    "section": "bridge",
    "text": "Line nine thousand twelve, now what is this?",
-   "start": 87.79,
-   "end": 91.16,
-   "confidence": "medium"
+   "start": 87.74,
+   "end": 90.52,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "Line",
+     "start": 87.74,
+     "end": 87.88
+    },
+    {
+     "w": "nine",
+     "start": 87.88,
+     "end": 88.24
+    },
+    {
+     "w": "thousand",
+     "start": 88.24,
+     "end": 88.78
+    },
+    {
+     "w": "twelve,",
+     "start": 88.78,
+     "end": 89.48
+    },
+    {
+     "w": "now",
+     "start": 89.6,
+     "end": 89.7
+    },
+    {
+     "w": "what",
+     "start": 89.7,
+     "end": 89.88
+    },
+    {
+     "w": "is",
+     "start": 89.88,
+     "end": 90.02
+    },
+    {
+     "w": "this?",
+     "start": 90.02,
+     "end": 90.52
+    }
+   ]
   },
   {
    "section": "bridge",
    "text": "Unsanitized input, there it is",
-   "start": 91.16,
-   "end": 94.55,
-   "confidence": "medium"
+   "start": 91.12,
+   "end": 93.6,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "Unsanitized",
+     "start": 91.12,
+     "end": 92.2
+    },
+    {
+     "w": "input,",
+     "start": 92.2,
+     "end": 92.86
+    },
+    {
+     "w": "there",
+     "start": 92.86,
+     "end": 93.1
+    },
+    {
+     "w": "it",
+     "start": 93.1,
+     "end": 93.3
+    },
+    {
+     "w": "is",
+     "start": 93.3,
+     "end": 93.6
+    }
+   ]
   },
   {
    "section": "bridge",
    "text": "I flagged it red, in all caps, with my paw",
-   "start": 94.55,
-   "end": 97.9,
-   "confidence": "medium"
+   "start": 94.46,
+   "end": 97.3,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "I",
+     "start": 94.46,
+     "end": 94.64
+    },
+    {
+     "w": "flagged",
+     "start": 94.64,
+     "end": 95.16
+    },
+    {
+     "w": "it",
+     "start": 95.16,
+     "end": 95.18
+    },
+    {
+     "w": "red,",
+     "start": 95.18,
+     "end": 95.56
+    },
+    {
+     "w": "in",
+     "start": 95.56,
+     "end": 95.7
+    },
+    {
+     "w": "all",
+     "start": 95.7,
+     "end": 95.84
+    },
+    {
+     "w": "caps,",
+     "start": 95.84,
+     "end": 96.36
+    },
+    {
+     "w": "with",
+     "start": 96.38,
+     "end": 96.48
+    },
+    {
+     "w": "my",
+     "start": 96.48,
+     "end": 96.68
+    },
+    {
+     "w": "paw",
+     "start": 96.68,
+     "end": 97.3
+    }
+   ]
   },
   {
    "section": "bridge",
    "text": "You clicked on merge and then you shipped the flaw",
-   "start": 97.9,
-   "end": 101.29,
-   "confidence": "medium"
-  },
-  {
-   "section": "bridge_tag",
-   "text": "(unlisted: extra vocals, likely a repeated last line)",
-   "start": 101.29,
-   "end": 104.63,
-   "confidence": "unknown"
+   "start": 97.7,
+   "end": 104.8,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "You",
+     "start": 97.7,
+     "end": 98.08
+    },
+    {
+     "w": "clicked",
+     "start": 98.08,
+     "end": 98.34
+    },
+    {
+     "w": "on",
+     "start": 98.34,
+     "end": 98.56
+    },
+    {
+     "w": "merge",
+     "start": 98.56,
+     "end": 98.94
+    },
+    {
+     "w": "and",
+     "start": 98.94,
+     "end": 99.36
+    },
+    {
+     "w": "then",
+     "start": 99.36,
+     "end": 99.64
+    },
+    {
+     "w": "you",
+     "start": 99.64,
+     "end": 99.88
+    },
+    {
+     "w": "shipped",
+     "start": 99.88,
+     "end": 100.78
+    },
+    {
+     "w": "the",
+     "start": 100.78,
+     "end": 101.06
+    },
+    {
+     "w": "flaw",
+     "start": 101.06,
+     "end": 101.3
+    }
+   ],
+   "hold": {
+    "word": "flaw",
+    "until": 104.8
+   }
   },
   {
    "section": "final_chorus",
    "text": "Four hundred comments on your PR (hop! hop!)",
-   "start": 104.63,
-   "end": 108.0,
-   "confidence": "high"
+   "start": 104.94,
+   "end": 108.24,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "Four",
+     "start": 104.94,
+     "end": 105.4
+    },
+    {
+     "w": "hundred",
+     "start": 105.4,
+     "end": 106.0
+    },
+    {
+     "w": "comments",
+     "start": 106.0,
+     "end": 106.52
+    },
+    {
+     "w": "on",
+     "start": 106.52,
+     "end": 106.78
+    },
+    {
+     "w": "your",
+     "start": 106.78,
+     "end": 106.98
+    },
+    {
+     "w": "PR",
+     "start": 106.98,
+     "end": 107.44
+    },
+    {
+     "w": "(hop!",
+     "start": 107.44,
+     "end": 107.764
+    },
+    {
+     "w": "hop!)",
+     "start": 107.764,
+     "end": 108.24
+    }
+   ]
   },
   {
    "section": "final_chorus",
    "text": "So now you wanna read a single one? (yep! yep!)",
-   "start": 108.0,
-   "end": 111.34,
-   "confidence": "high"
+   "start": 108.38,
+   "end": 111.38,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "So",
+     "start": 108.38,
+     "end": 108.54
+    },
+    {
+     "w": "now",
+     "start": 108.56,
+     "end": 108.86
+    },
+    {
+     "w": "you",
+     "start": 108.86,
+     "end": 109.08
+    },
+    {
+     "w": "wanna",
+     "start": 109.08,
+     "end": 109.3
+    },
+    {
+     "w": "read",
+     "start": 109.3,
+     "end": 109.76
+    },
+    {
+     "w": "a",
+     "start": 109.76,
+     "end": 109.92
+    },
+    {
+     "w": "single",
+     "start": 109.92,
+     "end": 110.28
+    },
+    {
+     "w": "one?",
+     "start": 110.28,
+     "end": 110.78
+    },
+    {
+     "w": "(yep!",
+     "start": 110.875,
+     "end": 111.06
+    },
+    {
+     "w": "yep!)",
+     "start": 111.224,
+     "end": 111.38
+    }
+   ]
   },
   {
    "section": "final_chorus",
    "text": "It's three a.m., prod's down, who could've known?",
-   "start": 111.34,
-   "end": 114.73,
-   "confidence": "medium"
+   "start": 111.44,
+   "end": 114.78,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "It's",
+     "start": 111.44,
+     "end": 111.58
+    },
+    {
+     "w": "three",
+     "start": 111.58,
+     "end": 111.76
+    },
+    {
+     "w": "a.m.,",
+     "start": 111.76,
+     "end": 112.38
+    },
+    {
+     "w": "prod's",
+     "start": 112.38,
+     "end": 112.86
+    },
+    {
+     "w": "down,",
+     "start": 112.98,
+     "end": 113.28
+    },
+    {
+     "w": "who",
+     "start": 113.28,
+     "end": 113.46
+    },
+    {
+     "w": "could've",
+     "start": 113.46,
+     "end": 114.3
+    },
+    {
+     "w": "known?",
+     "start": 114.3,
+     "end": 114.78
+    }
+   ]
   },
   {
    "section": "final_chorus",
    "text": "You scroll back to my comment and you groan",
-   "start": 114.73,
-   "end": 118.1,
-   "confidence": "medium"
+   "start": 114.86,
+   "end": 119.9,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "You",
+     "start": 114.86,
+     "end": 114.9
+    },
+    {
+     "w": "scroll",
+     "start": 114.9,
+     "end": 115.2
+    },
+    {
+     "w": "back",
+     "start": 115.2,
+     "end": 115.6
+    },
+    {
+     "w": "to",
+     "start": 115.6,
+     "end": 115.94
+    },
+    {
+     "w": "my",
+     "start": 115.94,
+     "end": 116.2
+    },
+    {
+     "w": "comment",
+     "start": 116.2,
+     "end": 116.64
+    },
+    {
+     "w": "and",
+     "start": 116.64,
+     "end": 116.92
+    },
+    {
+     "w": "you",
+     "start": 116.92,
+     "end": 117.06
+    },
+    {
+     "w": "groan",
+     "start": 117.06,
+     "end": 117.94
+    }
+   ],
+   "hold": {
+    "word": "groan",
+    "until": 119.9
+   }
   },
   {
    "section": "final_tag",
-   "text": "(unlisted: extra vocals, likely a repeated last line)",
-   "start": 118.1,
-   "end": 121.8,
-   "confidence": "unknown"
+   "text": "As mentioned above.",
+   "start": 120.0,
+   "end": 122.25,
+   "confidence": "high",
+   "words": [
+    {
+     "w": "As",
+     "start": 120.0,
+     "end": 120.68
+    },
+    {
+     "w": "mentioned",
+     "start": 120.68,
+     "end": 121.36
+    },
+    {
+     "w": "above.",
+     "start": 121.36,
+     "end": 122.25
+    }
+   ]
   },
   {
    "section": "outro_spoken",
    "text": "As mentioned above.",
-   "start": 125.6,
+   "start": 125.56,
    "end": 126.7,
-   "confidence": "high"
+   "confidence": "high",
+   "words": [
+    {
+     "w": "As",
+     "start": 125.56,
+     "end": 125.66
+    },
+    {
+     "w": "mentioned",
+     "start": 125.66,
+     "end": 125.94
+    },
+    {
+     "w": "above.",
+     "start": 125.94,
+     "end": 126.7
+    }
+   ]
   }
  ]
 }
