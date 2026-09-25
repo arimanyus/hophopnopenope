@@ -4,6 +4,8 @@ A procedurally animated music video for the song "CodeRabbit, Pause" (`assets/Co
 
 Every frame is a pure function of song time, painted with Canvas 2D in headless Chrome and muxed with ffmpeg. No image or video models are used. The pipeline is modelled on [PDoomVideo](https://github.com/JohnHeibel/PDoomVideo): a storyboard, then a shared drawing library and character rig, then one file per chapter, then a frame render, then an ffmpeg mux.
 
+[![Anti-Trust-War Machine](https://img.youtube.com/vi/EnmpDgFD3OI/maxresdefault.jpg)](https://www.youtube.com/watch?v=EnmpDgFD3OI)
+
 ## Docs
 
 - `docs/STYLE_SHEET.md`: the look (six riso inks, halftone, misregistration, stepped timing), the cast, typography and layout modes.
