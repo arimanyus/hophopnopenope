@@ -1,0 +1,375 @@
+1
+00:00:00,600 --> 00:00:01,820
+[verse1] "Hey, you got a sec?"
+
+2
+00:00:02,040 --> 00:00:03,420
+[verse1] Yeah, that's never just a sec
+
+3
+00:00:03,740 --> 00:00:05,040
+[verse1] "Nothing urgent, just a quick sync"
+
+4
+00:00:05,320 --> 00:00:06,760
+[verse1] There goes half my day, I think
+
+5
+00:00:07,240 --> 00:00:08,420
+[verse1] Calendar block, little blue box
+
+6
+00:00:08,720 --> 00:00:10,120
+[verse1] "Fifteen minutes," but everybody talks
+
+7
+00:00:10,280 --> 00:00:11,520
+[verse1] You could've typed it, crystal clear
+
+8
+00:00:11,600 --> 00:00:13,300
+[verse1] But somehow I gotta hear it in your ear
+
+9
+00:00:13,600 --> 00:00:14,940
+[pre1] You said, "let's just hop on"
+
+10
+00:00:15,180 --> 00:00:16,400
+[pre1] Like that solves everything
+
+11
+00:00:16,880 --> 00:00:17,880
+[pre1] You said, "it'll be quick"
+
+12
+00:00:18,720 --> 00:00:19,940
+[pre1] That's the funniest thing
+
+13
+00:00:20,700 --> 00:00:22,020
+[chorus1] This could have been a text
+
+14
+00:00:22,160 --> 00:00:23,620
+[chorus1] Could've hit send, could've done it in a sec
+
+15
+00:00:23,700 --> 00:00:24,460
+[chorus1] Could've dropped it in Teams
+
+16
+00:00:24,540 --> 00:00:25,280
+[chorus1] Could've slid into Slack
+
+17
+00:00:25,480 --> 00:00:28,220
+[chorus1] Now I'm staring at your camera while you circle back
+
+18
+00:00:28,700 --> 00:00:29,580
+[chorus1] This could have been an email
+
+19
+00:00:29,800 --> 00:00:31,540
+[chorus1] Two little lines and we're done for real
+
+20
+00:00:31,620 --> 00:00:33,640
+[chorus1] But you needed my face for a question with no depth
+
+21
+00:00:33,760 --> 00:00:35,400
+[chorus1] God, this could have been a text
+
+22
+00:00:35,560 --> 00:00:37,180
+[tag1] Oh, oh, oh, oh, oh
+
+23
+00:00:37,180 --> 00:00:38,820
+[tag1] This could have been a text
+
+24
+00:00:38,840 --> 00:00:40,900
+[tag1] Oh, oh, oh, oh, oh
+
+25
+00:00:41,280 --> 00:00:43,180
+[verse2] "Just wanted your thoughts on this"
+
+26
+00:00:43,340 --> 00:00:44,820
+[verse2] You want a meeting for a sentence?
+
+27
+00:00:44,900 --> 00:00:46,440
+[verse2] "Can we talk through what happened here?"
+
+28
+00:00:46,560 --> 00:00:47,880
+[verse2] Sure, give me thirty minutes to disappear
+
+29
+00:00:48,260 --> 00:00:49,820
+[verse2] Screen share, "can you see my screen?"
+
+30
+00:00:49,900 --> 00:00:51,380
+[verse2] Yeah, I've got the same one on my screen
+
+31
+00:00:51,500 --> 00:00:52,580
+[verse2] Then you ask what I would suggest
+
+32
+00:00:52,780 --> 00:00:55,160
+[verse2] Buddy, you literally wrote the context in the deck
+
+33
+00:00:55,240 --> 00:00:56,500
+[pre2] You said, "let's just jump on"
+
+34
+00:00:56,660 --> 00:00:58,000
+[pre2] Like we're defusing a bomb
+
+35
+00:00:58,520 --> 00:00:59,660
+[pre2] You said, "just a quick one"
+
+36
+00:00:59,720 --> 00:01:01,400
+[pre2] And the quick one lasted an hour long
+
+37
+00:01:01,940 --> 00:01:03,480
+[chorus2] This could have been a text
+
+38
+00:01:03,640 --> 00:01:05,020
+[chorus2] Could've hit send, could've done it in a sec
+
+39
+00:01:05,120 --> 00:01:05,860
+[chorus2] Could've dropped it in Teams
+
+40
+00:01:05,940 --> 00:01:06,700
+[chorus2] Could've slid into Slack
+
+41
+00:01:06,860 --> 00:01:09,960
+[chorus2] Now I'm nodding at my laptop while you're talking in abstracts
+
+42
+00:01:10,160 --> 00:01:10,920
+[chorus2] This could have been an email
+
+43
+00:01:11,080 --> 00:01:12,860
+[chorus2] One clean paragraph, nobody has to bail
+
+44
+00:01:12,940 --> 00:01:14,960
+[chorus2] But you needed a call for a question with no depth
+
+45
+00:01:15,060 --> 00:01:16,640
+[chorus2] God, this could have been a text
+
+46
+00:01:16,880 --> 00:01:19,080
+[post] Oh, oh, oh, oh, another meeting
+
+47
+00:01:19,660 --> 00:01:22,420
+[post] Oh, oh, oh, oh, another link
+
+48
+00:01:22,760 --> 00:01:26,040
+[post] Oh, oh, oh, oh, another "you free?"
+
+49
+00:01:26,820 --> 00:01:29,100
+[post] Oh, oh, oh, oh, give me a break
+
+50
+00:01:32,380 --> 00:01:34,400
+[verse3] Then there's the follow-up after the call
+
+51
+00:01:34,540 --> 00:01:35,940
+[verse3] "Just recapping," and you write it all
+
+52
+00:01:36,060 --> 00:01:37,560
+[verse3] So now we've got the minutes, notes and thread
+
+53
+00:01:37,660 --> 00:01:39,140
+[verse3] For something you could've typed from the start instead
+
+54
+00:01:39,320 --> 00:01:40,860
+[verse3] And I'm learning things I never knew
+
+55
+00:01:40,940 --> 00:01:42,600
+[verse3] Like apparently "noted" needs a Zoom
+
+56
+00:01:42,780 --> 00:01:44,180
+[verse3] You sent a deck, I read the deck
+
+57
+00:01:44,280 --> 00:01:45,840
+[verse3] Then booked a call to explain the deck
+
+58
+00:01:45,960 --> 00:01:47,440
+[bridge] If it needs emotion, call me
+
+59
+00:01:47,540 --> 00:01:49,080
+[bridge] If the building's on fire, call me
+
+60
+00:01:49,160 --> 00:01:50,520
+[bridge] If we're changing half the company
+
+61
+00:01:50,820 --> 00:01:52,380
+[bridge] Yeah, okay, call me
+
+62
+00:01:52,480 --> 00:01:54,080
+[bridge] But "hey, can you approve this?"
+
+63
+00:01:54,200 --> 00:01:54,480
+[bridge] Type it.
+
+64
+00:01:54,520 --> 00:01:55,580
+[bridge] "Can you send that over?"
+
+65
+00:01:55,780 --> 00:01:56,100
+[bridge] Type it.
+
+66
+00:01:56,200 --> 00:01:57,280
+[bridge] "Any update on this?"
+
+67
+00:01:57,470 --> 00:01:57,740
+[bridge] Type it.
+
+68
+00:01:57,820 --> 00:02:01,800
+[bridge] Why am I looking at your forehead?!
+
+69
+00:02:01,920 --> 00:02:03,550
+[breakdown] SEND. THE. MESSAGE.
+
+70
+00:02:03,670 --> 00:02:05,120
+[breakdown] SEND. THE. MESSAGE.
+
+71
+00:02:05,340 --> 00:02:07,020
+[breakdown] You have a keyboard.
+
+72
+00:02:07,360 --> 00:02:08,720
+[breakdown] You have my address.
+
+73
+00:02:09,140 --> 00:02:10,040
+[breakdown] You have Slack.
+
+74
+00:02:10,240 --> 00:02:10,900
+[breakdown] You have Teams.
+
+75
+00:02:11,080 --> 00:02:11,980
+[breakdown] You have email.
+
+76
+00:02:13,400 --> 00:02:15,300
+[breakdown] WHAT ARE WE DOING?
+
+77
+00:02:17,760 --> 00:02:19,080
+[final] This could have been a text
+
+78
+00:02:19,240 --> 00:02:20,620
+[final] Could've hit send, could've done it in a sec
+
+79
+00:02:20,740 --> 00:02:21,460
+[final] Could've dropped it in Teams
+
+80
+00:02:21,560 --> 00:02:23,100
+[final] Could've kept the whole thing clean
+
+81
+00:02:23,280 --> 00:02:24,740
+[final] Now I'm trapped inside a meeting
+
+82
+00:02:24,840 --> 00:02:25,520
+[final] That should've never been
+
+83
+00:02:25,600 --> 00:02:26,480
+[final] This could have been an email
+
+84
+00:02:26,640 --> 00:02:28,440
+[final] Nobody needed your voice to tell the tale
+
+85
+00:02:28,520 --> 00:02:30,820
+[final] But you booked a call for a thought with no context
+
+86
+00:02:31,060 --> 00:02:32,200
+[final] And everybody's thinking:
+
+87
+00:02:32,520 --> 00:02:33,920
+[final_tag] This could have been a message
+
+88
+00:02:34,220 --> 00:02:35,480
+[final_tag] This could have been a text
+
+89
+00:02:35,840 --> 00:02:37,200
+[final_tag] This could have been a text
+
+90
+00:02:37,320 --> 00:02:39,400
+[final_tag] THIS COULD HAVE BEEN A TEXT
+
+91
+00:02:43,960 --> 00:02:45,260
+[final_tag] This could have been a text
+
+92
+00:02:46,970 --> 00:02:47,900
+[outro] "Hey, got a minute?"
+
+93
+00:02:48,600 --> 00:02:48,950
+[outro] No.
+
+94
+00:02:50,060 --> 00:02:52,420
+[outro] Send me the damn text.

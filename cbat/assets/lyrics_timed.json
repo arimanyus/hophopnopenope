@@ -1,0 +1,3609 @@
+{
+ "duration": 179.88,
+ "bpm": 143.6,
+ "note": "Word times from stable-ts forced alignment (faster-whisper large-v3) on a Demucs vocal stem, cross-checked against a free transcription and per-window passes; hit words placed on vocal onsets by hand. \"8:57\" in the written lyric is not sung (the vocal opens at 0.60 with \"Hey\"). Use beats[] for sync.",
+ "lines": [
+  {
+   "section": "verse1",
+   "text": "\"Hey, you got a sec?\"",
+   "start": 0.6,
+   "end": 1.82,
+   "words": [
+    {
+     "w": "\"Hey,",
+     "start": 0.6,
+     "end": 0.82
+    },
+    {
+     "w": "you",
+     "start": 1.06,
+     "end": 1.16
+    },
+    {
+     "w": "got",
+     "start": 1.16,
+     "end": 1.34
+    },
+    {
+     "w": "a",
+     "start": 1.34,
+     "end": 1.44
+    },
+    {
+     "w": "sec?\"",
+     "start": 1.44,
+     "end": 1.82
+    }
+   ]
+  },
+  {
+   "section": "verse1",
+   "text": "Yeah, that's never just a sec",
+   "start": 2.04,
+   "end": 3.42,
+   "words": [
+    {
+     "w": "Yeah,",
+     "start": 2.04,
+     "end": 2.36
+    },
+    {
+     "w": "that's",
+     "start": 2.36,
+     "end": 2.56
+    },
+    {
+     "w": "never",
+     "start": 2.56,
+     "end": 2.74
+    },
+    {
+     "w": "just",
+     "start": 2.74,
+     "end": 2.96
+    },
+    {
+     "w": "a",
+     "start": 2.96,
+     "end": 3.14
+    },
+    {
+     "w": "sec",
+     "start": 3.14,
+     "end": 3.42
+    }
+   ]
+  },
+  {
+   "section": "verse1",
+   "text": "\"Nothing urgent, just a quick sync\"",
+   "start": 3.74,
+   "end": 5.04,
+   "words": [
+    {
+     "w": "\"Nothing",
+     "start": 3.74,
+     "end": 3.98
+    },
+    {
+     "w": "urgent,",
+     "start": 3.98,
+     "end": 4.46
+    },
+    {
+     "w": "just",
+     "start": 4.46,
+     "end": 4.58
+    },
+    {
+     "w": "a",
+     "start": 4.58,
+     "end": 4.64
+    },
+    {
+     "w": "quick",
+     "start": 4.64,
+     "end": 4.8
+    },
+    {
+     "w": "sync\"",
+     "start": 4.8,
+     "end": 5.04
+    }
+   ]
+  },
+  {
+   "section": "verse1",
+   "text": "There goes half my day, I think",
+   "start": 5.32,
+   "end": 6.76,
+   "words": [
+    {
+     "w": "There",
+     "start": 5.32,
+     "end": 5.42
+    },
+    {
+     "w": "goes",
+     "start": 5.42,
+     "end": 5.66
+    },
+    {
+     "w": "half",
+     "start": 5.66,
+     "end": 5.96
+    },
+    {
+     "w": "my",
+     "start": 5.96,
+     "end": 6.12
+    },
+    {
+     "w": "day,",
+     "start": 6.12,
+     "end": 6.4
+    },
+    {
+     "w": "I",
+     "start": 6.4,
+     "end": 6.52
+    },
+    {
+     "w": "think",
+     "start": 6.52,
+     "end": 6.76
+    }
+   ]
+  },
+  {
+   "section": "verse1",
+   "text": "Calendar block, little blue box",
+   "start": 7.24,
+   "end": 8.42,
+   "words": [
+    {
+     "w": "Calendar",
+     "start": 7.24,
+     "end": 7.38
+    },
+    {
+     "w": "block,",
+     "start": 7.38,
+     "end": 7.76
+    },
+    {
+     "w": "little",
+     "start": 7.88,
+     "end": 7.98
+    },
+    {
+     "w": "blue",
+     "start": 7.98,
+     "end": 8.14
+    },
+    {
+     "w": "box",
+     "start": 8.14,
+     "end": 8.42
+    }
+   ]
+  },
+  {
+   "section": "verse1",
+   "text": "\"Fifteen minutes,\" but everybody talks",
+   "start": 8.72,
+   "end": 10.12,
+   "words": [
+    {
+     "w": "\"Fifteen",
+     "start": 8.72,
+     "end": 8.98
+    },
+    {
+     "w": "minutes,\"",
+     "start": 8.98,
+     "end": 9.32
+    },
+    {
+     "w": "but",
+     "start": 9.32,
+     "end": 9.5
+    },
+    {
+     "w": "everybody",
+     "start": 9.5,
+     "end": 9.72
+    },
+    {
+     "w": "talks",
+     "start": 9.72,
+     "end": 10.12
+    }
+   ]
+  },
+  {
+   "section": "verse1",
+   "text": "You could've typed it, crystal clear",
+   "start": 10.28,
+   "end": 11.52,
+   "words": [
+    {
+     "w": "You",
+     "start": 10.28,
+     "end": 10.36
+    },
+    {
+     "w": "could've",
+     "start": 10.38,
+     "end": 10.52
+    },
+    {
+     "w": "typed",
+     "start": 10.52,
+     "end": 10.72
+    },
+    {
+     "w": "it,",
+     "start": 10.72,
+     "end": 10.82
+    },
+    {
+     "w": "crystal",
+     "start": 10.98,
+     "end": 11.12
+    },
+    {
+     "w": "clear",
+     "start": 11.12,
+     "end": 11.52
+    }
+   ]
+  },
+  {
+   "section": "verse1",
+   "text": "But somehow I gotta hear it in your ear",
+   "start": 11.6,
+   "end": 13.3,
+   "words": [
+    {
+     "w": "But",
+     "start": 11.6,
+     "end": 11.68
+    },
+    {
+     "w": "somehow",
+     "start": 11.68,
+     "end": 11.88
+    },
+    {
+     "w": "I",
+     "start": 11.88,
+     "end": 12.16
+    },
+    {
+     "w": "gotta",
+     "start": 12.16,
+     "end": 12.36
+    },
+    {
+     "w": "hear",
+     "start": 12.36,
+     "end": 12.56
+    },
+    {
+     "w": "it",
+     "start": 12.56,
+     "end": 12.68
+    },
+    {
+     "w": "in",
+     "start": 12.68,
+     "end": 12.8
+    },
+    {
+     "w": "your",
+     "start": 12.8,
+     "end": 12.96
+    },
+    {
+     "w": "ear",
+     "start": 12.96,
+     "end": 13.3
+    }
+   ]
+  },
+  {
+   "section": "pre1",
+   "text": "You said, \"let's just hop on\"",
+   "start": 13.6,
+   "end": 14.94,
+   "words": [
+    {
+     "w": "You",
+     "start": 13.6,
+     "end": 13.7
+    },
+    {
+     "w": "said,",
+     "start": 13.7,
+     "end": 13.9
+    },
+    {
+     "w": "\"let's",
+     "start": 13.9,
+     "end": 14.1
+    },
+    {
+     "w": "just",
+     "start": 14.1,
+     "end": 14.22
+    },
+    {
+     "w": "hop",
+     "start": 14.22,
+     "end": 14.56
+    },
+    {
+     "w": "on\"",
+     "start": 14.56,
+     "end": 14.94
+    }
+   ]
+  },
+  {
+   "section": "pre1",
+   "text": "Like that solves everything",
+   "start": 15.18,
+   "end": 16.4,
+   "words": [
+    {
+     "w": "Like",
+     "start": 15.18,
+     "end": 15.52
+    },
+    {
+     "w": "that",
+     "start": 15.52,
+     "end": 15.66
+    },
+    {
+     "w": "solves",
+     "start": 15.66,
+     "end": 15.94
+    },
+    {
+     "w": "everything",
+     "start": 15.94,
+     "end": 16.4
+    }
+   ]
+  },
+  {
+   "section": "pre1",
+   "text": "You said, \"it'll be quick\"",
+   "start": 16.88,
+   "end": 17.88,
+   "words": [
+    {
+     "w": "You",
+     "start": 16.88,
+     "end": 17.02
+    },
+    {
+     "w": "said,",
+     "start": 17.02,
+     "end": 17.22
+    },
+    {
+     "w": "\"it'll",
+     "start": 17.22,
+     "end": 17.4
+    },
+    {
+     "w": "be",
+     "start": 17.4,
+     "end": 17.5
+    },
+    {
+     "w": "quick\"",
+     "start": 17.5,
+     "end": 17.88
+    }
+   ]
+  },
+  {
+   "section": "pre1",
+   "text": "That's the funniest thing",
+   "start": 18.72,
+   "end": 19.94,
+   "words": [
+    {
+     "w": "That's",
+     "start": 18.72,
+     "end": 18.94
+    },
+    {
+     "w": "the",
+     "start": 18.94,
+     "end": 19.14
+    },
+    {
+     "w": "funniest",
+     "start": 19.14,
+     "end": 19.56
+    },
+    {
+     "w": "thing",
+     "start": 19.56,
+     "end": 19.94
+    }
+   ]
+  },
+  {
+   "section": "chorus1",
+   "text": "This could have been a text",
+   "start": 20.7,
+   "end": 22.02,
+   "words": [
+    {
+     "w": "This",
+     "start": 20.7,
+     "end": 20.9
+    },
+    {
+     "w": "could",
+     "start": 20.9,
+     "end": 21.08
+    },
+    {
+     "w": "have",
+     "start": 21.08,
+     "end": 21.32
+    },
+    {
+     "w": "been",
+     "start": 21.32,
+     "end": 21.56
+    },
+    {
+     "w": "a",
+     "start": 21.56,
+     "end": 21.68
+    },
+    {
+     "w": "text",
+     "start": 21.68,
+     "end": 22.02
+    }
+   ]
+  },
+  {
+   "section": "chorus1",
+   "text": "Could've hit send, could've done it in a sec",
+   "start": 22.16,
+   "end": 23.62,
+   "words": [
+    {
+     "w": "Could've",
+     "start": 22.16,
+     "end": 22.4
+    },
+    {
+     "w": "hit",
+     "start": 22.4,
+     "end": 22.52
+    },
+    {
+     "w": "send,",
+     "start": 22.52,
+     "end": 22.88
+    },
+    {
+     "w": "could've",
+     "start": 22.88,
+     "end": 23.06
+    },
+    {
+     "w": "done",
+     "start": 23.06,
+     "end": 23.2
+    },
+    {
+     "w": "it",
+     "start": 23.2,
+     "end": 23.28
+    },
+    {
+     "w": "in",
+     "start": 23.28,
+     "end": 23.4
+    },
+    {
+     "w": "a",
+     "start": 23.4,
+     "end": 23.42
+    },
+    {
+     "w": "sec",
+     "start": 23.42,
+     "end": 23.62
+    }
+   ]
+  },
+  {
+   "section": "chorus1",
+   "text": "Could've dropped it in Teams",
+   "start": 23.7,
+   "end": 24.46,
+   "words": [
+    {
+     "w": "Could've",
+     "start": 23.7,
+     "end": 23.88
+    },
+    {
+     "w": "dropped",
+     "start": 23.88,
+     "end": 24.02
+    },
+    {
+     "w": "it",
+     "start": 24.02,
+     "end": 24.14
+    },
+    {
+     "w": "in",
+     "start": 24.14,
+     "end": 24.26
+    },
+    {
+     "w": "Teams",
+     "start": 24.26,
+     "end": 24.46
+    }
+   ]
+  },
+  {
+   "section": "chorus1",
+   "text": "Could've slid into Slack",
+   "start": 24.54,
+   "end": 25.28,
+   "words": [
+    {
+     "w": "Could've",
+     "start": 24.54,
+     "end": 24.68
+    },
+    {
+     "w": "slid",
+     "start": 24.68,
+     "end": 24.88
+    },
+    {
+     "w": "into",
+     "start": 24.88,
+     "end": 24.98
+    },
+    {
+     "w": "Slack",
+     "start": 24.98,
+     "end": 25.28
+    }
+   ]
+  },
+  {
+   "section": "chorus1",
+   "text": "Now I'm staring at your camera while you circle back",
+   "start": 25.48,
+   "end": 28.22,
+   "words": [
+    {
+     "w": "Now",
+     "start": 25.48,
+     "end": 25.64
+    },
+    {
+     "w": "I'm",
+     "start": 25.64,
+     "end": 25.86
+    },
+    {
+     "w": "staring",
+     "start": 25.86,
+     "end": 26.14
+    },
+    {
+     "w": "at",
+     "start": 26.14,
+     "end": 26.52
+    },
+    {
+     "w": "your",
+     "start": 26.52,
+     "end": 26.66
+    },
+    {
+     "w": "camera",
+     "start": 26.66,
+     "end": 27.1
+    },
+    {
+     "w": "while",
+     "start": 27.1,
+     "end": 27.32
+    },
+    {
+     "w": "you",
+     "start": 27.32,
+     "end": 27.52
+    },
+    {
+     "w": "circle",
+     "start": 27.52,
+     "end": 27.86
+    },
+    {
+     "w": "back",
+     "start": 27.86,
+     "end": 28.22
+    }
+   ]
+  },
+  {
+   "section": "chorus1",
+   "text": "This could have been an email",
+   "start": 28.7,
+   "end": 29.58,
+   "words": [
+    {
+     "w": "This",
+     "start": 28.7,
+     "end": 28.8
+    },
+    {
+     "w": "could",
+     "start": 28.8,
+     "end": 28.98
+    },
+    {
+     "w": "have",
+     "start": 28.98,
+     "end": 29.1
+    },
+    {
+     "w": "been",
+     "start": 29.1,
+     "end": 29.22
+    },
+    {
+     "w": "an",
+     "start": 29.22,
+     "end": 29.34
+    },
+    {
+     "w": "email",
+     "start": 29.34,
+     "end": 29.58
+    }
+   ]
+  },
+  {
+   "section": "chorus1",
+   "text": "Two little lines and we're done for real",
+   "start": 29.8,
+   "end": 31.54,
+   "words": [
+    {
+     "w": "Two",
+     "start": 29.8,
+     "end": 29.98
+    },
+    {
+     "w": "little",
+     "start": 30.02,
+     "end": 30.36
+    },
+    {
+     "w": "lines",
+     "start": 30.36,
+     "end": 30.64
+    },
+    {
+     "w": "and",
+     "start": 30.64,
+     "end": 30.78
+    },
+    {
+     "w": "we're",
+     "start": 30.78,
+     "end": 30.9
+    },
+    {
+     "w": "done",
+     "start": 30.9,
+     "end": 31.06
+    },
+    {
+     "w": "for",
+     "start": 31.06,
+     "end": 31.26
+    },
+    {
+     "w": "real",
+     "start": 31.26,
+     "end": 31.54
+    }
+   ]
+  },
+  {
+   "section": "chorus1",
+   "text": "But you needed my face for a question with no depth",
+   "start": 31.62,
+   "end": 33.64,
+   "words": [
+    {
+     "w": "But",
+     "start": 31.62,
+     "end": 31.68
+    },
+    {
+     "w": "you",
+     "start": 31.68,
+     "end": 31.74
+    },
+    {
+     "w": "needed",
+     "start": 31.74,
+     "end": 31.94
+    },
+    {
+     "w": "my",
+     "start": 31.94,
+     "end": 32.08
+    },
+    {
+     "w": "face",
+     "start": 32.08,
+     "end": 32.38
+    },
+    {
+     "w": "for",
+     "start": 32.38,
+     "end": 32.5
+    },
+    {
+     "w": "a",
+     "start": 32.5,
+     "end": 32.6
+    },
+    {
+     "w": "question",
+     "start": 32.6,
+     "end": 32.9
+    },
+    {
+     "w": "with",
+     "start": 32.9,
+     "end": 33.14
+    },
+    {
+     "w": "no",
+     "start": 33.14,
+     "end": 33.34
+    },
+    {
+     "w": "depth",
+     "start": 33.34,
+     "end": 33.64
+    }
+   ]
+  },
+  {
+   "section": "chorus1",
+   "text": "God, this could have been a text",
+   "start": 33.76,
+   "end": 35.4,
+   "words": [
+    {
+     "w": "God,",
+     "start": 33.76,
+     "end": 34.02
+    },
+    {
+     "w": "this",
+     "start": 34.02,
+     "end": 34.22
+    },
+    {
+     "w": "could",
+     "start": 34.22,
+     "end": 34.4
+    },
+    {
+     "w": "have",
+     "start": 34.4,
+     "end": 34.64
+    },
+    {
+     "w": "been",
+     "start": 34.64,
+     "end": 34.86
+    },
+    {
+     "w": "a",
+     "start": 34.86,
+     "end": 35.06
+    },
+    {
+     "w": "text",
+     "start": 35.06,
+     "end": 35.4
+    }
+   ]
+  },
+  {
+   "section": "tag1",
+   "text": "Oh, oh, oh, oh, oh",
+   "start": 35.56,
+   "end": 37.18,
+   "words": [
+    {
+     "w": "Oh,",
+     "start": 35.56,
+     "end": 35.8
+    },
+    {
+     "w": "oh,",
+     "start": 35.8,
+     "end": 36.16
+    },
+    {
+     "w": "oh,",
+     "start": 36.16,
+     "end": 36.46
+    },
+    {
+     "w": "oh,",
+     "start": 36.46,
+     "end": 36.86
+    },
+    {
+     "w": "oh",
+     "start": 36.86,
+     "end": 37.18
+    }
+   ]
+  },
+  {
+   "section": "tag1",
+   "text": "This could have been a text",
+   "start": 37.18,
+   "end": 38.82,
+   "words": [
+    {
+     "w": "This",
+     "start": 37.18,
+     "end": 37.5
+    },
+    {
+     "w": "could",
+     "start": 37.5,
+     "end": 37.68
+    },
+    {
+     "w": "have",
+     "start": 37.68,
+     "end": 37.94
+    },
+    {
+     "w": "been",
+     "start": 37.94,
+     "end": 38.18
+    },
+    {
+     "w": "a",
+     "start": 38.18,
+     "end": 38.36
+    },
+    {
+     "w": "text",
+     "start": 38.36,
+     "end": 38.82
+    }
+   ]
+  },
+  {
+   "section": "tag1",
+   "text": "Oh, oh, oh, oh, oh",
+   "start": 38.84,
+   "end": 40.9,
+   "words": [
+    {
+     "w": "Oh,",
+     "start": 38.84,
+     "end": 39.3
+    },
+    {
+     "w": "oh,",
+     "start": 39.3,
+     "end": 39.6
+    },
+    {
+     "w": "oh,",
+     "start": 39.6,
+     "end": 39.92
+    },
+    {
+     "w": "oh,",
+     "start": 39.92,
+     "end": 40.32
+    },
+    {
+     "w": "oh",
+     "start": 40.32,
+     "end": 40.9
+    }
+   ]
+  },
+  {
+   "section": "verse2",
+   "text": "\"Just wanted your thoughts on this\"",
+   "start": 41.28,
+   "end": 43.18,
+   "words": [
+    {
+     "w": "\"Just",
+     "start": 41.28,
+     "end": 41.38
+    },
+    {
+     "w": "wanted",
+     "start": 41.45,
+     "end": 41.98
+    },
+    {
+     "w": "your",
+     "start": 41.98,
+     "end": 42.22
+    },
+    {
+     "w": "thoughts",
+     "start": 42.22,
+     "end": 42.68
+    },
+    {
+     "w": "on",
+     "start": 42.68,
+     "end": 42.94
+    },
+    {
+     "w": "this\"",
+     "start": 42.94,
+     "end": 43.18
+    }
+   ]
+  },
+  {
+   "section": "verse2",
+   "text": "You want a meeting for a sentence?",
+   "start": 43.34,
+   "end": 44.82,
+   "words": [
+    {
+     "w": "You",
+     "start": 43.34,
+     "end": 43.58
+    },
+    {
+     "w": "want",
+     "start": 43.58,
+     "end": 43.72
+    },
+    {
+     "w": "a",
+     "start": 43.72,
+     "end": 43.8
+    },
+    {
+     "w": "meeting",
+     "start": 43.8,
+     "end": 43.94
+    },
+    {
+     "w": "for",
+     "start": 43.94,
+     "end": 44.1
+    },
+    {
+     "w": "a",
+     "start": 44.1,
+     "end": 44.2
+    },
+    {
+     "w": "sentence?",
+     "start": 44.2,
+     "end": 44.82
+    }
+   ]
+  },
+  {
+   "section": "verse2",
+   "text": "\"Can we talk through what happened here?\"",
+   "start": 44.9,
+   "end": 46.44,
+   "words": [
+    {
+     "w": "\"Can",
+     "start": 44.9,
+     "end": 44.92
+    },
+    {
+     "w": "we",
+     "start": 44.92,
+     "end": 45.04
+    },
+    {
+     "w": "talk",
+     "start": 45.04,
+     "end": 45.22
+    },
+    {
+     "w": "through",
+     "start": 45.22,
+     "end": 45.38
+    },
+    {
+     "w": "what",
+     "start": 45.38,
+     "end": 45.64
+    },
+    {
+     "w": "happened",
+     "start": 45.64,
+     "end": 46.18
+    },
+    {
+     "w": "here?\"",
+     "start": 46.18,
+     "end": 46.44
+    }
+   ]
+  },
+  {
+   "section": "verse2",
+   "text": "Sure, give me thirty minutes to disappear",
+   "start": 46.56,
+   "end": 47.88,
+   "words": [
+    {
+     "w": "Sure,",
+     "start": 46.56,
+     "end": 46.64
+    },
+    {
+     "w": "give",
+     "start": 46.64,
+     "end": 46.78
+    },
+    {
+     "w": "me",
+     "start": 46.78,
+     "end": 46.88
+    },
+    {
+     "w": "thirty",
+     "start": 46.88,
+     "end": 47.0
+    },
+    {
+     "w": "minutes",
+     "start": 47.0,
+     "end": 47.24
+    },
+    {
+     "w": "to",
+     "start": 47.24,
+     "end": 47.42
+    },
+    {
+     "w": "disappear",
+     "start": 47.42,
+     "end": 47.88
+    }
+   ]
+  },
+  {
+   "section": "verse2",
+   "text": "Screen share, \"can you see my screen?\"",
+   "start": 48.26,
+   "end": 49.82,
+   "words": [
+    {
+     "w": "Screen",
+     "start": 48.26,
+     "end": 48.44
+    },
+    {
+     "w": "share,",
+     "start": 48.44,
+     "end": 48.96
+    },
+    {
+     "w": "\"can",
+     "start": 48.96,
+     "end": 49.06
+    },
+    {
+     "w": "you",
+     "start": 49.06,
+     "end": 49.14
+    },
+    {
+     "w": "see",
+     "start": 49.14,
+     "end": 49.28
+    },
+    {
+     "w": "my",
+     "start": 49.28,
+     "end": 49.44
+    },
+    {
+     "w": "screen?\"",
+     "start": 49.44,
+     "end": 49.82
+    }
+   ]
+  },
+  {
+   "section": "verse2",
+   "text": "Yeah, I've got the same one on my screen",
+   "start": 49.9,
+   "end": 51.38,
+   "words": [
+    {
+     "w": "Yeah,",
+     "start": 49.9,
+     "end": 49.96
+    },
+    {
+     "w": "I've",
+     "start": 49.96,
+     "end": 50.22
+    },
+    {
+     "w": "got",
+     "start": 50.22,
+     "end": 50.32
+    },
+    {
+     "w": "the",
+     "start": 50.32,
+     "end": 50.42
+    },
+    {
+     "w": "same",
+     "start": 50.42,
+     "end": 50.56
+    },
+    {
+     "w": "one",
+     "start": 50.56,
+     "end": 50.78
+    },
+    {
+     "w": "on",
+     "start": 50.78,
+     "end": 50.98
+    },
+    {
+     "w": "my",
+     "start": 50.98,
+     "end": 51.12
+    },
+    {
+     "w": "screen",
+     "start": 51.12,
+     "end": 51.38
+    }
+   ]
+  },
+  {
+   "section": "verse2",
+   "text": "Then you ask what I would suggest",
+   "start": 51.5,
+   "end": 52.58,
+   "words": [
+    {
+     "w": "Then",
+     "start": 51.5,
+     "end": 51.56
+    },
+    {
+     "w": "you",
+     "start": 51.56,
+     "end": 51.64
+    },
+    {
+     "w": "ask",
+     "start": 51.64,
+     "end": 51.84
+    },
+    {
+     "w": "what",
+     "start": 51.84,
+     "end": 51.96
+    },
+    {
+     "w": "I",
+     "start": 51.96,
+     "end": 52.06
+    },
+    {
+     "w": "would",
+     "start": 52.06,
+     "end": 52.18
+    },
+    {
+     "w": "suggest",
+     "start": 52.18,
+     "end": 52.58
+    }
+   ]
+  },
+  {
+   "section": "verse2",
+   "text": "Buddy, you literally wrote the context in the deck",
+   "start": 52.78,
+   "end": 55.16,
+   "words": [
+    {
+     "w": "Buddy,",
+     "start": 52.78,
+     "end": 53.1
+    },
+    {
+     "w": "you",
+     "start": 53.1,
+     "end": 53.28
+    },
+    {
+     "w": "literally",
+     "start": 53.28,
+     "end": 53.52
+    },
+    {
+     "w": "wrote",
+     "start": 53.52,
+     "end": 53.86
+    },
+    {
+     "w": "the",
+     "start": 53.86,
+     "end": 54.04
+    },
+    {
+     "w": "context",
+     "start": 54.04,
+     "end": 54.42
+    },
+    {
+     "w": "in",
+     "start": 54.42,
+     "end": 54.72
+    },
+    {
+     "w": "the",
+     "start": 54.72,
+     "end": 54.84
+    },
+    {
+     "w": "deck",
+     "start": 54.84,
+     "end": 55.16
+    }
+   ]
+  },
+  {
+   "section": "pre2",
+   "text": "You said, \"let's just jump on\"",
+   "start": 55.24,
+   "end": 56.5,
+   "words": [
+    {
+     "w": "You",
+     "start": 55.24,
+     "end": 55.3
+    },
+    {
+     "w": "said,",
+     "start": 55.3,
+     "end": 55.42
+    },
+    {
+     "w": "\"let's",
+     "start": 55.42,
+     "end": 55.58
+    },
+    {
+     "w": "just",
+     "start": 55.58,
+     "end": 55.72
+    },
+    {
+     "w": "jump",
+     "start": 55.72,
+     "end": 56.08
+    },
+    {
+     "w": "on\"",
+     "start": 56.08,
+     "end": 56.5
+    }
+   ]
+  },
+  {
+   "section": "pre2",
+   "text": "Like we're defusing a bomb",
+   "start": 56.66,
+   "end": 58.0,
+   "words": [
+    {
+     "w": "Like",
+     "start": 56.66,
+     "end": 56.82
+    },
+    {
+     "w": "we're",
+     "start": 56.82,
+     "end": 56.98
+    },
+    {
+     "w": "defusing",
+     "start": 56.98,
+     "end": 57.32
+    },
+    {
+     "w": "a",
+     "start": 57.32,
+     "end": 57.58
+    },
+    {
+     "w": "bomb",
+     "start": 57.58,
+     "end": 58.0
+    }
+   ]
+  },
+  {
+   "section": "pre2",
+   "text": "You said, \"just a quick one\"",
+   "start": 58.52,
+   "end": 59.66,
+   "words": [
+    {
+     "w": "You",
+     "start": 58.52,
+     "end": 58.54
+    },
+    {
+     "w": "said,",
+     "start": 58.54,
+     "end": 58.7
+    },
+    {
+     "w": "\"just",
+     "start": 58.7,
+     "end": 58.9
+    },
+    {
+     "w": "a",
+     "start": 58.92,
+     "end": 59.02
+    },
+    {
+     "w": "quick",
+     "start": 59.02,
+     "end": 59.26
+    },
+    {
+     "w": "one\"",
+     "start": 59.26,
+     "end": 59.66
+    }
+   ]
+  },
+  {
+   "section": "pre2",
+   "text": "And the quick one lasted an hour long",
+   "start": 59.72,
+   "end": 61.4,
+   "words": [
+    {
+     "w": "And",
+     "start": 59.72,
+     "end": 59.82
+    },
+    {
+     "w": "the",
+     "start": 59.82,
+     "end": 59.9
+    },
+    {
+     "w": "quick",
+     "start": 59.9,
+     "end": 60.04
+    },
+    {
+     "w": "one",
+     "start": 60.04,
+     "end": 60.26
+    },
+    {
+     "w": "lasted",
+     "start": 60.26,
+     "end": 60.56
+    },
+    {
+     "w": "an",
+     "start": 60.56,
+     "end": 60.76
+    },
+    {
+     "w": "hour",
+     "start": 60.76,
+     "end": 61.04
+    },
+    {
+     "w": "long",
+     "start": 61.04,
+     "end": 61.4
+    }
+   ]
+  },
+  {
+   "section": "chorus2",
+   "text": "This could have been a text",
+   "start": 61.94,
+   "end": 63.48,
+   "words": [
+    {
+     "w": "This",
+     "start": 61.94,
+     "end": 62.32
+    },
+    {
+     "w": "could",
+     "start": 62.32,
+     "end": 62.48
+    },
+    {
+     "w": "have",
+     "start": 62.48,
+     "end": 62.74
+    },
+    {
+     "w": "been",
+     "start": 62.74,
+     "end": 62.98
+    },
+    {
+     "w": "a",
+     "start": 62.98,
+     "end": 63.16
+    },
+    {
+     "w": "text",
+     "start": 63.16,
+     "end": 63.48
+    }
+   ]
+  },
+  {
+   "section": "chorus2",
+   "text": "Could've hit send, could've done it in a sec",
+   "start": 63.64,
+   "end": 65.02,
+   "words": [
+    {
+     "w": "Could've",
+     "start": 63.64,
+     "end": 63.82
+    },
+    {
+     "w": "hit",
+     "start": 63.82,
+     "end": 63.96
+    },
+    {
+     "w": "send,",
+     "start": 63.96,
+     "end": 64.28
+    },
+    {
+     "w": "could've",
+     "start": 64.28,
+     "end": 64.46
+    },
+    {
+     "w": "done",
+     "start": 64.46,
+     "end": 64.6
+    },
+    {
+     "w": "it",
+     "start": 64.6,
+     "end": 64.7
+    },
+    {
+     "w": "in",
+     "start": 64.7,
+     "end": 64.8
+    },
+    {
+     "w": "a",
+     "start": 64.8,
+     "end": 64.82
+    },
+    {
+     "w": "sec",
+     "start": 64.82,
+     "end": 65.02
+    }
+   ]
+  },
+  {
+   "section": "chorus2",
+   "text": "Could've dropped it in Teams",
+   "start": 65.12,
+   "end": 65.86,
+   "words": [
+    {
+     "w": "Could've",
+     "start": 65.12,
+     "end": 65.28
+    },
+    {
+     "w": "dropped",
+     "start": 65.28,
+     "end": 65.42
+    },
+    {
+     "w": "it",
+     "start": 65.42,
+     "end": 65.54
+    },
+    {
+     "w": "in",
+     "start": 65.54,
+     "end": 65.64
+    },
+    {
+     "w": "Teams",
+     "start": 65.64,
+     "end": 65.86
+    }
+   ]
+  },
+  {
+   "section": "chorus2",
+   "text": "Could've slid into Slack",
+   "start": 65.94,
+   "end": 66.7,
+   "words": [
+    {
+     "w": "Could've",
+     "start": 65.94,
+     "end": 66.1
+    },
+    {
+     "w": "slid",
+     "start": 66.1,
+     "end": 66.26
+    },
+    {
+     "w": "into",
+     "start": 66.26,
+     "end": 66.38
+    },
+    {
+     "w": "Slack",
+     "start": 66.38,
+     "end": 66.7
+    }
+   ]
+  },
+  {
+   "section": "chorus2",
+   "text": "Now I'm nodding at my laptop while you're talking in abstracts",
+   "start": 66.86,
+   "end": 69.96,
+   "words": [
+    {
+     "w": "Now",
+     "start": 66.86,
+     "end": 67.06
+    },
+    {
+     "w": "I'm",
+     "start": 67.06,
+     "end": 67.36
+    },
+    {
+     "w": "nodding",
+     "start": 67.36,
+     "end": 67.76
+    },
+    {
+     "w": "at",
+     "start": 67.76,
+     "end": 67.86
+    },
+    {
+     "w": "my",
+     "start": 67.86,
+     "end": 68.06
+    },
+    {
+     "w": "laptop",
+     "start": 68.06,
+     "end": 68.42
+    },
+    {
+     "w": "while",
+     "start": 68.44,
+     "end": 68.72
+    },
+    {
+     "w": "you're",
+     "start": 68.72,
+     "end": 68.92
+    },
+    {
+     "w": "talking",
+     "start": 68.92,
+     "end": 69.24
+    },
+    {
+     "w": "in",
+     "start": 69.24,
+     "end": 69.58
+    },
+    {
+     "w": "abstracts",
+     "start": 69.58,
+     "end": 69.96
+    }
+   ]
+  },
+  {
+   "section": "chorus2",
+   "text": "This could have been an email",
+   "start": 70.16,
+   "end": 70.92,
+   "words": [
+    {
+     "w": "This",
+     "start": 70.16,
+     "end": 70.24
+    },
+    {
+     "w": "could",
+     "start": 70.24,
+     "end": 70.34
+    },
+    {
+     "w": "have",
+     "start": 70.34,
+     "end": 70.46
+    },
+    {
+     "w": "been",
+     "start": 70.46,
+     "end": 70.56
+    },
+    {
+     "w": "an",
+     "start": 70.56,
+     "end": 70.68
+    },
+    {
+     "w": "email",
+     "start": 70.68,
+     "end": 70.92
+    }
+   ]
+  },
+  {
+   "section": "chorus2",
+   "text": "One clean paragraph, nobody has to bail",
+   "start": 71.08,
+   "end": 72.86,
+   "words": [
+    {
+     "w": "One",
+     "start": 71.08,
+     "end": 71.16
+    },
+    {
+     "w": "clean",
+     "start": 71.16,
+     "end": 71.38
+    },
+    {
+     "w": "paragraph,",
+     "start": 71.38,
+     "end": 71.84
+    },
+    {
+     "w": "nobody",
+     "start": 71.84,
+     "end": 72.08
+    },
+    {
+     "w": "has",
+     "start": 72.08,
+     "end": 72.38
+    },
+    {
+     "w": "to",
+     "start": 72.38,
+     "end": 72.56
+    },
+    {
+     "w": "bail",
+     "start": 72.56,
+     "end": 72.86
+    }
+   ]
+  },
+  {
+   "section": "chorus2",
+   "text": "But you needed a call for a question with no depth",
+   "start": 72.94,
+   "end": 74.96,
+   "words": [
+    {
+     "w": "But",
+     "start": 72.94,
+     "end": 73.04
+    },
+    {
+     "w": "you",
+     "start": 73.04,
+     "end": 73.08
+    },
+    {
+     "w": "needed",
+     "start": 73.08,
+     "end": 73.28
+    },
+    {
+     "w": "a",
+     "start": 73.28,
+     "end": 73.42
+    },
+    {
+     "w": "call",
+     "start": 73.42,
+     "end": 73.62
+    },
+    {
+     "w": "for",
+     "start": 73.62,
+     "end": 73.82
+    },
+    {
+     "w": "a",
+     "start": 73.82,
+     "end": 73.92
+    },
+    {
+     "w": "question",
+     "start": 73.92,
+     "end": 74.22
+    },
+    {
+     "w": "with",
+     "start": 74.22,
+     "end": 74.46
+    },
+    {
+     "w": "no",
+     "start": 74.46,
+     "end": 74.66
+    },
+    {
+     "w": "depth",
+     "start": 74.66,
+     "end": 74.96
+    }
+   ]
+  },
+  {
+   "section": "chorus2",
+   "text": "God, this could have been a text",
+   "start": 75.06,
+   "end": 76.64,
+   "words": [
+    {
+     "w": "God,",
+     "start": 75.06,
+     "end": 75.16
+    },
+    {
+     "w": "this",
+     "start": 75.36,
+     "end": 75.54
+    },
+    {
+     "w": "could",
+     "start": 75.54,
+     "end": 75.72
+    },
+    {
+     "w": "have",
+     "start": 75.72,
+     "end": 75.96
+    },
+    {
+     "w": "been",
+     "start": 75.96,
+     "end": 76.12
+    },
+    {
+     "w": "a",
+     "start": 76.12,
+     "end": 76.38
+    },
+    {
+     "w": "text",
+     "start": 76.38,
+     "end": 76.64
+    }
+   ]
+  },
+  {
+   "section": "post",
+   "text": "Oh, oh, oh, oh, another meeting",
+   "start": 76.88,
+   "end": 79.08,
+   "words": [
+    {
+     "w": "Oh,",
+     "start": 76.88,
+     "end": 77.1
+    },
+    {
+     "w": "oh,",
+     "start": 77.1,
+     "end": 77.48
+    },
+    {
+     "w": "oh,",
+     "start": 77.48,
+     "end": 77.76
+    },
+    {
+     "w": "oh,",
+     "start": 77.76,
+     "end": 78.1
+    },
+    {
+     "w": "another",
+     "start": 78.1,
+     "end": 78.38
+    },
+    {
+     "w": "meeting",
+     "start": 78.38,
+     "end": 79.08
+    }
+   ]
+  },
+  {
+   "section": "post",
+   "text": "Oh, oh, oh, oh, another link",
+   "start": 79.66,
+   "end": 82.42,
+   "words": [
+    {
+     "w": "Oh,",
+     "start": 79.66,
+     "end": 80.38
+    },
+    {
+     "w": "oh,",
+     "start": 80.38,
+     "end": 80.76
+    },
+    {
+     "w": "oh,",
+     "start": 80.76,
+     "end": 81.06
+    },
+    {
+     "w": "oh,",
+     "start": 81.06,
+     "end": 81.5
+    },
+    {
+     "w": "another",
+     "start": 81.5,
+     "end": 81.84
+    },
+    {
+     "w": "link",
+     "start": 81.84,
+     "end": 82.42
+    }
+   ]
+  },
+  {
+   "section": "post",
+   "text": "Oh, oh, oh, oh, another \"you free?\"",
+   "start": 82.76,
+   "end": 86.04,
+   "words": [
+    {
+     "w": "Oh,",
+     "start": 82.76,
+     "end": 83.7
+    },
+    {
+     "w": "oh,",
+     "start": 83.7,
+     "end": 84.08
+    },
+    {
+     "w": "oh,",
+     "start": 84.08,
+     "end": 84.4
+    },
+    {
+     "w": "oh,",
+     "start": 84.4,
+     "end": 84.68
+    },
+    {
+     "w": "another",
+     "start": 84.68,
+     "end": 85.02
+    },
+    {
+     "w": "\"you",
+     "start": 85.02,
+     "end": 85.24
+    },
+    {
+     "w": "free?\"",
+     "start": 85.24,
+     "end": 86.04
+    }
+   ]
+  },
+  {
+   "section": "post",
+   "text": "Oh, oh, oh, oh, give me a break",
+   "start": 86.82,
+   "end": 89.1,
+   "words": [
+    {
+     "w": "Oh,",
+     "start": 86.82,
+     "end": 87.02
+    },
+    {
+     "w": "oh,",
+     "start": 87.02,
+     "end": 87.36
+    },
+    {
+     "w": "oh,",
+     "start": 87.36,
+     "end": 87.7
+    },
+    {
+     "w": "oh,",
+     "start": 87.7,
+     "end": 87.96
+    },
+    {
+     "w": "give",
+     "start": 87.96,
+     "end": 88.06
+    },
+    {
+     "w": "me",
+     "start": 88.06,
+     "end": 88.44
+    },
+    {
+     "w": "a",
+     "start": 88.44,
+     "end": 88.68
+    },
+    {
+     "w": "break",
+     "start": 88.68,
+     "end": 89.1
+    }
+   ]
+  },
+  {
+   "section": "verse3",
+   "text": "Then there's the follow-up after the call",
+   "start": 92.38,
+   "end": 94.4,
+   "words": [
+    {
+     "w": "Then",
+     "start": 92.38,
+     "end": 92.4
+    },
+    {
+     "w": "there's",
+     "start": 92.4,
+     "end": 92.74
+    },
+    {
+     "w": "the",
+     "start": 92.74,
+     "end": 92.82
+    },
+    {
+     "w": "follow-up",
+     "start": 92.82,
+     "end": 93.3
+    },
+    {
+     "w": "after",
+     "start": 93.3,
+     "end": 93.68
+    },
+    {
+     "w": "the",
+     "start": 93.68,
+     "end": 94.02
+    },
+    {
+     "w": "call",
+     "start": 94.02,
+     "end": 94.4
+    }
+   ]
+  },
+  {
+   "section": "verse3",
+   "text": "\"Just recapping,\" and you write it all",
+   "start": 94.54,
+   "end": 95.94,
+   "words": [
+    {
+     "w": "\"Just",
+     "start": 94.54,
+     "end": 94.66
+    },
+    {
+     "w": "recapping,\"",
+     "start": 94.66,
+     "end": 95.2
+    },
+    {
+     "w": "and",
+     "start": 95.2,
+     "end": 95.32
+    },
+    {
+     "w": "you",
+     "start": 95.32,
+     "end": 95.36
+    },
+    {
+     "w": "write",
+     "start": 95.36,
+     "end": 95.54
+    },
+    {
+     "w": "it",
+     "start": 95.54,
+     "end": 95.74
+    },
+    {
+     "w": "all",
+     "start": 95.74,
+     "end": 95.94
+    }
+   ]
+  },
+  {
+   "section": "verse3",
+   "text": "So now we've got the minutes, notes and thread",
+   "start": 96.06,
+   "end": 97.56,
+   "words": [
+    {
+     "w": "So",
+     "start": 96.06,
+     "end": 96.12
+    },
+    {
+     "w": "now",
+     "start": 96.12,
+     "end": 96.24
+    },
+    {
+     "w": "we've",
+     "start": 96.24,
+     "end": 96.44
+    },
+    {
+     "w": "got",
+     "start": 96.44,
+     "end": 96.5
+    },
+    {
+     "w": "the",
+     "start": 96.5,
+     "end": 96.62
+    },
+    {
+     "w": "minutes,",
+     "start": 96.62,
+     "end": 96.84
+    },
+    {
+     "w": "notes",
+     "start": 96.84,
+     "end": 97.08
+    },
+    {
+     "w": "and",
+     "start": 97.08,
+     "end": 97.34
+    },
+    {
+     "w": "thread",
+     "start": 97.34,
+     "end": 97.56
+    }
+   ]
+  },
+  {
+   "section": "verse3",
+   "text": "For something you could've typed from the start instead",
+   "start": 97.66,
+   "end": 99.14,
+   "words": [
+    {
+     "w": "For",
+     "start": 97.66,
+     "end": 97.74
+    },
+    {
+     "w": "something",
+     "start": 97.74,
+     "end": 97.88
+    },
+    {
+     "w": "you",
+     "start": 97.88,
+     "end": 98.06
+    },
+    {
+     "w": "could've",
+     "start": 98.06,
+     "end": 98.2
+    },
+    {
+     "w": "typed",
+     "start": 98.2,
+     "end": 98.38
+    },
+    {
+     "w": "from",
+     "start": 98.38,
+     "end": 98.54
+    },
+    {
+     "w": "the",
+     "start": 98.54,
+     "end": 98.6
+    },
+    {
+     "w": "start",
+     "start": 98.6,
+     "end": 98.82
+    },
+    {
+     "w": "instead",
+     "start": 98.82,
+     "end": 99.14
+    }
+   ]
+  },
+  {
+   "section": "verse3",
+   "text": "And I'm learning things I never knew",
+   "start": 99.32,
+   "end": 100.86,
+   "words": [
+    {
+     "w": "And",
+     "start": 99.32,
+     "end": 99.46
+    },
+    {
+     "w": "I'm",
+     "start": 99.46,
+     "end": 99.54
+    },
+    {
+     "w": "learning",
+     "start": 99.54,
+     "end": 99.74
+    },
+    {
+     "w": "things",
+     "start": 99.74,
+     "end": 99.94
+    },
+    {
+     "w": "I",
+     "start": 99.94,
+     "end": 100.26
+    },
+    {
+     "w": "never",
+     "start": 100.26,
+     "end": 100.5
+    },
+    {
+     "w": "knew",
+     "start": 100.5,
+     "end": 100.86
+    }
+   ]
+  },
+  {
+   "section": "verse3",
+   "text": "Like apparently \"noted\" needs a Zoom",
+   "start": 100.94,
+   "end": 102.6,
+   "words": [
+    {
+     "w": "Like",
+     "start": 100.94,
+     "end": 101.04
+    },
+    {
+     "w": "apparently",
+     "start": 101.04,
+     "end": 101.3
+    },
+    {
+     "w": "\"noted\"",
+     "start": 101.3,
+     "end": 101.8
+    },
+    {
+     "w": "needs",
+     "start": 101.8,
+     "end": 102.06
+    },
+    {
+     "w": "a",
+     "start": 102.06,
+     "end": 102.28
+    },
+    {
+     "w": "Zoom",
+     "start": 102.28,
+     "end": 102.6
+    }
+   ]
+  },
+  {
+   "section": "verse3",
+   "text": "You sent a deck, I read the deck",
+   "start": 102.78,
+   "end": 104.18,
+   "words": [
+    {
+     "w": "You",
+     "start": 102.78,
+     "end": 102.88
+    },
+    {
+     "w": "sent",
+     "start": 102.88,
+     "end": 103.06
+    },
+    {
+     "w": "a",
+     "start": 103.06,
+     "end": 103.2
+    },
+    {
+     "w": "deck,",
+     "start": 103.2,
+     "end": 103.46
+    },
+    {
+     "w": "I",
+     "start": 103.46,
+     "end": 103.54
+    },
+    {
+     "w": "read",
+     "start": 103.54,
+     "end": 103.76
+    },
+    {
+     "w": "the",
+     "start": 103.76,
+     "end": 103.92
+    },
+    {
+     "w": "deck",
+     "start": 103.92,
+     "end": 104.18
+    }
+   ]
+  },
+  {
+   "section": "verse3",
+   "text": "Then booked a call to explain the deck",
+   "start": 104.28,
+   "end": 105.84,
+   "words": [
+    {
+     "w": "Then",
+     "start": 104.28,
+     "end": 104.4
+    },
+    {
+     "w": "booked",
+     "start": 104.4,
+     "end": 104.6
+    },
+    {
+     "w": "a",
+     "start": 104.6,
+     "end": 104.74
+    },
+    {
+     "w": "call",
+     "start": 104.9,
+     "end": 105.04
+    },
+    {
+     "w": "to",
+     "start": 105.04,
+     "end": 105.14
+    },
+    {
+     "w": "explain",
+     "start": 105.14,
+     "end": 105.34
+    },
+    {
+     "w": "the",
+     "start": 105.34,
+     "end": 105.58
+    },
+    {
+     "w": "deck",
+     "start": 105.58,
+     "end": 105.84
+    }
+   ]
+  },
+  {
+   "section": "bridge",
+   "text": "If it needs emotion, call me",
+   "start": 105.96,
+   "end": 107.44,
+   "words": [
+    {
+     "w": "If",
+     "start": 105.96,
+     "end": 106.0
+    },
+    {
+     "w": "it",
+     "start": 106.0,
+     "end": 106.04
+    },
+    {
+     "w": "needs",
+     "start": 106.04,
+     "end": 106.26
+    },
+    {
+     "w": "emotion,",
+     "start": 106.26,
+     "end": 106.8
+    },
+    {
+     "w": "call",
+     "start": 106.8,
+     "end": 107.02
+    },
+    {
+     "w": "me",
+     "start": 107.02,
+     "end": 107.44
+    }
+   ]
+  },
+  {
+   "section": "bridge",
+   "text": "If the building's on fire, call me",
+   "start": 107.54,
+   "end": 109.08,
+   "words": [
+    {
+     "w": "If",
+     "start": 107.54,
+     "end": 107.62
+    },
+    {
+     "w": "the",
+     "start": 107.62,
+     "end": 107.72
+    },
+    {
+     "w": "building's",
+     "start": 107.72,
+     "end": 108.0
+    },
+    {
+     "w": "on",
+     "start": 108.0,
+     "end": 108.04
+    },
+    {
+     "w": "fire,",
+     "start": 108.04,
+     "end": 108.5
+    },
+    {
+     "w": "call",
+     "start": 108.5,
+     "end": 108.7
+    },
+    {
+     "w": "me",
+     "start": 108.7,
+     "end": 109.08
+    }
+   ]
+  },
+  {
+   "section": "bridge",
+   "text": "If we're changing half the company",
+   "start": 109.16,
+   "end": 110.52,
+   "words": [
+    {
+     "w": "If",
+     "start": 109.16,
+     "end": 109.28
+    },
+    {
+     "w": "we're",
+     "start": 109.28,
+     "end": 109.38
+    },
+    {
+     "w": "changing",
+     "start": 109.38,
+     "end": 109.6
+    },
+    {
+     "w": "half",
+     "start": 109.6,
+     "end": 109.92
+    },
+    {
+     "w": "the",
+     "start": 109.92,
+     "end": 110.08
+    },
+    {
+     "w": "company",
+     "start": 110.08,
+     "end": 110.52
+    }
+   ]
+  },
+  {
+   "section": "bridge",
+   "text": "Yeah, okay, call me",
+   "start": 110.82,
+   "end": 112.38,
+   "words": [
+    {
+     "w": "Yeah,",
+     "start": 110.82,
+     "end": 111.1
+    },
+    {
+     "w": "okay,",
+     "start": 111.1,
+     "end": 111.72
+    },
+    {
+     "w": "call",
+     "start": 111.72,
+     "end": 112.04
+    },
+    {
+     "w": "me",
+     "start": 112.04,
+     "end": 112.38
+    }
+   ]
+  },
+  {
+   "section": "bridge",
+   "text": "But \"hey, can you approve this?\"",
+   "start": 112.48,
+   "end": 114.08,
+   "words": [
+    {
+     "w": "But",
+     "start": 112.48,
+     "end": 112.64
+    },
+    {
+     "w": "\"hey,",
+     "start": 112.64,
+     "end": 112.94
+    },
+    {
+     "w": "can",
+     "start": 112.94,
+     "end": 113.18
+    },
+    {
+     "w": "you",
+     "start": 113.18,
+     "end": 113.34
+    },
+    {
+     "w": "approve",
+     "start": 113.34,
+     "end": 113.54
+    },
+    {
+     "w": "this?\"",
+     "start": 113.54,
+     "end": 114.08
+    }
+   ]
+  },
+  {
+   "section": "bridge",
+   "text": "Type it.",
+   "start": 114.2,
+   "end": 114.48,
+   "words": [
+    {
+     "w": "Type",
+     "start": 114.2,
+     "end": 114.28
+    },
+    {
+     "w": "it.",
+     "start": 114.4,
+     "end": 114.48
+    }
+   ]
+  },
+  {
+   "section": "bridge",
+   "text": "\"Can you send that over?\"",
+   "start": 114.52,
+   "end": 115.58,
+   "words": [
+    {
+     "w": "\"Can",
+     "start": 114.52,
+     "end": 114.6
+    },
+    {
+     "w": "you",
+     "start": 114.6,
+     "end": 114.68
+    },
+    {
+     "w": "send",
+     "start": 114.68,
+     "end": 114.86
+    },
+    {
+     "w": "that",
+     "start": 114.86,
+     "end": 115.04
+    },
+    {
+     "w": "over?\"",
+     "start": 115.04,
+     "end": 115.58
+    }
+   ]
+  },
+  {
+   "section": "bridge",
+   "text": "Type it.",
+   "start": 115.78,
+   "end": 116.1,
+   "words": [
+    {
+     "w": "Type",
+     "start": 115.78,
+     "end": 115.88
+    },
+    {
+     "w": "it.",
+     "start": 115.96,
+     "end": 116.1
+    }
+   ]
+  },
+  {
+   "section": "bridge",
+   "text": "\"Any update on this?\"",
+   "start": 116.2,
+   "end": 117.28,
+   "words": [
+    {
+     "w": "\"Any",
+     "start": 116.2,
+     "end": 116.28
+    },
+    {
+     "w": "update",
+     "start": 116.28,
+     "end": 116.58
+    },
+    {
+     "w": "on",
+     "start": 116.6,
+     "end": 116.92
+    },
+    {
+     "w": "this?\"",
+     "start": 116.92,
+     "end": 117.28
+    }
+   ]
+  },
+  {
+   "section": "bridge",
+   "text": "Type it.",
+   "start": 117.47,
+   "end": 117.74,
+   "words": [
+    {
+     "w": "Type",
+     "start": 117.47,
+     "end": 117.55
+    },
+    {
+     "w": "it.",
+     "start": 117.64,
+     "end": 117.74
+    }
+   ]
+  },
+  {
+   "section": "bridge",
+   "text": "Why am I looking at your forehead?!",
+   "start": 117.82,
+   "end": 121.8,
+   "words": [
+    {
+     "w": "Why",
+     "start": 117.82,
+     "end": 117.9
+    },
+    {
+     "w": "am",
+     "start": 117.9,
+     "end": 118.18
+    },
+    {
+     "w": "I",
+     "start": 118.18,
+     "end": 118.34
+    },
+    {
+     "w": "looking",
+     "start": 118.34,
+     "end": 118.68
+    },
+    {
+     "w": "at",
+     "start": 118.68,
+     "end": 118.96
+    },
+    {
+     "w": "your",
+     "start": 118.96,
+     "end": 119.12
+    },
+    {
+     "w": "forehead?!",
+     "start": 119.12,
+     "end": 121.8
+    }
+   ]
+  },
+  {
+   "section": "breakdown",
+   "text": "SEND. THE. MESSAGE.",
+   "start": 121.92,
+   "end": 123.55,
+   "words": [
+    {
+     "w": "SEND.",
+     "start": 121.92,
+     "end": 122.56
+    },
+    {
+     "w": "THE.",
+     "start": 122.6,
+     "end": 123.0
+    },
+    {
+     "w": "MESSAGE.",
+     "start": 123.0,
+     "end": 123.55
+    }
+   ]
+  },
+  {
+   "section": "breakdown",
+   "text": "SEND. THE. MESSAGE.",
+   "start": 123.67,
+   "end": 125.12,
+   "words": [
+    {
+     "w": "SEND.",
+     "start": 123.67,
+     "end": 124.04
+    },
+    {
+     "w": "THE.",
+     "start": 124.04,
+     "end": 124.62
+    },
+    {
+     "w": "MESSAGE.",
+     "start": 124.62,
+     "end": 125.12
+    }
+   ]
+  },
+  {
+   "section": "breakdown",
+   "text": "You have a keyboard.",
+   "start": 125.34,
+   "end": 127.02,
+   "words": [
+    {
+     "w": "You",
+     "start": 125.34,
+     "end": 125.66
+    },
+    {
+     "w": "have",
+     "start": 125.66,
+     "end": 126.08
+    },
+    {
+     "w": "a",
+     "start": 126.08,
+     "end": 126.46
+    },
+    {
+     "w": "keyboard.",
+     "start": 126.46,
+     "end": 127.02
+    }
+   ]
+  },
+  {
+   "section": "breakdown",
+   "text": "You have my address.",
+   "start": 127.36,
+   "end": 128.72,
+   "words": [
+    {
+     "w": "You",
+     "start": 127.36,
+     "end": 127.5
+    },
+    {
+     "w": "have",
+     "start": 127.5,
+     "end": 127.78
+    },
+    {
+     "w": "my",
+     "start": 127.78,
+     "end": 128.1
+    },
+    {
+     "w": "address.",
+     "start": 128.1,
+     "end": 128.72
+    }
+   ]
+  },
+  {
+   "section": "breakdown",
+   "text": "You have Slack.",
+   "start": 129.14,
+   "end": 130.04,
+   "words": [
+    {
+     "w": "You",
+     "start": 129.14,
+     "end": 129.32
+    },
+    {
+     "w": "have",
+     "start": 129.32,
+     "end": 129.62
+    },
+    {
+     "w": "Slack.",
+     "start": 129.62,
+     "end": 130.04
+    }
+   ]
+  },
+  {
+   "section": "breakdown",
+   "text": "You have Teams.",
+   "start": 130.24,
+   "end": 130.9,
+   "words": [
+    {
+     "w": "You",
+     "start": 130.24,
+     "end": 130.36
+    },
+    {
+     "w": "have",
+     "start": 130.36,
+     "end": 130.56
+    },
+    {
+     "w": "Teams.",
+     "start": 130.56,
+     "end": 130.9
+    }
+   ]
+  },
+  {
+   "section": "breakdown",
+   "text": "You have email.",
+   "start": 131.08,
+   "end": 131.98,
+   "words": [
+    {
+     "w": "You",
+     "start": 131.08,
+     "end": 131.22
+    },
+    {
+     "w": "have",
+     "start": 131.22,
+     "end": 131.42
+    },
+    {
+     "w": "email.",
+     "start": 131.42,
+     "end": 131.98
+    }
+   ]
+  },
+  {
+   "section": "breakdown",
+   "text": "WHAT ARE WE DOING?",
+   "start": 133.4,
+   "end": 135.3,
+   "words": [
+    {
+     "w": "WHAT",
+     "start": 133.4,
+     "end": 134.02
+    },
+    {
+     "w": "ARE",
+     "start": 134.02,
+     "end": 134.3
+    },
+    {
+     "w": "WE",
+     "start": 134.3,
+     "end": 134.6
+    },
+    {
+     "w": "DOING?",
+     "start": 134.6,
+     "end": 135.3
+    }
+   ]
+  },
+  {
+   "section": "final",
+   "text": "This could have been a text",
+   "start": 137.76,
+   "end": 139.08,
+   "words": [
+    {
+     "w": "This",
+     "start": 137.76,
+     "end": 137.86
+    },
+    {
+     "w": "could",
+     "start": 137.86,
+     "end": 138.12
+    },
+    {
+     "w": "have",
+     "start": 138.12,
+     "end": 138.36
+    },
+    {
+     "w": "been",
+     "start": 138.36,
+     "end": 138.6
+    },
+    {
+     "w": "a",
+     "start": 138.6,
+     "end": 138.76
+    },
+    {
+     "w": "text",
+     "start": 138.76,
+     "end": 139.08
+    }
+   ]
+  },
+  {
+   "section": "final",
+   "text": "Could've hit send, could've done it in a sec",
+   "start": 139.24,
+   "end": 140.62,
+   "words": [
+    {
+     "w": "Could've",
+     "start": 139.24,
+     "end": 139.46
+    },
+    {
+     "w": "hit",
+     "start": 139.46,
+     "end": 139.58
+    },
+    {
+     "w": "send,",
+     "start": 139.58,
+     "end": 139.92
+    },
+    {
+     "w": "could've",
+     "start": 139.92,
+     "end": 140.08
+    },
+    {
+     "w": "done",
+     "start": 140.08,
+     "end": 140.24
+    },
+    {
+     "w": "it",
+     "start": 140.24,
+     "end": 140.32
+    },
+    {
+     "w": "in",
+     "start": 140.32,
+     "end": 140.42
+    },
+    {
+     "w": "a",
+     "start": 140.42,
+     "end": 140.48
+    },
+    {
+     "w": "sec",
+     "start": 140.48,
+     "end": 140.62
+    }
+   ]
+  },
+  {
+   "section": "final",
+   "text": "Could've dropped it in Teams",
+   "start": 140.74,
+   "end": 141.46,
+   "words": [
+    {
+     "w": "Could've",
+     "start": 140.74,
+     "end": 140.9
+    },
+    {
+     "w": "dropped",
+     "start": 140.9,
+     "end": 141.04
+    },
+    {
+     "w": "it",
+     "start": 141.04,
+     "end": 141.14
+    },
+    {
+     "w": "in",
+     "start": 141.14,
+     "end": 141.28
+    },
+    {
+     "w": "Teams",
+     "start": 141.28,
+     "end": 141.46
+    }
+   ]
+  },
+  {
+   "section": "final",
+   "text": "Could've kept the whole thing clean",
+   "start": 141.56,
+   "end": 143.1,
+   "words": [
+    {
+     "w": "Could've",
+     "start": 141.56,
+     "end": 141.68
+    },
+    {
+     "w": "kept",
+     "start": 141.68,
+     "end": 141.84
+    },
+    {
+     "w": "the",
+     "start": 141.84,
+     "end": 142.0
+    },
+    {
+     "w": "whole",
+     "start": 142.0,
+     "end": 142.32
+    },
+    {
+     "w": "thing",
+     "start": 142.32,
+     "end": 142.7
+    },
+    {
+     "w": "clean",
+     "start": 142.7,
+     "end": 143.1
+    }
+   ]
+  },
+  {
+   "section": "final",
+   "text": "Now I'm trapped inside a meeting",
+   "start": 143.28,
+   "end": 144.74,
+   "words": [
+    {
+     "w": "Now",
+     "start": 143.28,
+     "end": 143.54
+    },
+    {
+     "w": "I'm",
+     "start": 143.54,
+     "end": 143.72
+    },
+    {
+     "w": "trapped",
+     "start": 143.72,
+     "end": 143.9
+    },
+    {
+     "w": "inside",
+     "start": 143.9,
+     "end": 144.22
+    },
+    {
+     "w": "a",
+     "start": 144.22,
+     "end": 144.52
+    },
+    {
+     "w": "meeting",
+     "start": 144.52,
+     "end": 144.74
+    }
+   ]
+  },
+  {
+   "section": "final",
+   "text": "That should've never been",
+   "start": 144.84,
+   "end": 145.52,
+   "words": [
+    {
+     "w": "That",
+     "start": 144.84,
+     "end": 144.92
+    },
+    {
+     "w": "should've",
+     "start": 144.92,
+     "end": 145.2
+    },
+    {
+     "w": "never",
+     "start": 145.2,
+     "end": 145.32
+    },
+    {
+     "w": "been",
+     "start": 145.32,
+     "end": 145.52
+    }
+   ]
+  },
+  {
+   "section": "final",
+   "text": "This could have been an email",
+   "start": 145.6,
+   "end": 146.48,
+   "words": [
+    {
+     "w": "This",
+     "start": 145.6,
+     "end": 145.84
+    },
+    {
+     "w": "could",
+     "start": 145.84,
+     "end": 145.9
+    },
+    {
+     "w": "have",
+     "start": 145.9,
+     "end": 146.0
+    },
+    {
+     "w": "been",
+     "start": 146.0,
+     "end": 146.12
+    },
+    {
+     "w": "an",
+     "start": 146.12,
+     "end": 146.24
+    },
+    {
+     "w": "email",
+     "start": 146.24,
+     "end": 146.48
+    }
+   ]
+  },
+  {
+   "section": "final",
+   "text": "Nobody needed your voice to tell the tale",
+   "start": 146.64,
+   "end": 148.44,
+   "words": [
+    {
+     "w": "Nobody",
+     "start": 146.64,
+     "end": 146.88
+    },
+    {
+     "w": "needed",
+     "start": 146.88,
+     "end": 147.2
+    },
+    {
+     "w": "your",
+     "start": 147.2,
+     "end": 147.36
+    },
+    {
+     "w": "voice",
+     "start": 147.36,
+     "end": 147.64
+    },
+    {
+     "w": "to",
+     "start": 147.64,
+     "end": 147.8
+    },
+    {
+     "w": "tell",
+     "start": 147.8,
+     "end": 148.02
+    },
+    {
+     "w": "the",
+     "start": 148.02,
+     "end": 148.16
+    },
+    {
+     "w": "tale",
+     "start": 148.16,
+     "end": 148.44
+    }
+   ]
+  },
+  {
+   "section": "final",
+   "text": "But you booked a call for a thought with no context",
+   "start": 148.52,
+   "end": 150.82,
+   "words": [
+    {
+     "w": "But",
+     "start": 148.52,
+     "end": 148.62
+    },
+    {
+     "w": "you",
+     "start": 148.62,
+     "end": 148.66
+    },
+    {
+     "w": "booked",
+     "start": 148.66,
+     "end": 148.84
+    },
+    {
+     "w": "a",
+     "start": 148.84,
+     "end": 148.98
+    },
+    {
+     "w": "call",
+     "start": 149.1,
+     "end": 149.24
+    },
+    {
+     "w": "for",
+     "start": 149.24,
+     "end": 149.38
+    },
+    {
+     "w": "a",
+     "start": 149.38,
+     "end": 149.5
+    },
+    {
+     "w": "thought",
+     "start": 149.5,
+     "end": 149.66
+    },
+    {
+     "w": "with",
+     "start": 149.66,
+     "end": 149.84
+    },
+    {
+     "w": "no",
+     "start": 149.84,
+     "end": 150.06
+    },
+    {
+     "w": "context",
+     "start": 150.06,
+     "end": 150.82
+    }
+   ]
+  },
+  {
+   "section": "final",
+   "text": "And everybody's thinking:",
+   "start": 151.06,
+   "end": 152.2,
+   "words": [
+    {
+     "w": "And",
+     "start": 151.06,
+     "end": 151.22
+    },
+    {
+     "w": "everybody's",
+     "start": 151.22,
+     "end": 151.92
+    },
+    {
+     "w": "thinking:",
+     "start": 151.92,
+     "end": 152.2
+    }
+   ]
+  },
+  {
+   "section": "final_tag",
+   "text": "This could have been a message",
+   "start": 152.52,
+   "end": 153.92,
+   "words": [
+    {
+     "w": "This",
+     "start": 152.52,
+     "end": 152.68
+    },
+    {
+     "w": "could",
+     "start": 152.68,
+     "end": 152.9
+    },
+    {
+     "w": "have",
+     "start": 152.9,
+     "end": 153.12
+    },
+    {
+     "w": "been",
+     "start": 153.12,
+     "end": 153.38
+    },
+    {
+     "w": "a",
+     "start": 153.38,
+     "end": 153.54
+    },
+    {
+     "w": "message",
+     "start": 153.54,
+     "end": 153.92
+    }
+   ]
+  },
+  {
+   "section": "final_tag",
+   "text": "This could have been a text",
+   "start": 154.22,
+   "end": 155.48,
+   "words": [
+    {
+     "w": "This",
+     "start": 154.22,
+     "end": 154.32
+    },
+    {
+     "w": "could",
+     "start": 154.32,
+     "end": 154.54
+    },
+    {
+     "w": "have",
+     "start": 154.54,
+     "end": 154.78
+    },
+    {
+     "w": "been",
+     "start": 154.78,
+     "end": 154.98
+    },
+    {
+     "w": "a",
+     "start": 154.98,
+     "end": 155.18
+    },
+    {
+     "w": "text",
+     "start": 155.18,
+     "end": 155.48
+    }
+   ]
+  },
+  {
+   "section": "final_tag",
+   "text": "This could have been a text",
+   "start": 155.84,
+   "end": 157.2,
+   "words": [
+    {
+     "w": "This",
+     "start": 155.84,
+     "end": 156.0
+    },
+    {
+     "w": "could",
+     "start": 156.0,
+     "end": 156.18
+    },
+    {
+     "w": "have",
+     "start": 156.18,
+     "end": 156.42
+    },
+    {
+     "w": "been",
+     "start": 156.42,
+     "end": 156.6
+    },
+    {
+     "w": "a",
+     "start": 156.6,
+     "end": 156.84
+    },
+    {
+     "w": "text",
+     "start": 156.84,
+     "end": 157.2
+    }
+   ]
+  },
+  {
+   "section": "final_tag",
+   "text": "THIS COULD HAVE BEEN A TEXT",
+   "start": 157.32,
+   "end": 159.4,
+   "words": [
+    {
+     "w": "THIS",
+     "start": 157.32,
+     "end": 157.64
+    },
+    {
+     "w": "COULD",
+     "start": 157.64,
+     "end": 157.86
+    },
+    {
+     "w": "HAVE",
+     "start": 157.86,
+     "end": 158.08
+    },
+    {
+     "w": "BEEN",
+     "start": 158.08,
+     "end": 158.3
+    },
+    {
+     "w": "A",
+     "start": 158.3,
+     "end": 158.52
+    },
+    {
+     "w": "TEXT",
+     "start": 158.52,
+     "end": 159.4
+    }
+   ]
+  },
+  {
+   "section": "final_tag",
+   "text": "This could have been a text",
+   "start": 163.96,
+   "end": 165.26,
+   "words": [
+    {
+     "w": "This",
+     "start": 163.96,
+     "end": 164.06
+    },
+    {
+     "w": "could",
+     "start": 164.08,
+     "end": 164.28
+    },
+    {
+     "w": "have",
+     "start": 164.28,
+     "end": 164.58
+    },
+    {
+     "w": "been",
+     "start": 164.58,
+     "end": 164.82
+    },
+    {
+     "w": "a",
+     "start": 164.82,
+     "end": 164.98
+    },
+    {
+     "w": "text",
+     "start": 164.98,
+     "end": 165.26
+    }
+   ]
+  },
+  {
+   "section": "outro",
+   "text": "\"Hey, got a minute?\"",
+   "start": 166.97,
+   "end": 167.9,
+   "words": [
+    {
+     "w": "\"Hey,",
+     "start": 166.97,
+     "end": 167.06
+    },
+    {
+     "w": "got",
+     "start": 167.23,
+     "end": 167.36
+    },
+    {
+     "w": "a",
+     "start": 167.37,
+     "end": 167.5
+    },
+    {
+     "w": "minute?\"",
+     "start": 167.5,
+     "end": 167.9
+    }
+   ]
+  },
+  {
+   "section": "outro",
+   "text": "No.",
+   "start": 168.6,
+   "end": 168.95,
+   "words": [
+    {
+     "w": "No.",
+     "start": 168.6,
+     "end": 168.95
+    }
+   ]
+  },
+  {
+   "section": "outro",
+   "text": "Send me the damn text.",
+   "start": 170.06,
+   "end": 172.42,
+   "words": [
+    {
+     "w": "Send",
+     "start": 170.06,
+     "end": 170.28
+    },
+    {
+     "w": "me",
+     "start": 170.28,
+     "end": 170.48
+    },
+    {
+     "w": "the",
+     "start": 170.48,
+     "end": 170.66
+    },
+    {
+     "w": "damn",
+     "start": 170.66,
+     "end": 171.12
+    },
+    {
+     "w": "text.",
+     "start": 171.12,
+     "end": 172.42
+    }
+   ]
+  }
+ ]
+}
