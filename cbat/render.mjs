@@ -3,7 +3,7 @@
 //   node render.mjs --stills=1.4,33.2 [--out=out/stills]                           full-res PNG stills
 //   node render.mjs --clip=30:46 [--out=out/clip.mp4]                              clip with audio (single worker)
 //   node render.mjs --frames=0:179.88 --workers=4                                  JPEG frames -> out/frames (resumable)
-//   node render.mjs --encode [--out=out/cbat.mp4]                      frames + song -> MP4
+//   node render.mjs --encode [--x] [--t=10] [--out=out/cbat.mp4]                  cold open + frames + song -> MP4 (--x: X upload settings)
 //   --look=name renders the look-dev scene LOOKS[name] instead of the song (t = scene time).
 //   --page=file.html renders another studio page (e.g. one that loads a work-in-progress library file).
 import puppeteer from 'puppeteer-core';
@@ -15,14 +15,21 @@ import { pathToFileURL } from 'node:url';
 const args = Object.fromEntries(process.argv.slice(2).map(a => { const [k, v] = a.replace(/^--/, '').split('='); return [k, v ?? true]; }));
 const CHROME = args.chrome || 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 const DUR = 179.88, fps = 24, FRAMES = 'out/frames', SONG = 'assets/song.mp3';
+// The cold open: song frames v..b ("SEND. THE. MESSAGE.") play before frame 0. Its audio starts at frame a to catch the slam at
+// 121.75, so the picture holds frame v until its own time.
+const COLD = { a: 2921, v: 2925, b: 2965 };
 const run = (cmd, a) => new Promise((ok, bad) => { const p = spawn(cmd, a, { stdio: 'inherit' }); p.on('close', c => c ? bad(new Error(cmd + ' exited ' + c)) : ok()); });
 
 if (args.encode) {
-  const out = args.out || 'out/cbat.mp4', n = readdirSync(FRAMES).filter(f => f.endsWith('.jpg')).length;
-  console.log(`encoding ${n} frames -> ${out}`);
-  await run('ffmpeg', ['-y', '-loglevel', 'error', '-stats', '-framerate', String(fps), '-i', `${FRAMES}/f%05d.jpg`, '-i', SONG,
-    '-map', '0:v', '-map', '1:a', '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', '-tune', 'animation', '-pix_fmt', 'yuv420p',
-    '-profile:v', 'high', '-c:a', 'aac', '-b:a', '256k', '-movflags', '+faststart', '-shortest', out]);
+  const out = args.out || 'out/cbat.mp4', n = readdirSync(FRAMES).filter(f => f.endsWith('.jpg')).length, { a, v, b } = COLD;
+  const graph = `[0:v]trim=end_frame=${b - v},tpad=start=${v - a}:start_mode=clone[cv];[cv][1:v]concat=n=2:v=1:a=0[v];` +
+    `[2:a]asplit[s0][s1];[s0]atrim=${a / fps}:${b / fps},asetpts=PTS-STARTPTS,afade=t=out:st=${(b - a) / fps - .02}:d=0.02[ca];[ca][s1]concat=n=2:v=0:a=1[a]`;
+  const q = args.x ? ['-crf', '17', '-maxrate', '16M', '-bufsize', '32M', '-ar', '48000'] : ['-crf', '16'];
+  console.log(`encoding ${b - a} cold-open + ${n} frames -> ${out}`);
+  await run('ffmpeg', ['-y', '-loglevel', 'error', '-stats', '-framerate', String(fps), '-start_number', String(v), '-i', `${FRAMES}/f%05d.jpg`,
+    '-framerate', String(fps), '-i', `${FRAMES}/f%05d.jpg`, '-i', SONG, '-filter_complex', graph, '-map', '[v]', '-map', '[a]',
+    '-c:v', 'libx264', '-preset', 'slow', ...q, '-tune', 'animation', '-pix_fmt', 'yuv420p', '-profile:v', 'high',
+    '-c:a', 'aac', '-b:a', '256k', '-movflags', '+faststart', ...(args.t ? ['-t', String(args.t)] : []), '-shortest', out]);
   console.log('wrote ' + out); process.exit(0);
 }
 

@@ -27,7 +27,7 @@
   const deskScreen = (c, b, t) => outlookCalendar(c, b, t, { zoom: .34, nav: false, now: 8.95, from: 8, to: 18,
     events: Array.from({ length: 22 }, (_, i) => ({ day: i % 5, start: 9 + Math.floor(i / 5) * 1.5 + (i % 2) * .5, end: 9.75 + Math.floor(i / 5) * 1.5 + (i % 2) * .5, title: 'Quick sync' })) });
 
-  // ---------- S1 0 - 2.0: the thumbnail. Dan mid-sip at his desk, the toast arriving. ----------
+  // ---------- S1 0 - 2.0: Dan mid-sip at his desk, the toast arriving. Straight after the cold open (render.mjs COLD). ----------
   function desk(ctx, t) {
     look(0); const tc = twos(t), ping = on(t, wordT(0, 0));
     // the sip: up towards the lips, frozen by the ping, then lowered (FK angles: a shoulder, e elbow)
@@ -40,6 +40,16 @@
     officeDesk(ctx, t, { fg: true });
     ctx.restore();
     teamsToast(ctx, 930, 620, 950, t, { kind: 'chat', who: 'greg', text: MSG0, t0: -.2, presence: 'available', photo: true });
+    FRAME.post.push(earlier);
+  }
+  // The comic caption that makes the cut from the cold open (4:59 PM) a flashback.
+  function earlier(ctx) {
+    const s = '8 HOURS EARLIER', f = { font: 'hand', weight: 800, size: 84, track: .5 }, pad = f.size * .5;
+    setFont(ctx, f); const bw = ctx.measureText(s).width + pad * 2, bh = f.size * 1.12 + pad * 1.4;
+    ctx.translate(80, 70); ctx.rotate(-.02);
+    fillPts(ctx, rect(10, 12, bw, bh), INK.ink, false);
+    ink(ctx, rect(0, 0, bw, bh), { fill: INK.yellow, line: 4, smooth: false, boil: .8 });
+    txt(ctx, s, pad, pad * .7 + f.size * .776, { ...f, color: INK.ink });
   }
 
   // ---------- S2 2.0 - 3.62: close on Dan. The smile strains. Mask slip on "sec". ----------
@@ -246,7 +256,7 @@
     [BAND, call1], [beatTime(35), call2], [beatTime(39), call3], [beatTime(43), call4], [beatTime(46), hover]]);
 
   Object.assign(LYRICS, {
-    0: { mode: 'none' },                                   // Greg's toast
+    0: { mode: 'livecap', hold: 0, x: 30, w: 620, y: 1050, lines: 1, size: 50 },   // Greg's toast is too small on a phone; clear of Dan's face
     1: { mode: 'livecap', hold: 0, until: 3.62 },          // gone before the chat cut
     2: { mode: 'none' },                                   // Greg's chat messages
     8: { mode: 'livecap', hold: .2, x: 40, w: 820, y: 1050 },

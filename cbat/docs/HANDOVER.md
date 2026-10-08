@@ -9,11 +9,12 @@
 Run from `cbat/`:
 - one chapter's frames again: `node render.mjs --frames=A:B --workers=4 --force`; use A one frame early (e.g. 20.58 for 20.62), because a chapter's first frame is `floor(a * 24)`.
 - the master: `node render.mjs --encode --out=out/cbat.mp4`.
-- the X version: the ffmpeg line in "Encodes" below.
+- the X version: `node render.mjs --encode --x --out=out/cbat_x.mp4`.
+- a quick look at the opening: `node render.mjs --encode --t=10 --out=out/check/hook.mp4`.
 - checks: `--sheet=t1,t2 --cols=4 --w=480 --out=out/check/x.jpg`, `--stills=t`, `--clip=a:b`, `--look=NAME`, `--page=other.html`.
 
 ## Encodes
-`ffmpeg -framerate 24 -i out/frames/f%05d.jpg -i assets/song.mp3 -map 0:v -map 1:a -c:v libx264 -preset slow -tune animation -crf 17 -maxrate 16M -bufsize 32M -pix_fmt yuv420p -profile:v high -c:a aac -b:a 256k -ar 48000 -movflags +faststart -shortest out/cbat_x.mp4`
+Both encodes put the cold open first: song frames 2925–2964 (SEND. THE. MESSAGE.) with the song's audio from 121.71 s, 1.83 s in all, then the whole film. `COLD` in `render.mjs` sets the splice. The X version is CRF 17 capped at 16 Mbps, with 48 kHz audio.
 
 ## Map
 - Contracts: `docs/LIBRARY.md` (shared files), `docs/ANIMATION_GUIDE.md` (chapters), `docs/STORYBOARD.md`, `docs/STYLE_SHEET.md`.

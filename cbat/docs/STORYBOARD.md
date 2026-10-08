@@ -31,9 +31,12 @@ The arc: **office (pastel, muted, polite) → cracks → stage (riso, unmuted, r
 
 ---
 
+## Cold open: 1.83 s before song time 0
+The song's first 13 s are quiet, so the film opens on the breakdown instead: song 121.71–123.54 (SEND. THE. MESSAGE., Dan screaming on his desk), audio and frames spliced in by `render.mjs --encode` (`COLD`). Its first frame is the thumbnail. Then a hard cut to near-silence and c01's desk, under a comic caption: **8 HOURS EARLIER**.
+
 ## c01 verse 1: 0 – 20.68 · office 8:57 AM · look 0 → .4
 Music: a quiet verse to 13.2; the full band slams in at **13.58**; pre-chorus 13.6–20.68.
-**Frame 0 is the thumbnail** (X autoplays muted): Dan at his desk, polite, glasses glare, the clock at 8:57, and a Teams toast already sliding in.
+Frame 0 follows the cold open: Dan at his desk, polite, glasses glare, the clock at 8:57, a Teams toast already in, "8 HOURS EARLIER" up top.
 
 | Time | Shot |
 |---|---|
